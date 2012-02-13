@@ -16,4 +16,4 @@ class Game : QObject
 		virtual void processReceive(QString message);
 		virtual void processClick();
 		virtual void processKey();
-}
+};

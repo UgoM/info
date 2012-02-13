@@ -15,4 +15,4 @@ class Brain : QObject
 		void sendToAll(QString message);
 		virtual void processReceive(QString message);
 
-}
+};
