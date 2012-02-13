@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QString>
 
-class Brain : QObject
+class Brain : public QObject
 {
 	Q_OBJECT
 
@@ -15,4 +15,4 @@ class Brain : QObject
 		void sendToAll(QString message);
 		virtual void processReceive(QString message);
 
-}
+};

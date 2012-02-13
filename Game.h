@@ -3,12 +3,13 @@
 #include <QObject>
 #include <QString>
 
-class Game : QObject
+class Game : public QObject
 {
 	Q_OBJECT
 
 	public:
 		Game();
+		~Game();
 
 	private:
 		void sendTo(int idClient, QString message);
@@ -16,4 +17,4 @@ class Game : QObject
 		virtual void processReceive(QString message);
 		virtual void processClick();
 		virtual void processKey();
-}
+};
