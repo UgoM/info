@@ -9,15 +9,27 @@ INCLUDEPATH += .
 QT += network core
 
 # Input
-HEADERS += 	TcpServer.h \
+HEADERS += 	TcpServer.h \			
+			UdpServer.h \
 			TcpClient.h \
 			Server.h \
 			Game.h \
-			Brain.h
+			Brain.h \
+            Board.h \
+            Cell.h \
+            CellType.h \
+            Constants.h \
+            Picture.h \
+            Piece.h
 
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
+			UdpServer.cpp \
 			TcpClient.cpp \
 			Server.cpp \
 			Game.cpp \
-			Brain.cpp
+			Brain.cpp \
+            Board.cpp \
+            Cell.cpp \
+            CellType.cpp \
+            Piece.cpp
