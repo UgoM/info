@@ -7,6 +7,8 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 QT += network core
+OBJECTS_DIR = objects/
+MOC_DIR = moc_dir/
 
 # Input
 HEADERS += 	TcpServer.h \			
