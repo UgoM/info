@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TcpServer.h"
+#include "UdpServer.h"
 #include "Brain.h"
 #include "Game.h"
 
@@ -17,7 +18,7 @@ class Server : public QObject
 
 	private:
 		/// listen to UDP request
-		//UdpServer * udpServer;
+		UdpServer * udpServer;
 		/// listen to TCP request
 		TcpServer * tcpServer;
 		/// list of every brains on the local host
