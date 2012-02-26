@@ -11,8 +11,7 @@ OBJECTS_DIR = objects/
 MOC_DIR = moc_dir/
 
 # Input
-HEADERS += 	TcpServer.h \			
-			UdpServer.h \
+HEADERS += 	TcpServer.h \
 			TcpClient.h \
 			Server.h \
 			Game.h \
@@ -26,7 +25,6 @@ HEADERS += 	TcpServer.h \
 
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
-			UdpServer.cpp \
 			TcpClient.cpp \
 			Server.cpp \
 			Game.cpp \
