@@ -13,12 +13,14 @@ MOC_DIR = moc_dir/
 # Input
 HEADERS += 	TcpServer.h \
 			TcpClient.h \
+            UdpServer.h \
 			Server.h \
 			Game.h \
 			Brain.h 
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
 			TcpClient.cpp \
+            UdpServer.cpp \
 			Server.cpp \
 			Game.cpp \
 			Brain.cpp 

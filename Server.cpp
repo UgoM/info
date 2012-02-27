@@ -9,16 +9,19 @@
 Server::Server()
 {
 	TcpServer * tcpServer = new TcpServer();
+	UdpServer * udpServer = new UdpServer();
 
 	brains = new QList<Brain *>;
 	games = new QList<Game *>;
 
  	connect(tcpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
+ 	connect(udpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
 }
 
 Server::~Server()
 {
 	delete tcpServer;
+    delete udpServer;
 	brains->clear();
 	delete brains;
 	games->clear();
