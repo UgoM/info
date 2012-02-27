@@ -15,21 +15,10 @@ HEADERS += 	TcpServer.h \
 			TcpClient.h \
 			Server.h \
 			Game.h \
-			Brain.h \
-            Board.h \
-            Cell.h \
-            CellType.h \
-            Constants.h \
-            Picture.h \
-            Piece.h
-
+			Brain.h 
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
 			TcpClient.cpp \
 			Server.cpp \
 			Game.cpp \
-			Brain.cpp \
-            Board.cpp \
-            Cell.cpp \
-            CellType.cpp \
-            Piece.cpp
+			Brain.cpp 
