@@ -6,7 +6,7 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
-QT += network core
+QT += network core testlib
 OBJECTS_DIR = objects/
 MOC_DIR = moc_dir/
 QMAKE_CXXFLAGS += -Wshadow 
@@ -15,6 +15,7 @@ QMAKE_CXXFLAGS += -Wshadow
 HEADERS += 	TcpServer.h \
 			TcpClient.h \
             UdpServer.h \
+            ServerList.h \
 			Server.h \
 			Game.h \
 			Brain.h 
@@ -22,6 +23,7 @@ SOURCES += 	main.cpp \
 			TcpServer.cpp \
 			TcpClient.cpp \
             UdpServer.cpp \
+            ServerList.cpp \
 			Server.cpp \
 			Game.cpp \
 			Brain.cpp 
