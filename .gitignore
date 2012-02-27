@@ -2,3 +2,4 @@ Makefile.Debug
 Makefile.Release
 README
 debug\
+main.cpp

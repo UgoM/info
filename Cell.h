@@ -4,25 +4,24 @@
 #include <QPoint>
 #include <QLabel>
 #include "Piece.h"
-#include "CellType.h"
 
 class Cell {
 
-	Piece * piece;
+	Piece piece;
 	bool empty;
 	QPoint pos;
-	CellType * type;
+	QPixmap picture;
 	
 	public:
-		Cell(const QPoint & pos, const CellType & type);
-		Cell(const QPoint & pos, const Piece & piece, const CellType & type);
+		Cell(const QPoint & pos, const QPixmap & picture);
+		Cell(const QPoint & pos, Piece piece, const QPixmap & picture);
 		
-		Piece & getPiece() const;
-		void setPiece(const Piece & piece);
+		Piece getPiece() const;
+		void setPiece(Piece piece);
 		bool isEmpty() const;
 		void setEmpty(bool empty);
 		QPoint getPosition() const;
-		void draw(QLabel & parent) const;
+		QPixmap getPicture() const;
 
 };
 

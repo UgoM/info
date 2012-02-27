@@ -1,28 +1,28 @@
 #include <stdexcept>
 #include "Cell.h"
 
-Cell::Cell(const QPoint & pos, const CellType & type) {
+Cell::Cell(const QPoint & pos, const QPixmap & picture) {
 	this->pos = pos;
-	*this->type = type;
+	this->picture = picture;
 	empty = true;
 }
 
-Cell::Cell(const QPoint & pos, const Piece & piece, const CellType & type) {
+Cell::Cell(const QPoint & pos, Piece piece, const QPixmap & picture) {
 	this->pos = pos;
-	*this->piece = piece;
-	*this->type = type;
+	this->piece = piece;
+	this->picture = picture;
 	empty = false;
 }
 
-Piece & Cell::getPiece() const {
+Piece Cell::getPiece() const {
 	if (empty) {
 		throw std::logic_error("This cell does not contain a piece");
 	}
-	return *piece;
+	return piece;
 }
 
-void Cell::setPiece(const Piece & piece) {
-	*this->piece = piece;
+void Cell::setPiece(Piece piece) {
+	this->piece = piece;
 }
 
 bool Cell::isEmpty() const {
@@ -37,10 +37,6 @@ QPoint Cell::getPosition() const {
 	return pos;
 }
 
-void Cell::draw(QLabel & parent) const {
-	parent.setPixmap(type->getPicture());
-	if (!empty) {
-		QLabel picture(&parent);
-		picture.setPixmap(piece->getPicture());
-	}
+QPixmap Cell::getPicture() const {
+	return picture;
 }

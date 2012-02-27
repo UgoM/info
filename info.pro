@@ -18,7 +18,13 @@ HEADERS += 	TcpServer.h \
             ServerList.h \
 			Server.h \
 			Game.h \
-			Brain.h 
+			Brain.h \
+            Board.h \
+            Cell.h \
+            Constants.h \
+			Piece.h \
+			Image.h
+
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
 			TcpClient.cpp \
@@ -26,4 +32,7 @@ SOURCES += 	main.cpp \
             ServerList.cpp \
 			Server.cpp \
 			Game.cpp \
-			Brain.cpp 
+			Brain.cpp \
+            Board.cpp \
+            Cell.cpp \
+			Image.cpp
