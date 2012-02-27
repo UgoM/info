@@ -14,6 +14,7 @@ class Board : public QWidget {
 		Board();
 		
 		Cell * getCellAt(const QPoint & pos) const;
+		void update() const;
 
 };
 

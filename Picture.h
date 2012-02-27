@@ -11,7 +11,9 @@ class Picture {
 		Picture() {}
 	
 	public:
-		void draw() const;
+		const QPixmap & getPicture() const {
+			return picture;
+		}
 		void setPicture(const QPixmap & picture) {
 			this->picture = picture;
 		}

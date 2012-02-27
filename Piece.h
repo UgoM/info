@@ -10,6 +10,7 @@ class Piece : public Picture {
 		static const Piece BLACK_PAWN;
 		static const Piece WHITE_QUEEN;
 		static const Piece BLACK_QUEEN;
+		//static const Piece NONE; <- utile ?
 		
 	private:
 		Piece() {}

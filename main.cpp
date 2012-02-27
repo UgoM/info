@@ -6,20 +6,20 @@
 
 #include <QPushButton>
 
+#include "Board.h"
  
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
- 
-    QPushButton bouton("Salut les Zéros, la forme ? Test");
-    bouton.setText("Pimp mon encore !");
- 
-    bouton.show();
-
-	Server * server = new Server();
-
-	TcpClient * tcpClient = new TcpClient();
-
 	
+	CellType even = CellType::EVEN;
+	even.setPicture(QPixmap("evenCell.png", "png"));
+	
+	CellType odd = CellType::ODD;
+	odd.setPicture(QPixmap("oddCell.png", "png"));
+
+    Board * board = new Board();
+	board->update();
+ 
     return app.exec();
 }
