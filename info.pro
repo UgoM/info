@@ -9,6 +9,7 @@ INCLUDEPATH += .
 QT += network core
 OBJECTS_DIR = objects/
 MOC_DIR = moc_dir/
+QMAKE_CXXFLAGS += -Wshadow 
 
 # Input
 HEADERS += 	TcpServer.h \
