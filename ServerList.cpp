@@ -65,21 +65,21 @@ void ServerList::processPendingDatagrams()
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
         datagram.resize(udpSocket->pendingDatagramSize());
-        QHostAddress sender;
+        QHostAddress senderHost;
         quint16 senderPort;
 
         udpSocket->readDatagram(datagram.data(), datagram.size(),
-                             &sender, &senderPort);
+                             &senderHost, &senderPort);
 
-        processTheDatagram(datagram, sender, senderPort);
+        processTheDatagram(datagram, senderHost, senderPort);
     }
 }
 
-void ServerList::processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort)
+void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHost, quint16 senderPort)
 {
     if (datagram == serverObject->message("ANSWER_UDP_ASK_FOR_SERVER")) {
-        std::cout << "new server " << sender.toString().toStdString() << ":" << senderPort << std::endl;
-        serverList->insert(sender.toString(), senderPort);
+        std::cout << "new server " << senderHost.toString().toStdString() << ":" << senderPort << std::endl;
+        serverList->insert(senderHost.toString(), senderPort);
     }
 }
 

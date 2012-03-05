@@ -8,8 +8,8 @@
 
 Server::Server()
 {
-	TcpServer * tcpServer = new TcpServer();
-	UdpServer * udpServer = new UdpServer(this);
+	tcpServer = new TcpServer();
+	udpServer = new UdpServer(this);
 
 	brains = new QList<Brain *>;
 	games = new QList<Game *>;
