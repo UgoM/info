@@ -2,13 +2,16 @@
 
 #include <QObject>
 #include <QtNetwork>
+#include "Server.h"
+
+class Server;
 
 class UdpServer : public QObject
 {
 	Q_OBJECT
 
 	public:
-		UdpServer();
+		UdpServer(Server * s);
 		~UdpServer();
 
 	public slots:
@@ -21,4 +24,5 @@ class UdpServer : public QObject
         void processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort);
 
 		QUdpSocket * udpSocket;
+        Server * mainServer;
 };

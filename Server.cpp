@@ -9,13 +9,24 @@
 Server::Server()
 {
 	TcpServer * tcpServer = new TcpServer();
-	UdpServer * udpServer = new UdpServer();
+	UdpServer * udpServer = new UdpServer(this);
 
 	brains = new QList<Brain *>;
 	games = new QList<Game *>;
 
  	connect(tcpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
  	connect(udpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
+
+    initMessages();
+}
+
+Server::Server(int n)
+{
+    if (n) {
+        Server();
+    } else {
+        initMessages();
+    }
 }
 
 Server::~Server()
@@ -40,3 +51,11 @@ void Server::makeNewGame()
 	std::cout << "New game created" << std::endl;
 }
 
+void Server::initMessages()
+{
+    messages = new QMap <QString, QByteArray>;
+    
+    messages->insert("UDP_ASK_FOR_SERVER", "Is there any server here ?");
+    messages->insert("ANSWER_UDP_ASK_FOR_SERVER", "I think I'm here. Don't you think that too ?");
+
+}
