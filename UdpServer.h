@@ -21,7 +21,7 @@ class UdpServer : public QObject
 		void newGame();
 
 	private:
-        void processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort);
+        void processTheDatagram (QByteArray datagram, QHostAddress senderHost, quint16 senderPort);
 
 		QUdpSocket * udpSocket;
         Server * mainServer;
