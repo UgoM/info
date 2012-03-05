@@ -15,12 +15,14 @@ class ServerList : public QObject
 	public slots:
 		void processPendingDatagrams();
         void stopListening();
+        void testSendUdp();
 
 	public:
 		ServerList();
 		~ServerList();
         void run();
         QMap <QString, quint16> get();
+        void testMode();
 
     private:
         void processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort);
