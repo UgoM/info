@@ -33,7 +33,7 @@ void ServerList::run()
 
     // broadcast message
     QByteArray datagram = "Broadcast message " + QByteArray::number(128);
-    udpSocket->writeDatagram(datagram.data(), datagram.size(), QHostAddress::Broadcast, 12800);
+    udpSocket->writeDatagram(datagram.data(), datagram.size(), QHostAddress("193.54.87.255")/*QHostAddress::Broadcast*/, 12800);
     std::cout << "ServerList : Broadcast message" << std::endl;
 
     // start listening for 5s
@@ -41,7 +41,7 @@ void ServerList::run()
     std::cout << "ServerList : start listening" << std::endl;
 
     // end listening after timeout
-     QTimer::singleShot(5000, this, SLOT(stopListening()));
+     QTimer::singleShot(6000, this, SLOT(stopListening()));
 }
 
 void ServerList::clearServerList()
@@ -81,4 +81,18 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress sender, q
 QMap <QString, quint16> ServerList::get()
 {
     return *serverList;
+}
+
+void ServerList::testMode()
+{
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(testSendUdp()));
+    timer->start(1000);
+}
+
+void ServerList::testSendUdp()
+{
+    QByteArray datagram = "Broadcast message " + QByteArray::number(128);
+    udpSocket->writeDatagram(datagram.data(), datagram.size(), QHostAddress("193.54.87.255")/*QHostAddress::Broadcast*/, 12800);
+    std::cout << "ServerList : message sent..." << std::endl;
 }
