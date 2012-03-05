@@ -1,16 +1,18 @@
 #include <stdexcept>
 #include "Cell.h"
 
-Cell::Cell(const QPoint & pos, const QPixmap & picture) {
-	this->pos = pos;
-	this->picture = picture;
+Cell::Cell(const QPoint & position, const QPixmap & pixmap, QWidget * b) {
+	pos = position;
+	picture = new QLabel(b);
+	picture->setPixmap(pixmap);
 	empty = true;
 }
 
-Cell::Cell(const QPoint & pos, Piece piece, const QPixmap & picture) {
-	this->pos = pos;
-	this->piece = piece;
-	this->picture = picture;
+Cell::Cell(const QPoint & position, Piece p, const QPixmap & pixmap, QWidget * b) {
+	pos = position;
+	piece = p;
+	picture = new QLabel(b);
+	picture->setPixmap(pixmap);
 	empty = false;
 }
 
@@ -21,22 +23,26 @@ Piece Cell::getPiece() const {
 	return piece;
 }
 
-void Cell::setPiece(Piece piece) {
-	this->piece = piece;
+void Cell::setPiece(Piece p) {
+	piece = p;
 }
 
 bool Cell::isEmpty() const {
 	return empty;
 }
 
-void Cell::setEmpty(bool empty) {
-	this->empty = empty;
+void Cell::setEmpty(bool emp) {
+	empty = emp;
 }
 
 QPoint Cell::getPosition() const {
 	return pos;
 }
 
-QPixmap Cell::getPicture() const {
+QLabel* Cell::getPicture() const {
 	return picture;
+}
+
+void Cell::setPicture(QLabel * label){
+	picture = label;
 }

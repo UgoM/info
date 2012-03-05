@@ -10,18 +10,19 @@ class Cell {
 	Piece piece;
 	bool empty;
 	QPoint pos;
-	QPixmap picture;
+	QLabel * picture;
 	
 	public:
-		Cell(const QPoint & pos, const QPixmap & picture);
-		Cell(const QPoint & pos, Piece piece, const QPixmap & picture);
+		Cell(const QPoint & position, const QPixmap & pixmap, QWidget * b);
+		Cell(const QPoint & position, Piece piece, const QPixmap & pixmap, QWidget * b);
 		
 		Piece getPiece() const;
 		void setPiece(Piece piece);
 		bool isEmpty() const;
 		void setEmpty(bool empty);
 		QPoint getPosition() const;
-		QPixmap getPicture() const;
+		QLabel * getPicture() const;
+		void setPicture(QLabel * label);
 
 };
 
