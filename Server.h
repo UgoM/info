@@ -8,12 +8,15 @@
 #include <QObject>
 #include <QtCore>
 
+class UdpServer;
+
 class Server : public QObject
 {
 	Q_OBJECT
 
 	public:
 		Server();
+		Server(int n);
 		~Server();
 
 	private:
@@ -32,5 +35,12 @@ class Server : public QObject
 
 	public slots:
 		void makeNewGame();
+
+    private:
+        QMap <QString, QByteArray> * messages;
+        void initMessages();
+
+    public:
+        QByteArray message (QString m) {return messages->value(m);};
 				
 };

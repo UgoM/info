@@ -16,6 +16,10 @@ ServerList::ServerList()
     serverList =  new QMap <QString, quint16> ;
 
 	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
+
+    /* create an empty Server, just to get messages definitions */
+    serverObject = new Server(0);
+
 }
 
 ServerList::~ServerList()
@@ -28,17 +32,16 @@ void ServerList::run()
     std::cout << "ServerList : run" << std::endl;
 
     // clear server list
-    std::cout << "ServerList : clear server list" << std::endl;
+    std::cout << "ServerList : clear list" << std::endl;
     clearServerList();
 
     // broadcast message
-    QByteArray datagram = "Broadcast message " + QByteArray::number(128);
+    QByteArray datagram = serverObject->message("UDP_ASK_FOR_SERVER");
     udpSocket->writeDatagram(datagram.data(), datagram.size(), QHostAddress("193.54.87.255")/*QHostAddress::Broadcast*/, 12800);
-    std::cout << "ServerList : Broadcast message" << std::endl;
+    std::cout << "ServerList : Broadcast message, now waiting for responses..." << std::endl;
 
     // start listening for 5s
     flg_listen = 1;
-    std::cout << "ServerList : start listening" << std::endl;
 
     // end listening after timeout
      QTimer::singleShot(6000, this, SLOT(stopListening()));
@@ -52,7 +55,7 @@ void ServerList::clearServerList()
 void ServerList::stopListening()
 {
     flg_listen = 0;
-    std::cout << "ServerList : end listening" << std::endl;
+    std::cout << "ServerList : stop listening" << std::endl;
 }
 
 void ServerList::processPendingDatagrams()
@@ -74,8 +77,10 @@ void ServerList::processPendingDatagrams()
 
 void ServerList::processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort)
 {
-    std::cout << "new server " << sender.toString().toStdString() << ":" << senderPort << std::endl;
-    serverList->insert(sender.toString(), senderPort);
+    if (datagram == serverObject->message("ANSWER_UDP_ASK_FOR_SERVER")) {
+        std::cout << "new server " << sender.toString().toStdString() << ":" << senderPort << std::endl;
+        serverList->insert(sender.toString(), senderPort);
+    }
 }
 
 QMap <QString, quint16> ServerList::get()
@@ -92,7 +97,7 @@ void ServerList::testMode()
 
 void ServerList::testSendUdp()
 {
-    QByteArray datagram = "Broadcast message " + QByteArray::number(128);
+    QByteArray datagram = serverObject->message("UDP_ASK_FOR_SERVER");
     udpSocket->writeDatagram(datagram.data(), datagram.size(), QHostAddress("193.54.87.255")/*QHostAddress::Broadcast*/, 12800);
     std::cout << "ServerList : message sent..." << std::endl;
 }

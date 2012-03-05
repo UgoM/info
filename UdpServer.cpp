@@ -7,7 +7,7 @@
 #include <iostream>
 
 
-UdpServer::UdpServer()
+UdpServer::UdpServer(Server * s)
 {
 	std::cout << "Constructeur UdpServer" << std::endl;
 
@@ -16,6 +16,8 @@ UdpServer::UdpServer()
 	udpSocket->bind(12800, QUdpSocket::ShareAddress);
 
 	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
+
+    mainServer = s;
 }
 
 UdpServer::~UdpServer()
@@ -42,15 +44,15 @@ void UdpServer::processPendingDatagrams()
 
 void UdpServer::processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort)
 {
-	/// the Udp server just respond it is there, so the client 
-	/// can connect himself to the tcp server.
-	std::cout << "Received Udp data : \"" << datagram.data() << "\"" << std::endl;
-    
-    /// TODO : check incoming datagram
+	std::cout << "Received Udp data : \"" << datagram.data() << "\"" << std::endl; 
 
-    datagram = "I'm here " + QByteArray::number(128);
-    udpSocket->writeDatagram(datagram.data(), datagram.size(),
-                                    sender, senderPort);
+    if (datagram == mainServer->message("UDP_ASK_FOR_SERVER")) {
+        std::cout << "UDP_ASK_FOR_SERVER " << sender.toString().toStdString() << ":" << senderPort << std::endl;
+	    /// the Udp server just respond it is there, so the client 
+	    /// can connect himself to the tcp server.
+        datagram = mainServer->message("ANSWER_UDP_ASK_FOR_SERVER");
+        udpSocket->writeDatagram(datagram.data(), datagram.size(), sender, senderPort);
+    }
 
 	// to create a new game : just use newGame() signal
 	//emit newGame();	

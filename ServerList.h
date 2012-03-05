@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QtNetwork>
+#include "Server.h"
 
 class ServerList : public QObject
 {
@@ -10,7 +11,7 @@ class ServerList : public QObject
     QUdpSocket * udpSocket;
     QMap <QString, quint16> * serverList;
     int flg_listen;
-
+    Server * serverObject;
 
 	public slots:
 		void processPendingDatagrams();
