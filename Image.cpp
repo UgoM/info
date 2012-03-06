@@ -9,3 +9,12 @@ Image::Image() {
 	whiteQueen = new QPixmap("whitePawn.png");
 	blackQueen = new QPixmap("blackPawn.png");
 }
+
+Image::~Image() {
+	delete oddCell;
+	delete evenCell;
+	delete whitePawn;
+	delete blackPawn;
+	delete whiteQueen;
+	delete blackQueen;
+}

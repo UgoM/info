@@ -2,22 +2,31 @@
 #define DEF_BOARD
 
 #include <QWidget>
-#include <QPoint>
+#include <QLabel>
+#include <QMouseEvent>
 #include "Constants.h"
-#include "Cell.h"
+#include "Piece.h"
 #include "Image.h"
+
+#include <QDebug>
 
 class Board : public QWidget {
 
-	Cell*** table;
+	Piece** table;
+	QLabel*** screen;
 	Image* image;
+	bool current;	//true if white to play, false otherwhise
+	
+	QLabel * inPlay;
 	
 	public:
 		Board();
 		~Board();
+
+		void mousePressEvent(QMouseEvent * event);
 		
-		Cell * getCellAt(const QPoint & pos) const;
-		void update();
+	private:
+		QLabel * setLabelPicture(QPixmap * pixmap);
 
 };
 

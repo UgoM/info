@@ -15,24 +15,24 @@ class Image {
 	
 	public:
 		Image();
-		
-		const QPixmap & getOddCell() {
-			return *oddCell;
+		~Image();
+		QPixmap * getOddCell() {
+			return oddCell;
 		}
-		const QPixmap & getEvenCell() {
-			return *evenCell;
+		QPixmap * getEvenCell() {
+			return evenCell;
 		}
-		const QPixmap & getWhitePawn() {
-			return *whitePawn;
+		QPixmap * getWhitePawn() {
+			return whitePawn;
 		}
-		const QPixmap & getBlackPawn() {
-			return *blackPawn;
+		QPixmap * getBlackPawn() {
+			return blackPawn;
 		}
-		const QPixmap & getWhiteQueen() {
-			return *whiteQueen;
+		QPixmap * getWhiteQueen() {
+			return whiteQueen;
 		}
-		const QPixmap & getBlackQueen() {
-			return *blackQueen;
+		QPixmap * getBlackQueen() {
+			return blackQueen;
 		}
 
 };

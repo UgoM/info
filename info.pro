@@ -20,7 +20,6 @@ HEADERS += 	TcpServer.h \
 			Game.h \
 			Brain.h \
             Board.h \
-            Cell.h \
             Constants.h \
 			Piece.h \
 			Image.h
@@ -34,5 +33,4 @@ SOURCES += 	main.cpp \
 			Game.cpp \
 			Brain.cpp \
             Board.cpp \
-            Cell.cpp \
 			Image.cpp

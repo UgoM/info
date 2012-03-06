@@ -2,60 +2,76 @@
 #include <sstream>
 #include "Board.h"
 
-
-#include <iostream>
-
 Board::Board() : QWidget() {
 	setFixedSize(MAX_ROW * CELL_SIZE, MAX_COL * CELL_SIZE);
+	setAcceptDrops(true);
 	image = new Image();
-	table = new Cell**[MAX_COL];
+	table = new Piece*[MAX_COL];
+	screen = new QLabel**[MAX_COL];
 	for (int i = 0; i < MAX_COL ; i++) {
-		table[i] = new Cell*[MAX_ROW];
+		table[i] = new Piece[MAX_ROW];
+		screen[i] = new QLabel*[MAX_ROW];
 	}
 	for (int i = 0; i < MAX_ROW; i++) {
 		for (int j = 0; j < MAX_COL; j++) {
 			if ( (i + j) % 2 == 0) {
-				table[i][j] = new Cell(QPoint(i, j), image->getEvenCell(), this);
+				table[i][j] = EMPTY;
+				screen[i][j] = setLabelPicture(image->getEvenCell());
 			} else {
 				if (i <= 3) {
-					table[i][j] = new Cell(QPoint(i, j), BLACK_PAWN, image->getOddCell(), this);
+					table[i][j] = BLACK_PAWN;
+					screen[i][j] = setLabelPicture(image->getBlackPawn());
 				} else if (i >= 6) {
-					table[i][j] = new Cell(QPoint(i, j), WHITE_PAWN, image->getOddCell(), this);
+					table[i][j] = WHITE_PAWN;
+					screen[i][j] = setLabelPicture(image->getWhitePawn());
 				} else {
-					table[i][j] = new Cell(QPoint(i, j), image->getOddCell(), this);
+					table[i][j] = NONE;
+					screen[i][j] = setLabelPicture(image->getOddCell());
 				}
 			}
+			screen[i][j]->move(j*CELL_SIZE, i*CELL_SIZE);
 		}
 	}
+	inPlay = NULL;
+	current = true;
 }
 
-Cell * Board::getCellAt(const QPoint & posi) const {
-	if (posi.x() < 0 || posi.x() >= MAX_COL || posi.y() < 0 || posi.y() >= MAX_ROW) {
-		std::stringstream sstm;
-		sstm << "Index out of bounds : (" << posi.x() << "," << posi.y() + ")";
-		throw std::logic_error(sstm.str());
-	}
-	return table[posi.x()][posi.y()];
+QLabel * Board::setLabelPicture(QPixmap * pixmap) {
+	QLabel * label = new QLabel(this);
+	label->setPixmap(*pixmap);
+	return label;
 }
 
-void Board::update() {
-	for (int i = 0; i < MAX_ROW; i++) {
-		for (int j = 0; j < MAX_COL; j++) {
-			Cell *cell = table[i][j];
-			QLabel *label = cell->getPicture();
-			if (!cell->isEmpty()) {
-				QLabel picture(label);
-				picture.setText("toto");
-				switch(cell->getPiece()) {
-					case WHITE_PAWN : picture.setPixmap(image->getWhitePawn()); break;
-					case BLACK_PAWN : picture.setPixmap(image->getBlackPawn()); break;
-					case WHITE_QUEEN : picture.setPixmap(image->getWhiteQueen()); break;
-					case BLACK_QUEEN : picture.setPixmap(image->getBlackQueen()); break;
-				}
-				cell->setPicture(&picture);
-			}
-			label->move((i%MAX_ROW) * CELL_SIZE, (j%MAX_COL) * CELL_SIZE);
+void Board::mousePressEvent(QMouseEvent *ev) {
+    if (!inPlay) {
+		qDebug() << "in";
+		inPlay = static_cast<QLabel*>(childAt(ev->pos()));
+		//TODO: contrôler que l'on clique un bon pion
+		QPoint pt = inPlay->pos();
+		int i = pt.y()/CELL_SIZE, j = pt.x()/CELL_SIZE;
+		if(table[i][j] == NONE || table[i][j] == EMPTY ||
+			(current && table[i][j] == BLACK_PAWN) || (current && table[i][j] == BLACK_QUEEN) ||
+			(!current && table[i][j] == WHITE_PAWN) || (!current && table[i][j] == WHITE_QUEEN)) {
+			inPlay = NULL;
 		}
+	} else {
+		qDebug() << "out";
+		//TODO: contrôler que le mouvement est possible
+		QPoint pt = inPlay->pos();
+		int i = pt.y()/CELL_SIZE, j = pt.x()/CELL_SIZE;
+		int ni = ev->pos().y()/CELL_SIZE, nj = ev->pos().x()/CELL_SIZE;
+		table[ni][nj] = table[i][j];
+		switch(table[i][j]) {
+			case WHITE_PAWN : screen[ni][nj]->setPixmap(*image->getWhitePawn()); break;
+			case BLACK_PAWN : screen[ni][nj]->setPixmap(*image->getBlackPawn()); break;
+			case WHITE_QUEEN : screen[ni][nj]->setPixmap(*image->getWhiteQueen()); break;
+			case BLACK_QUEEN : screen[ni][nj]->setPixmap(*image->getBlackQueen()); break;
+			default : break;
+		}
+		table[i][j] = NONE;
+		screen[i][j]->setPixmap(*image->getOddCell());
+		inPlay = NULL;
+		current = !current;
 	}
 }
 
@@ -63,9 +79,11 @@ Board::~Board() {
 	delete image;
 	for (int i = 0; i < MAX_ROW; i++) {
 		for (int j = 0; j < MAX_COL; j++) {
-			delete table[i][j];
+			delete screen[i][j];
 		}
 		delete[] table[i];
+		delete[] screen[i];
 	}
 	delete[] table;
+	delete[] screen;
 }
