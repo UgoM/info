@@ -1,13 +1,13 @@
 #include "Image.h"
 
 Image::Image() {
-	oddCell = new QPixmap("oddCell.png");
-	evenCell = new QPixmap("evenCell.png");
-	whitePawn = new QPixmap("whitePawn.png");
-	blackPawn = new QPixmap("blackPawn.png");
+	oddCell = new QPixmap("../images/oddCell.png");
+	evenCell = new QPixmap("../images/evenCell.png");
+	whitePawn = new QPixmap("../images/whitePawn.png");
+	blackPawn = new QPixmap("../images/blackPawn.png");
 	//TODO:
-	whiteQueen = new QPixmap("whitePawn.png");
-	blackQueen = new QPixmap("blackPawn.png");
+	whiteQueen = new QPixmap("../images/whitePawn.png");
+	blackQueen = new QPixmap("../images/blackPawn.png");
 }
 
 Image::~Image() {
