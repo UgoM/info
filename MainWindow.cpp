@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "Checkers.h"
+#include "ServerList.h"
 
 mainwindow::mainwindow() 
 {
@@ -39,6 +40,8 @@ mainwindow::mainwindow()
    
 	//boutons principaux
     QPushButton *buttonList = new QPushButton("Liste serveurs");
+    serverListWidget = new ServerListWidget();
+	connect(buttonList, SIGNAL(clicked()), this, SLOT(serverListDisp()));
 	QPushButton *buttonWatch= new QPushButton("observation parties en cours");
 	QPushButton *buttonSetup=new QPushButton("configurer joueur");
 	
@@ -130,20 +133,11 @@ mainwindow::mainwindow()
 	windowServerWatch = new QDialog;
 	connect(buttonWatch, SIGNAL(clicked()), this, SLOT(serverWatchDisp()));
 	
-
-
-	//test **************************************
-	windowServerList=new QDialog;
-	connect(buttonList, SIGNAL(clicked()), this, SLOT(serverListDisp()));
 	
 }
 void mainwindow::serverListDisp()
 {
-	windowServerList->setWindowIcon(QIcon("icone2.png"));
-	windowServerList->setWindowTitle("Liste des serveurs disponibles pour jouer");
-	windowServerList->setModal(true);
-	windowServerList->show();
-
+	serverListWidget->show();
 }
 void mainwindow::serverWatchDisp()
 {

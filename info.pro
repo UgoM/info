@@ -25,7 +25,8 @@ HEADERS += 	TcpServer.h \
 			Piece.h \
 			Image.h \
 			Checkers.h \
-			MainWindow.h
+			MainWindow.h \
+            ServerListWidget.h
 
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
@@ -38,4 +39,5 @@ SOURCES += 	main.cpp \
             Board.cpp \
 			Image.cpp \
 			Checkers.cpp \
-			MainWindow.cpp
+			MainWindow.cpp \
+            ServerListWidget.cpp

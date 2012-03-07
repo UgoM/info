@@ -9,7 +9,7 @@
 #include <QWidget>
 #include <QPushButton>
 
-
+#include "ServerListWidget.h"
 
 #include <QMessageBox>
  
@@ -44,7 +44,6 @@ class mainwindow : public QMainWindow
 		QDialog *windowBoss;
 		QDialog *windowAbout;
 
-		QDialog *windowServerList;
 
 
 		QDialog *windowSetup;
@@ -69,7 +68,7 @@ class mainwindow : public QMainWindow
 		QDialog *windowServerWatch;
 
 
-		
+        ServerListWidget * serverListWidget;		
 		
 
 };

@@ -29,4 +29,7 @@ class ServerList : public QObject
     private:
         void processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort);
         void clearServerList();
+
+    signals:
+        void newList();
 };
