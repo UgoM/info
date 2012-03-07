@@ -27,6 +27,8 @@ class Board : public QWidget {
 		
 	private:
 		QLabel * setLabelPicture(QPixmap * pixmap);
+		bool inBounds(int i, int j);
+		bool isPieceMoveable(int i, int j);
 
 };
 
