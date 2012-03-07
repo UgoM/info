@@ -9,6 +9,7 @@ INCLUDEPATH += .
 QT += network core testlib
 OBJECTS_DIR = objects/
 MOC_DIR = moc_dir/
+DESTDIR = ./
 QMAKE_CXXFLAGS += -Wshadow 
 
 # Input
