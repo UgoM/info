@@ -1,5 +1,6 @@
 #include "MainWindow.h"
- 
+#include "Checkers.h"
+
 mainwindow::mainwindow() 
 {
 	QMdiArea *zoneCentrale = new QMdiArea;
@@ -18,6 +19,7 @@ mainwindow::mainwindow()
     QMenu *menuQuestion = menuBar()->addMenu("&?");
 
 	QAction *actionNew = menuFile->addAction("&Nouvelle partie");
+	connect(actionNew, SIGNAL(triggered()),this, SLOT(newGameFromMenu()));
 	QAction *actionWatch = menuFile->addAction("&Regarder une partie");
 	QAction *actionCancel = menuFile->addAction("&Annuler");
 	QAction *actionStat = menuFile->addAction("&Statistique");
@@ -216,4 +218,16 @@ fichier=fopen("erreur.txt","at");
 	fprintf(fichier,"Ligne %d, %s\n",linenumber,message);
 fclose(fichier);
 
+}
+
+
+void mainwindow::newGameFromMenu()
+{
+    /// When Beginning a new game :
+    /// - start Server if down
+    /// - launch a Brain
+    /// - launch a Game
+    /// - connect Game to Brain
+    /// For now : just start a Game object
+    Checkers * checkers = new Checkers();
 }

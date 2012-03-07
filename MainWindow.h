@@ -31,7 +31,7 @@ class mainwindow : public QMainWindow
 		void serverWatchDisp();
 		void setupClose();
 		void setupCancel();
-	
+	    void newGameFromMenu();
 
 		
 		void windowBossDisp();
