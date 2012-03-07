@@ -83,9 +83,10 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHos
     }
 }
 
-QMap <QString, quint16> ServerList::get()
+QStandardItemModel * ServerList::get()
 {
-    return *serverList;
+    QStandardItemModel * toto = new QStandardItemModel();
+    return toto;
 }
 
 void ServerList::testMode()

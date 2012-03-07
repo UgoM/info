@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QStandardItemModel>
 #include <QtNetwork>
 #include "Server.h"
 
@@ -22,7 +23,7 @@ class ServerList : public QObject
 		ServerList();
 		~ServerList();
         void run();
-        QMap <QString, quint16> get();
+        QStandardItemModel * get();
         void testMode();
 
     private:
