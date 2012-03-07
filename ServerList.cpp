@@ -14,6 +14,10 @@ ServerList::ServerList()
 	udpSocket->bind(12800, QUdpSocket::ShareAddress);
     flg_listen = 0;
     serverList =  new QMap <QString, quint16> ;
+    ipList =  new QStringList ;
+    gameList =  new QStringList ;
+    nPlayersList =  new QList <int> ;
+    nMaxPlayersList =  new QList <int> ;
 
 	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
 
@@ -50,6 +54,10 @@ void ServerList::run()
 void ServerList::clearServerList()
 {
     serverList->clear();
+    ipList->clear();
+    gameList->clear();
+    nPlayersList->clear();
+    nMaxPlayersList->clear();
 }
 
 void ServerList::stopListening()
@@ -85,8 +93,47 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHos
 
 QStandardItemModel * ServerList::get()
 {
-    QStandardItemModel * toto = new QStandardItemModel();
-    return toto;
+    QStandardItemModel * model = new QStandardItemModel();
+
+    //row
+    for (int i=0; i<ipList->size(); ++i)
+    {
+	    QList<QStandardItem *> items;
+
+        {
+            QStandardItem * item = new QStandardItem();
+            item->setData(ipList->at(i));
+            items.append(item);
+        }
+
+        {
+            QStandardItem * item = new QStandardItem();
+            item->setData(gameList->at(i));
+            items.append(item);
+        }
+
+        {
+            QStandardItem * item = new QStandardItem();
+            item->setData(nPlayersList->at(i));
+            items.append(item);
+        }
+
+        {
+            QStandardItem * item = new QStandardItem();
+            item->setData(nMaxPlayersList->at(i));
+            items.append(item);
+        }
+
+	    model->appendRow(items);
+    }
+
+
+	model->setHeaderData(0 , Qt::Horizontal, "IP");
+	model->setHeaderData(1 , Qt::Horizontal, "Jeu");
+	model->setHeaderData(2 , Qt::Horizontal, "# Joueurs");
+	model->setHeaderData(3 , Qt::Horizontal, "# Joueurs Max");
+
+    return model;
 }
 
 void ServerList::testMode()

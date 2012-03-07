@@ -10,9 +10,15 @@ class ServerList : public QObject
 	Q_OBJECT
 
     QUdpSocket * udpSocket;
-    QMap <QString, quint16> * serverList;
     int flg_listen;
     Server * serverObject;
+
+    QMap <QString, quint16> * serverList;
+    QStringList * ipList;
+    QStringList * gameList;
+    QList <int> * nPlayersList;
+    QList <int> * nMaxPlayersList;
+    
 
 	public slots:
 		void processPendingDatagrams();
