@@ -22,7 +22,8 @@ HEADERS += 	TcpServer.h \
             Board.h \
             Constants.h \
 			Piece.h \
-			Image.h
+			Image.h \
+			Checkers.h
 
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
@@ -33,4 +34,5 @@ SOURCES += 	main.cpp \
 			Game.cpp \
 			Brain.cpp \
             Board.cpp \
-			Image.cpp
+			Image.cpp \
+			Checkers.cpp
