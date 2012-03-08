@@ -44,18 +44,14 @@ QLabel * Board::setLabelPicture(QPixmap * pixmap) {
 
 void Board::mousePressEvent(QMouseEvent *ev) {
     if (!inPlay) {
-		qDebug() << "in";
 		inPlay = static_cast<QLabel*>(childAt(ev->pos()));
 		//TODO: contrôler que l'on clique un bon pion
 		QPoint pt = inPlay->pos();
 		int i = pt.y()/CELL_SIZE, j = pt.x()/CELL_SIZE;
-		if(table[i][j] == NONE || table[i][j] == EMPTY ||
-			(current && table[i][j] == BLACK_PAWN) || (current && table[i][j] == BLACK_QUEEN) ||
-			(!current && table[i][j] == WHITE_PAWN) || (!current && table[i][j] == WHITE_QUEEN)) {
+		if (!isPieceMoveable(i, j)) {
 			inPlay = NULL;
 		}
 	} else {
-		qDebug() << "out";
 		//TODO: contrôler que le mouvement est possible
 		QPoint pt = inPlay->pos();
 		int i = pt.y()/CELL_SIZE, j = pt.x()/CELL_SIZE;
@@ -73,6 +69,44 @@ void Board::mousePressEvent(QMouseEvent *ev) {
 		inPlay = NULL;
 		current = !current;
 	}
+}
+
+// QMap<Piece, int> calculatePositionCount(...) {
+	// calculer pour chaque pion le nombre de case sur lesquels il peut aller.
+// }
+
+bool Board::isPieceMoveable(int i, int j) {
+	if(table[i][j] == NONE || table[i][j] == EMPTY ||
+		(current && table[i][j] == BLACK_PAWN) || (current && table[i][j] == BLACK_QUEEN) ||
+		(!current && table[i][j] == WHITE_PAWN) || (!current && table[i][j] == WHITE_QUEEN)) {
+		//clic sur un pion blanc alors que les noirs jouent et inversement
+		return false;
+	}
+	if (current && table[i][j] == WHITE_PAWN) {
+		//clic sur un pion blanc qui n'a pas de pion devant
+		if (inBounds(i-1,j-1) && table[i-1][j-1] == NONE) {
+			return true;
+		} else if (inBounds(i-1,j+1) && table[i-1][j+1] == NONE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	if (!current && table[i][j] == BLACK_PAWN) {
+		//clic sur un pion noir qui n'a pas de pion devant
+		if (inBounds(i+1,j-1) && table[i+1][j-1] == NONE) {
+			return true;
+		} else if (inBounds(i+1,j+1) && table[i+1][j+1] == NONE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	return false;
+}
+
+bool Board::inBounds(int i, int j) {
+	return i>=0 && i<MAX_ROW && j>=0 && j<MAX_COL;
 }
 
 Board::~Board() {
