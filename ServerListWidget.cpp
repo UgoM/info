@@ -14,12 +14,16 @@ ServerListWidget::ServerListWidget()
 
     QPushButton * buttonGetList = new QPushButton("Rafraichir");
 	connect(buttonGetList, SIGNAL(clicked()), this, SLOT(buttonRefresh()));
+    QPushButton * buttonConnect = new QPushButton("Connecter");
+    QPushButton * buttonWatch = new QPushButton("Observer");
 
 
     
 	QGridLayout * gridLayout = new QGridLayout();
     gridLayout->addWidget(tableView, 0, 0, 0, 10);
-    gridLayout->addWidget(buttonGetList, 1, 0, 0, 0);
+    gridLayout->addWidget(buttonGetList, 1, 0);
+    gridLayout->addWidget(buttonConnect, 1, 1);
+    gridLayout->addWidget(buttonWatch, 1, 2);
 
 	this->setLayout(gridLayout);
 
