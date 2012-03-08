@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "Checkers.h"
 
 #include <QtCore>
 #include <QApplication>
@@ -41,7 +42,8 @@ Server::~Server()
 
 void Server::makeNewGame()
 {
-	Game * newGame = new Game();
+    Checkers * newGame = new Checkers();
+	//Game * newGame = new Game();
 	QThread * newGameThread = new QThread();
 	newGame->moveToThread(newGameThread);
 	newGameThread->start();

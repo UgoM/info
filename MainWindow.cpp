@@ -223,5 +223,7 @@ void mainwindow::newGameFromMenu()
     /// - launch a Game
     /// - connect Game to Brain
     /// For now : just start a Game object
-    Checkers * checkers = new Checkers();
+    //Checkers * checkers = new Checkers();
+    Server * s = new Server();
+    s->makeNewGame();
 }
