@@ -6,4 +6,6 @@
 #define CELL_COUNT MAX_ROW*MAX_COL
 #define CELL_SIZE 60
 
+enum Move { ILLEGAL, SIMPLE, SINGLE_CAPTURE, MANY_CAPTURE };
+
 #endif

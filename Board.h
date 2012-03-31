@@ -7,8 +7,7 @@
 #include "Constants.h"
 #include "Piece.h"
 #include "Image.h"
-
-#include <QDebug>
+#include "BoardController.h"
 
 class Board : public QWidget {
 
@@ -16,19 +15,23 @@ class Board : public QWidget {
 	QLabel*** screen;
 	Image* image;
 	bool current;	//true if white to play, false otherwhise
+	BoardController * controller;
+	int whiteCount;
+	int blackCount;
 	
 	QLabel * inPlay;
+	QPoint position;
+	QPoint start;
 	
 	public:
 		Board();
 		~Board();
 
 		void mousePressEvent(QMouseEvent * event);
+		Piece** getPieceTable();
 		
 	private:
 		QLabel * setLabelPicture(QPixmap * pixmap);
-		bool inBounds(int i, int j);
-		bool isPieceMoveable(int i, int j);
 
 };
 
