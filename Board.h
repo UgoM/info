@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include "Constants.h"
-#include "Piece.h"
 #include "Image.h"
 #include "BoardController.h"
 

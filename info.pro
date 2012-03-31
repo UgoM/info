@@ -24,7 +24,6 @@ HEADERS += 	TcpServer.h \
 			BoardController.h \
 			Direction.h \
             Constants.h \
-			Piece.h \
 			Image.h \
 			Checkers.h \
 			MainWindow.h \

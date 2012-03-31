@@ -3,7 +3,6 @@
 
 #include <QMap>
 #include <QPoint>
-#include "Piece.h"
 #include "Constants.h"
 #include "Direction.h"
 
