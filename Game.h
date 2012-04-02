@@ -1,9 +1,9 @@
 #pragma once
 
-#include <QObject>
+#include <QWidget>
 #include <QString>
 
-class Game : public QObject
+class Game : public QWidget
 {
 	Q_OBJECT
 

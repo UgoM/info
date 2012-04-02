@@ -1,5 +1,6 @@
 #include "Server.h"
 #include "Checkers.h"
+#include "BrainCheckers.h"
 
 #include <QtCore>
 #include <QApplication>
@@ -45,6 +46,8 @@ Server::~Server()
 void Server::makeNewGame()
 {
     Checkers * newGame = new Checkers();
+	BrainCheckers * brainCheckers = new BrainCheckers();
+	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), brainCheckers, SLOT(handleMove(QByteArray)));
 	//Game * newGame = new Game();
 	QThread * newGameThread = new QThread();
 	newGame->moveToThread(newGameThread);
