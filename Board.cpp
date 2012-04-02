@@ -109,7 +109,7 @@ void Board::handleChangeTurn(int ni, int nj) {
 	controller->calculateClickablePieces(table, current);
 }
 
-QByteArray Board::encodeBoard() {
+QByteArray Board::encodeBoard() const {
 	QByteArray byteArray;
 	for (int i = 0; i < MAX_COL; i++) {
 		for (int j = 0; j < MAX_ROW; j++) {
@@ -129,10 +129,15 @@ QByteArray Board::encodeBoard() {
 void Board::decodeBoard(QByteArray byteArray) {
 	QList<QByteArray> tokens = byteArray.split(SEPARATOR);
 	for (int k = 0; k < tokens.size(); k++) {
-		// switch (tokens[k].toInt()) {
-			// case 0 : 
-		// }
-		// table[k % MAX_COL][k / MAX_COL] = tokens[k].toInt();
+		switch (tokens[k].toInt()) {
+			case 0 : table[k % MAX_COL][k / MAX_COL] = WHITE_PAWN; break;
+			case 1 : table[k % MAX_COL][k / MAX_COL] = BLACK_PAWN; break;
+			case 2 : table[k % MAX_COL][k / MAX_COL] = WHITE_QUEEN; break;
+			case 3 : table[k % MAX_COL][k / MAX_COL] = BLACK_QUEEN; break;
+			case 4 : table[k % MAX_COL][k / MAX_COL] = NONE; break;
+			case 5 : table[k % MAX_COL][k / MAX_COL] = EMPTY; break;
+			default :  break;
+		}
 	}
 }
 

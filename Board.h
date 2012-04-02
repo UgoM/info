@@ -30,7 +30,7 @@ class Board : public QWidget {
 
 		void mousePressEvent(QMouseEvent * event);
 		Piece** getPieceTable();
-		QByteArray encodeBoard();
+		QByteArray encodeBoard() const;
 		void decodeBoard(QByteArray byteArray);
 		
 	private:
