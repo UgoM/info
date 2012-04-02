@@ -154,8 +154,8 @@ void ServerList::askForInfos(QHostAddress senderHost, quint16 senderPort)
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(displayErrorTcp(QAbstractSocket::SocketError)));
 
-    std::cout << "Tcp connection to host " << senderHost.toString().toStdString() << ":" << senderPort << std::endl;
-    tcpSocket->connectToHost(senderHost, senderPort);
+    std::cout << "Tcp connection to host " << senderHost.toString().toStdString() << ":" << "12801" << std::endl;
+    tcpSocket->connectToHost(senderHost, 12801);
 }
 
 void ServerList::readDataTcp()

@@ -17,7 +17,7 @@ TcpServer::TcpServer(Server * s)
     tcpServer = new QTcpServer();
 
 	// Vérification
-	if (!tcpServer->listen(QHostAddress::Any, 12800)) {
+	if (!tcpServer->listen(QHostAddress::Any, 12801)) {
         std::cout << "Unable to start the server Tcp : " << tcpServer->errorString().toStdString() << std::endl;
         return;
     }
