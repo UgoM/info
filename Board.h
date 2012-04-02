@@ -22,12 +22,16 @@ class Board : public QWidget {
 	QPoint position;
 	QPoint start;
 	
+	static const char SEPARATOR;
+	
 	public:
 		Board();
 		~Board();
 
 		void mousePressEvent(QMouseEvent * event);
 		Piece** getPieceTable();
+		QByteArray encodeBoard();
+		void decodeBoard(QByteArray byteArray);
 		
 	private:
 		QLabel * setLabelPicture(QPixmap * pixmap);

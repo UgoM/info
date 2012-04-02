@@ -1,5 +1,9 @@
 #include "Board.h"
 
+#include <QDebug>
+
+const char Board::SEPARATOR = ';';
+
 Board::Board() : QWidget() {
 	setFixedSize(MAX_ROW * CELL_SIZE, MAX_COL * CELL_SIZE);
 	image = new Image();
@@ -40,6 +44,7 @@ Board::Board() : QWidget() {
 			}
 		}
 	}
+	
 	table[9][2] = WHITE_QUEEN;
 	screen[9][2]->setPixmap(*image->getWhiteQueen());
 	table[6][5] = BLACK_PAWN;
@@ -121,6 +126,33 @@ void Board::handleChangeTurn(int ni, int nj) {
 	}
 	current = !current;
 	controller->calculateClickablePieces(table, current);
+}
+
+QByteArray Board::encodeBoard() {
+	QByteArray byteArray;
+	for (int i = 0; i < MAX_COL; i++) {
+		for (int j = 0; j < MAX_ROW; j++) {
+			char buffer[2];
+			if (i == MAX_COL - 1 && j == MAX_ROW - 1) {
+				sprintf(buffer, "%d", table[i][j]);
+			} else {
+				sprintf(buffer, "%d%c", table[i][j], SEPARATOR);
+			}
+			byteArray.append(buffer);
+		}
+	}
+	qDebug() << byteArray;
+	return byteArray;
+}
+
+void Board::decodeBoard(QByteArray byteArray) {
+	QList<QByteArray> tokens = byteArray.split(SEPARATOR);
+	for (int k = 0; k < tokens.size(); k++) {
+		// switch (tokens[k].toInt()) {
+			// case 0 : 
+		// }
+		// table[k % MAX_COL][k / MAX_COL] = tokens[k].toInt();
+	}
 }
 
 Piece** Board::getPieceTable() {

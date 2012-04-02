@@ -24,7 +24,11 @@ Move BoardController::controlMove(Piece** table, const QPoint & point, const QPo
 	} else if (queenMovementInProgress && canQueenCapture) {
 		int rafle = findQueenCapture(point.x(), point.y(), Direction::UNDEFINED, table, p == WHITE_QUEEN ? BLACK_PAWN : WHITE_PAWN);
 		if (rafle == 1) {
-			return SINGLE_CAPTURE;
+			foreach (QList<QPoint> list, clickablePieces->value(point)) {
+				if (list.contains(wanted)) {
+					return SINGLE_CAPTURE;
+				}
+			}
 		}
 	}
 	QList<QList<QPoint> > newlyAllowedPositions;

@@ -3,6 +3,7 @@
 Checkers::Checkers() : Game() {
 	board = new Board();
 	board->show();
+	// board->encodeBoard();
 }
 
 void Checkers::processReceive(QString message) {
