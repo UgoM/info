@@ -1,5 +1,7 @@
 #include "BoardController.h"
 
+#include <QDebug>
+
 bool operator<(const QPoint & lhs, const QPoint & rhs) {
 	return lhs.x() < rhs.x() || (lhs.x() == rhs.x() && lhs.y() < rhs.y());
 }
@@ -8,7 +10,23 @@ bool BoardController::isPointClickable(const QPoint & point) {
 	return clickablePieces->contains(point);
 }
 
-Move BoardController::controlMove(const QPoint & point, const QPoint & wanted) {
+Move BoardController::controlMove(Piece** table, const QPoint & point, const QPoint & wanted) {
+	Piece p = table[point.x()][point.y()];
+	if (p == WHITE_QUEEN || p == BLACK_QUEEN) {
+		queenMovementInProgress = true;
+	}
+	if (queenMovementInProgress && !canQueenCapture) {
+		foreach (QList<QPoint> list, clickablePieces->value(point)) {
+			if (list.contains(wanted)) {
+				return SIMPLE;
+			}
+		}
+	} else if (queenMovementInProgress && canQueenCapture) {
+		int rafle = findQueenCapture(point.x(), point.y(), Direction::UNDEFINED, table, p == WHITE_QUEEN ? BLACK_PAWN : WHITE_PAWN);
+		if (rafle == 1) {
+			return SINGLE_CAPTURE;
+		}
+	}
 	QList<QList<QPoint> > newlyAllowedPositions;
 	foreach (QList<QPoint> list, clickablePieces->value(point)) {
 		if (list.startsWith(wanted)) {
@@ -34,14 +52,22 @@ Move BoardController::controlMove(const QPoint & point, const QPoint & wanted) {
 
 void BoardController::calculateClickablePieces(Piece** table, bool current) {
 	int max_rafle = 0;
+	canQueenCapture = false;
+	queenMovementInProgress = false;
 	Piece targetPiece = current ? BLACK_PAWN : WHITE_PAWN;
 	Piece currentPiece = current ? WHITE_PAWN : BLACK_PAWN;
+	Piece currentOtherPiece = current ? WHITE_QUEEN : BLACK_QUEEN;
 	QList<QPoint> possibleList;
 	clickablePieces = new QMap<QPoint, QList<QList<QPoint> > >();
 	for (int i = 0; i < MAX_COL; i++) {
 		for (int j = 0; j < MAX_ROW; j++) {
-			if (table[i][j] == currentPiece || table[i][j] == getOther(currentPiece)) {
-				int rafle = findPawnCapture(i, j, table, targetPiece);
+			int rafle = 0;
+			if (table[i][j] == currentPiece) {
+				rafle = findPawnCapture(i, j, table, targetPiece);
+			} else if (table[i][j] == currentOtherPiece) {
+				rafle = findQueenCapture(i, j, Direction::UNDEFINED, table, targetPiece);
+			}
+			if (table[i][j] == currentPiece || table[i][j] == currentOtherPiece) {
 				if (rafle > max_rafle) {
 					possibleList.clear();
 					max_rafle = rafle;
@@ -55,37 +81,57 @@ void BoardController::calculateClickablePieces(Piece** table, bool current) {
 	foreach (QPoint point, possibleList) {
 		QList<QList<QPoint> > coord;
 		if (max_rafle > 0) {
-			coordMaxPawnCapture(point.x(), point.y(), table, coord, 0, max_rafle, targetPiece);
+			if (table[point.x()][point.y()] == currentPiece) {
+				coordMaxPawnCapture(point.x(), point.y(), table, coord, 0, max_rafle, targetPiece);
+			} else {
+				canQueenCapture = true;
+				coordMaxQueenCapture(point.x(), point.y(), Direction::UNDEFINED, table, coord, 0, max_rafle, targetPiece);
+			}
 			clickablePieces->insert(point, coord);
 		} else {
-			if (current) {
-				if (inBounds(point.x() - 1, point.y() - 1) && table[point.x() - 1][point.y() - 1] == NONE) {
-					QList<QPoint> list;
-					list << QPoint(point.x() - 1, point.y() - 1);
-					coord << list;
-				}
-				if (inBounds(point.x() + 1, point.y() - 1) && table[point.x() + 1][point.y() - 1] == NONE) {
-					QList<QPoint> list;
-					list << QPoint(point.x() + 1, point.y() - 1);
-					coord << list;
+			if (table[point.x()][point.y()] == currentPiece) {
+				if (current) {
+					if (inBounds(point.x() - 1, point.y() - 1) && table[point.x() - 1][point.y() - 1] == NONE) {
+						QList<QPoint> list;
+						list << QPoint(point.x() - 1, point.y() - 1);
+						coord << list;
+					}
+					if (inBounds(point.x() + 1, point.y() - 1) && table[point.x() + 1][point.y() - 1] == NONE) {
+						QList<QPoint> list;
+						list << QPoint(point.x() + 1, point.y() - 1);
+						coord << list;
+					}
+				} else {
+					if (inBounds(point.x() - 1, point.y() + 1) && table[point.x() - 1][point.y() + 1] == NONE) {
+						QList<QPoint> list;
+						list << QPoint(point.x() - 1, point.y() + 1);
+						coord << list;
+					}
+					if (inBounds(point.x() + 1, point.y() + 1) && table[point.x() + 1][point.y() + 1] == NONE) {
+						QList<QPoint> list;
+						list << QPoint(point.x() + 1, point.y() + 1);
+						coord << list;
+					}
 				}
 			} else {
-				if (inBounds(point.x() - 1, point.y() + 1) && table[point.x() - 1][point.y() + 1] == NONE) {
+				QList<Direction> dirList = Direction::values();
+				for (int p = 0; p < dirList.size(); p++) {
+					int l = 1;
+					Direction dir = dirList[p];
 					QList<QPoint> list;
-					list << QPoint(point.x() - 1, point.y() + 1);
-					coord << list;
-				}
-				if (inBounds(point.x() + 1, point.y() + 1) && table[point.x() + 1][point.y() + 1] == NONE) {
-					QList<QPoint> list;
-					list << QPoint(point.x() + 1, point.y() + 1);
-					coord << list;
+					while (inBounds(point.x()+l*dir.i(), point.y()+l*dir.j()) && table[point.x()+l*dir.i()][point.y()+l*dir.j()] == NONE) {
+						list << QPoint(point.x()+l*dir.i(), point.y()+l*dir.j());
+						l++;
+					}
+					if(!list.isEmpty()) {
+						coord << list;
+					}
 				}
 			}
 			if (!coord.isEmpty()) {
 				clickablePieces->insert(point, coord);
 			}
 		}
-		
 	}
 }
 
@@ -164,285 +210,215 @@ int BoardController::coordMaxPawnCapture(int i, int j, Piece** table, QList<QLis
     return rafle;
 }
 
-/* j'ai écris le code qui suit quand j'avais fais le jeu de dames en C.
-je suis sur à 100 % qu'il marche et fait ce qui est demandé (même si le code est ultra long et compliqué).
-en gros, c'est la même chose que pour les pions au dessus sauf que ici, c'est pour les dames
-ce qu'il faut retenir est que
-i - colonne de départ, j - ligne de départ
-k_prec - mettre -1 à l'appel puis ne plus s'en soucier
-carte[][NB_TOTAL_CASE] - damier (contient enum VIDE, PION_NOIR, etc).
-couleur - la couleur cible énoncé en pion (si blanc joue, couleur = PION_NOIR, et inversement)
-
-int trouver_rafle_dame(int i, int j, int k_prec, int carte[][NB_TOTAL_CASE], int couleur){
-    int rafle=0,max_rafle=0,rafle_tmp=0,k=0,col=0,lin=0,fin=0,carte_m=0,cl=0;
-    Direc dir[4]={{1,1},{1,-1},{-1,-1},{-1,1}};
-    if(couleur==PION_NOIR){
-        cl=DAME_NOIRE;
-    }
-    else{
-        cl=DAME_BLANCHE;
-    }
-    if(k_prec==-1){
-        for(k=0;k<4;k++){
-            col=i;
-            lin=j;
-            fin=0;
-            while(en_jeu(col+2*dir[k].i,lin+2*dir[k].j) && !fin){
-                if((carte[col+dir[k].i][lin+dir[k].j]==couleur || carte[col+dir[k].i][lin+dir[k].j]==cl) && carte[col+2*dir[k].i][lin+2*dir[k].j]==VIDE){
-                    carte_m=carte[col+dir[k].i][lin+dir[k].j];
-                    carte[col+dir[k].i][lin+dir[k].j]=PRIS;
-                    rafle=trouver_rafle_dame(col+2*dir[k].i,lin+2*dir[k].j,k,carte,couleur)+1;
-                    fin=1;
-                    carte[col+dir[k].i][lin+dir[k].j]=carte_m;
+int BoardController::findQueenCapture(int i, int j, Direction dirPrec, Piece** table, Piece piece){
+    int rafle = 0, max_rafle = 0, lin = 0, col = 0;
+	Piece pieceOther = getOther(piece);
+    if (dirPrec == Direction::UNDEFINED) {
+        foreach (Direction dir, Direction::values()) {
+			col = i;
+			lin = j;
+            bool end = false;
+			while (inBounds(col+2*dir.i(), lin+2*dir.j()) && !end) {
+				Piece p = table[col+dir.i()][lin+dir.j()];
+                if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE) {
+                    table[col+dir.i()][lin+dir.j()] = TOOK;
+                    rafle = findQueenCapture(col+2*dir.i(), lin+2*dir.j(), dir, table, piece) + 1;
+                    end = true;
+                    table[col+dir.i()][lin+dir.j()] = p;
                 }
-                if(carte[col+dir[k].i][lin+dir[k].j]!=VIDE){
-                    fin=1;
+                if (p != NONE) {
+                    end = true;
                 }
-                col=col+dir[k].i;
-                lin=lin+dir[k].j;
+                col = col + dir.i();
+                lin = lin + dir.j();
             }
-        }
+		}
     }
-    else{
-        col=i;
-        lin=j;
-        fin=0;
-        while(en_jeu(col+2*dir[k_prec].i,lin+2*dir[k_prec].j) && !fin){
-            if((carte[col+dir[k_prec].i][lin+dir[k_prec].j]==couleur || carte[col+dir[k_prec].i][lin+dir[k_prec].j]==cl) && carte[col+2*dir[k_prec].i][lin+2*dir[k_prec].j]==VIDE){
-                carte_m=carte[col+dir[k_prec].i][lin+dir[k_prec].j];
-                carte[col+dir[k_prec].i][lin+dir[k_prec].j]=PRIS;
-                rafle=trouver_rafle_dame(col+2*dir[k_prec].i,lin+2*dir[k_prec].j,k_prec,carte,couleur)+1;
-                fin=1;
-                carte[col+dir[k_prec].i][lin+dir[k_prec].j]=carte_m;
+    else {
+		col = i;
+		lin = j;
+		bool end = false;
+        while (inBounds(col+2*dirPrec.i(), lin+2*dirPrec.j()) && !end) {
+			Piece p = table[col+dirPrec.i()][lin+dirPrec.j()];
+            if ((p == piece || p == pieceOther) && table[col+2*dirPrec.i()][lin+2*dirPrec.j()] == NONE) {
+                table[col+dirPrec.i()][lin+dirPrec.j()] = TOOK;
+                rafle = findQueenCapture(col+2*dirPrec.i(), lin+2*dirPrec.j(), dirPrec, table, piece) + 1;
+                end = true;
+                table[col+dirPrec.i()][lin+dirPrec.j()] = p;
             }
-            if(carte[col+dir[k_prec].i][lin+dir[k_prec].j]!=VIDE){
-                fin=1;
+            if (p != NONE){
+                end = true;
             }
-            col=col+dir[k_prec].i;
-            lin=lin+dir[k_prec].j;
+            col = col+dirPrec.i();
+            lin = lin+dirPrec.j();
         }
-        while(en_jeu(i,j) && carte[i][j]==VIDE){
-            for(k=min((k_prec+1)%4,(k_prec+3)%4);k<=max((k_prec+1)%4,(k_prec+3)%4);k+=2){
-                col=i;
-                lin=j;
-                fin=0;
-                while(en_jeu(col+2*dir[k].i,lin+2*dir[k].j) && !fin){
-                    if((carte[col+dir[k].i][lin+dir[k].j]==couleur || carte[col+dir[k_prec].i][lin+dir[k_prec].j]==cl) && carte[col+2*dir[k].i][lin+2*dir[k].j]==VIDE){
-                        carte_m=carte[col+dir[k].i][lin+dir[k].j];
-                        carte[col+dir[k].i][lin+dir[k].j]=PRIS;
-                        rafle_tmp=trouver_rafle_dame(col+2*dir[k].i,lin+2*dir[k].j,k,carte,couleur)+1;
-                        if(rafle_tmp>rafle){
-                            rafle=rafle_tmp;
+        while (inBounds(i,j) && table[i][j] == NONE) {
+			foreach (Direction dir, Direction::getOrthogonalDirections(dirPrec)) {
+				col = i;
+                lin = j;
+                end = false;
+				while (inBounds(col+2*dir.i(), lin+2*dir.j()) && !end) {
+					Piece p = table[col+dir.i()][lin+dir.j()];
+                    if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE){
+                        table[col+dir.i()][lin+dir.j()] = TOOK;
+                        int rafle_tmp = findQueenCapture(col+2*dir.i(), lin+2*dir.j(), dir, table, piece) + 1;
+                        if (rafle_tmp > rafle) {
+                            rafle = rafle_tmp;
                         }
-                        fin=1;
-                        carte[col+dir[k].i][lin+dir[k].j]=carte_m;
+                        end = true;
+                        table[col+dir.i()][lin+dir.j()] = p;
                     }
-                    if(carte[col+dir[k].i][lin+dir[k].j]!=VIDE){
-                        fin=1;
+                    if (p != NONE){
+                        end = true;
                     }
-                    col=col+dir[k].i;
-                    lin=lin+dir[k].j;
+                    col = col + dir.i();
+                    lin = lin + dir.j();
                 }
-            }
-            i=i+dir[k_prec].i;
-            j=j+dir[k_prec].j;
+			}
+            i = i + dirPrec.i();
+            j = j + dirPrec.j();
         }
     }
-    if(rafle>max_rafle){
-        max_rafle=rafle;
+    if (rafle > max_rafle) {
+        max_rafle = rafle;
     }
     return max_rafle;
 }
 
-Ici, explication :
-i, j, k_prec, carte et couleur comme précédemment
-coord - coordonnées rafle(s) possible(s). (structure contennant un champ x et y)
-longueur - vaut 0 au début et ne plus s'en occuper
-max_rafle - le résultat de la fonction ci-dessus
-nb_chemin - pointeur vers un int qui vaut 0 et ne pas s'en occuper
-l_total - tableau de int qui donne pour chaque rafle, le nombre total de cases possibles (max_rafle + choix final - 1)
-(c'est tordu mais lors d'une rafle par une dame, la dernière case peut être laissé au choix ex:
-....
-....
-.o..
-x...
-x = dame, o=adverse
-La dame peut aller sur les 2 points restants de la diagonale donc l_total[0 (car une seule rafle)] = 1 + 2 - 1
-
-int coordonnee_rafle_max_dame(int i, int j, int k_prec, int carte[][10], Coord **coord, int longueur, int max_rafle, int *nb_chemin, int *l_total, int couleur){
-    int rafle=0,rafle_tmp=0,res=0,k=0,col=0,lin=0,fin=0,p=0,carte_m=0,cl=0;
-    Direc dir[4]={{1,1},{1,-1},{-1,-1},{-1,1}};
-    if(couleur==PION_NOIR){
-        cl=DAME_NOIRE;
-    }
-    else{
-        cl=DAME_BLANCHE;
-    }
-    if(k_prec==-1){
-        for(k=0;k<4;k++){
-            col=i;
-            lin=j;
-            fin=0;
-            while(en_jeu(col+2*dir[k].i,lin+2*dir[k].j) && !fin){
-                if((carte[col+dir[k].i][lin+dir[k].j]==couleur || carte[col+dir[k].i][lin+dir[k].j]==cl) && carte[col+2*dir[k].i][lin+2*dir[k].j]==VIDE){
-                    carte_m=carte[col+dir[k].i][lin+dir[k].j];
-                    carte[col+dir[k].i][lin+dir[k].j]=PRIS;
-                    longueur++;
-                    rafle=coordonnee_rafle_max_dame(col+2*dir[k].i,lin+2*dir[k].j,k,carte,coord,longueur,max_rafle,nb_chemin,l_total,couleur)+1;
-                    if(max_rafle==1){
-                        (*nb_chemin)++;
-                        if(*nb_chemin>1){
-                            for(p=0;p<*nb_chemin;p++){
-                                coord=(Coord**)realloc(coord,(*nb_chemin)*sizeof(Coord*));
-                                if(coord==NULL) exit(0);
-                            }
-                            coord[*nb_chemin-1]=malloc(max_rafle*sizeof(Coord));
-                            if(coord[*nb_chemin-1]==NULL) exit(0);
-                            for(p=0;p<max_rafle;p++){
-                                coord[*nb_chemin-1][p].x=-1;
-                                coord[*nb_chemin-1][p].y=-1;
-                            }
-                        }
-                        p=0;
-                        while(en_jeu(col+(p+2)*dir[k].i,lin+(p+2)*dir[k].j) && carte[col+(p+2)*dir[k].i][lin+(p+2)*dir[k].j]==VIDE){
-                            coord[*nb_chemin-1]=(Coord*)realloc(coord[*nb_chemin-1],(max_rafle+p+1)*sizeof(Coord));
-                            coord[*nb_chemin-1][max_rafle+p-1].x=col+(p+2)*dir[k].i;
-                            coord[*nb_chemin-1][max_rafle+p-1].y=lin+(p+2)*dir[k].j;
-                            l_total[*nb_chemin-1]=max_rafle+p;
-                            p++;
+int BoardController::coordMaxQueenCapture(int i, int j, Direction dirPrec, Piece** table, QList<QList<QPoint> > & coord, int length, int max_rafle, Piece piece) {
+    int rafle=0, res=0, col=0, lin=0, l=0;
+    Piece pieceOther = getOther(piece);
+    if (dirPrec == Direction::UNDEFINED) {
+        foreach (Direction dir, Direction::values()) {
+            col = i;
+            lin = j;
+            bool end = false;
+            while (inBounds(col+2*dir.i(),lin+2*dir.j()) && !end) {
+				Piece p = table[col+dir.i()][lin+dir.j()];
+                if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE) {
+                    table[col+dir.i()][lin+dir.j()] = TOOK;
+                    length++;
+                    rafle = coordMaxQueenCapture(col+2*dir.i(), lin+2*dir.j(), dir, table, coord, length, max_rafle, piece) + 1;
+                    if(max_rafle == 1){
+						coord << QList<QPoint>();
+                        int nb_chemin = coord.size();
+						l = 0;
+                        while (inBounds(col+(l+2)*dir.i(), lin+(l+2)*dir.j()) && table[col+(l+2)*dir.i()][lin+(l+2)*dir.j()] == NONE) {
+                            coord[nb_chemin - 1] << QPoint(col+(l+2)*dir.i(), lin+(l+2)*dir.j());
+                            l++;
                         }
                     }
-                    fin=1;
-                    carte[col+dir[k].i][lin+dir[k].j]=carte_m;
+                    end = true;
+                    table[col+dir.i()][lin+dir.j()] = p;
                 }
-                if(carte[col+dir[k].i][lin+dir[k].j]!=VIDE){
-                    fin=1;
+                if (p != NONE) {
+                    end = true;
                 }
-                col=col+dir[k].i;
-                lin=lin+dir[k].j;
+                col = col + dir.i();
+                lin = lin + dir.j();
             }
         }
     }
-    else{
-        col=i;
-        lin=j;
-        fin=0;
-        while(en_jeu(col+2*dir[k_prec].i,lin+2*dir[k_prec].j) && !fin){
-            if((carte[col+dir[k_prec].i][lin+dir[k_prec].j]==couleur || carte[col+dir[k_prec].i][lin+dir[k_prec].j]==cl) && carte[col+2*dir[k_prec].i][lin+2*dir[k_prec].j]==VIDE){
-                carte_m=carte[col+dir[k_prec].i][lin+dir[k_prec].j];
-                carte[col+dir[k_prec].i][lin+dir[k_prec].j]=PRIS;
-                longueur++;
-                res=coordonnee_rafle_max_dame(col+2*dir[k_prec].i,lin+2*dir[k_prec].j,k_prec,carte,coord,longueur,max_rafle,nb_chemin,l_total,couleur)+1;
-                longueur--;
-                if(longueur+res==max_rafle){
-                    if(longueur==max_rafle-1){
-                        (*nb_chemin)++;
-                        if(*nb_chemin>1){
-                            for(p=0;p<*nb_chemin;p++){
-                                coord=(Coord**)realloc(coord,(*nb_chemin)*sizeof(Coord*));
-                                if(coord==NULL) exit(0);
-                            }
-                            coord[*nb_chemin-1]=malloc(max_rafle*sizeof(Coord));
-                            if(coord[*nb_chemin-1]==NULL) exit(0);
-                            for(p=0;p<max_rafle;p++){
-                                coord[*nb_chemin-1][p].x=-1;
-                                coord[*nb_chemin-1][p].y=-1;
-                            }
-                        }
-                        p=0;
-                        while(en_jeu(col+(p+2)*dir[k_prec].i,lin+(p+2)*dir[k_prec].j) && carte[col+(p+2)*dir[k_prec].i][lin+(p+2)*dir[k_prec].j]==VIDE){
-                            coord[*nb_chemin-1]=(Coord*)realloc(coord[*nb_chemin-1],(max_rafle+p+1)*sizeof(Coord));
-                            coord[*nb_chemin-1][max_rafle+p-1].x=col+(p+2)*dir[k_prec].i;
-                            coord[*nb_chemin-1][max_rafle+p-1].y=lin+(p+2)*dir[k_prec].j;
-                            l_total[*nb_chemin-1]=max_rafle+p;
-                            p++;
+    else {
+        col = i;
+        lin = j;
+        bool end = false;
+        while (inBounds(col+2*dirPrec.i(),lin+2*dirPrec.j()) && !end) {
+            Piece p = table[col+dirPrec.i()][lin+dirPrec.j()];
+			if ((p == piece || p == pieceOther) && table[col+2*dirPrec.i()][lin+2*dirPrec.j()] == NONE){
+                table[col+dirPrec.i()][lin+dirPrec.j()] = TOOK;
+                length++;
+                res = coordMaxQueenCapture(col+2*dirPrec.i(), lin+2*dirPrec.j(), dirPrec, table, coord, length, max_rafle, piece) + 1;
+                length--;
+                if (length + res == max_rafle) {
+                    if (length == max_rafle - 1) {
+                        QList<QPoint> list = QList<QPoint>();
+						for (l = 0; l < max_rafle; l++) {
+							list << QPoint(-1, -1);
+						}
+						coord << list;
+						int nb_chemin = coord.size();
+                        l=1;
+						coord[nb_chemin - 1].replace(max_rafle - 1, QPoint(col+2*dirPrec.i(), lin+2*dirPrec.j()));
+                        while (inBounds(col+(l+2)*dirPrec.i(), lin+(l+2)*dirPrec.j()) && table[col+(l+2)*dirPrec.i()][lin+(l+2)*dirPrec.j()] == NONE){
+							coord[nb_chemin - 1] << QPoint(col+(l+2)*dirPrec.i(), lin+(l+2)*dirPrec.j());
+                            l++;
                         }
                     }
-                    coord[*nb_chemin-1][longueur-1].x=col;
-                    coord[*nb_chemin-1][longueur-1].y=lin;
-                    p=0;
-                    while(*nb_chemin>p+1 && coord[*nb_chemin-2-p][longueur].x==-1 && coord[*nb_chemin-2-p][longueur].y==-1){
-                        coord[*nb_chemin-2-p][longueur].x=col;
-                        coord[*nb_chemin-2-p][longueur].y=lin;
-                        p++;
+					int nb_chemin = coord.size();
+					coord[nb_chemin - 1].replace(length - 1, QPoint(col, lin));
+                    l = 0;
+                    while (nb_chemin > l+1 && coord[nb_chemin-2-l][length] == QPoint(-1, -1)){
+                        coord[nb_chemin - 2 - l].replace(length, QPoint(col, lin));
+                        l++;
                     }
                 }
-                fin=1;
-                carte[col+dir[k_prec].i][lin+dir[k_prec].j]=carte_m;
+                end = true;
+                table[col+dirPrec.i()][lin+dirPrec.j()] = p;
             }
-            if(carte[col+dir[k_prec].i][lin+dir[k_prec].j]!=VIDE){
-                fin=1;
+            if (p != NONE) {
+                end = true;
             }
-            col=col+dir[k_prec].i;
-            lin=lin+dir[k_prec].j;
+            col = col + dirPrec.i();
+            lin = lin + dirPrec.j();
         }
-        while(en_jeu(i,j) && carte[i][j]==VIDE){
-            for(k=min((k_prec+1)%4,(k_prec+3)%4);k<=max((k_prec+1)%4,(k_prec+3)%4);k+=2){
-                col=i;
-                lin=j;
-                fin=0;
-                while(en_jeu(col+2*dir[k].i,lin+2*dir[k].j) && !fin){
-                    if((carte[col+dir[k].i][lin+dir[k].j]==couleur || carte[col+dir[k].i][lin+dir[k].j]==cl) && carte[col+2*dir[k].i][lin+2*dir[k].j]==VIDE){
-                        carte_m=carte[col+dir[k].i][lin+dir[k].j];
-                        carte[col+dir[k].i][lin+dir[k].j]=PRIS;
-                        longueur++;
-                        rafle_tmp=coordonnee_rafle_max_dame(col+2*dir[k].i,lin+2*dir[k].j,k,carte,coord,longueur,max_rafle,nb_chemin,l_total,couleur)+1;
-                        longueur--;
-                        if(longueur+rafle_tmp==max_rafle){
-                            if(longueur==max_rafle-1){
-                                (*nb_chemin)++;
-                                if(*nb_chemin>1){
-                                    for(p=0;p<*nb_chemin;p++){
-                                        coord=(Coord**)realloc(coord,(*nb_chemin)*sizeof(Coord*));
-                                        if(coord==NULL) exit(0);
-                                    }
-                                    coord[*nb_chemin-1]=malloc(max_rafle*sizeof(Coord));
-                                    if(coord[*nb_chemin-1]==NULL) exit(0);
-                                    for(p=0;p<max_rafle;p++){
-                                        coord[*nb_chemin-1][p].x=-1;
-                                        coord[*nb_chemin-1][p].y=-1;
-                                    }
-                                }
-                                p=0;
-                                while(en_jeu(col+(p+2)*dir[k].i,lin+(p+2)*dir[k].j) && carte[col+(p+2)*dir[k].i][lin+(p+2)*dir[k].j]==VIDE){
-                                    coord[*nb_chemin-1]=(Coord*)realloc(coord[*nb_chemin-1],(max_rafle+p+1)*sizeof(Coord));
-                                    coord[*nb_chemin-1][max_rafle+p-1].x=col+(p+2)*dir[k].i;
-                                    coord[*nb_chemin-1][max_rafle+p-1].y=lin+(p+2)*dir[k].j;
-                                    l_total[*nb_chemin-1]=max_rafle+p;
-                                    p++;
+        while (inBounds(i, j) && table[i][j] == NONE) {
+            foreach (Direction dir, Direction::getOrthogonalDirections(dirPrec)) {
+                col = i;
+                lin = j;
+                end = false;
+                while (inBounds(col+2*dir.i(),lin+2*dir.j()) && !end) {
+					Piece p = table[col+dir.i()][lin+dir.j()];
+                    if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE){
+                        table[col+dir.i()][lin+dir.j()] = TOOK;
+                        length++;
+                        int rafle_tmp = coordMaxQueenCapture(col+2*dir.i(),lin+2*dir.j(), dir, table, coord, length, max_rafle, piece) + 1;
+                        length--;
+                        if (length + rafle_tmp == max_rafle) {
+                            if (length == max_rafle-1) {
+                                QList<QPoint> list = QList<QPoint>();
+								for (l = 0; l < max_rafle; l++) {
+									list << QPoint(-1, -1);
+								}
+								coord << list;
+								int nb_chemin = coord.size();
+                                l=1;
+								coord[nb_chemin - 1].replace(max_rafle - 1, QPoint(col+2*dir.i(), lin+2*dir.j()));
+                                while (inBounds(col+(l+2)*dir.i(), lin+(l+2)*dir.j()) && table[col+(l+2)*dir.i()][lin+(l+2)*dir.j()] == NONE) {
+                                    coord[nb_chemin - 1] << QPoint(col+(l+2)*dir.i(), lin+(l+2)*dir.j());
+                                    l++;
                                 }
                             }
-                            coord[*nb_chemin-1][longueur-1].x=i;
-                            coord[*nb_chemin-1][longueur-1].y=j;
-                            p=0;
-                            while(*nb_chemin>p+1 && coord[*nb_chemin-2-p][longueur-1].x==-1 && coord[*nb_chemin-2-p][longueur-1].y==-1){
-                                coord[*nb_chemin-2-p][longueur-1].x=i;
-                                coord[*nb_chemin-2-p][longueur-1].y=j;
-                                p++;
+							int nb_chemin = coord.size();
+							coord[nb_chemin - 1].replace(length - 1, QPoint(i, j));
+                            l=0;
+                            while (nb_chemin > l+1 && coord[nb_chemin-2-l][length-1] == QPoint(-1, -1)) {
+                                coord[nb_chemin - 2 - l].replace(length - 1, QPoint(i, j));
+                                l++;
                             }
                         }
-                        if(rafle_tmp>res){
-                            res=rafle_tmp;
+                        if (rafle_tmp > res) {
+                            res = rafle_tmp;
                         }
-                        fin=1;
-                        carte[col+dir[k].i][lin+dir[k].j]=carte_m;
+                        end = true;
+                        table[col+dir.i()][lin+dir.j()] = p;
                     }
-                    if(carte[col+dir[k].i][lin+dir[k].j]!=VIDE){
-                        fin=1;
+                    if (p != NONE){
+                        end = true;
                     }
-                    col=col+dir[k].i;
-                    lin=lin+dir[k].j;
+                    col = col + dir.i();
+                    lin = lin + dir.j();
                 }
             }
-            i=i+dir[k_prec].i;
-            j=j+dir[k_prec].j;
+            i = i + dirPrec.i();
+            j = j + dirPrec.j();
         }
     }
-    if(res>rafle){
-        rafle=res;
+    if (res > rafle) {
+        rafle = res;
     }
     return rafle;
-} */
+}
 
 BoardController::~BoardController() {
 	delete clickablePieces;

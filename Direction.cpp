@@ -1,5 +1,11 @@
 #include "Direction.h"
 
+const Direction Direction::NORTH_WEST = Direction(-1, -1);
+const Direction Direction::NORTH_EAST = Direction(-1, 1);
+const Direction Direction::SOUTH_WEST = Direction(1, -1);
+const Direction Direction::SOUTH_EAST = Direction(1, 1);
+const Direction Direction::UNDEFINED = Direction(0, 0);
+
 Direction::Direction(int i, int j) {
 	di = i;
 	dj = j;
@@ -19,7 +25,16 @@ QList<Direction> Direction::values() {
 	return dirs;
 }
 
-const Direction Direction::NORTH_WEST = Direction(-1, -1);
-const Direction Direction::NORTH_EAST = Direction(-1, 1);
-const Direction Direction::SOUTH_WEST = Direction(1, -1);
-const Direction Direction::SOUTH_EAST = Direction(1, 1);
+QList<Direction> Direction::getOrthogonalDirections(Direction dir) {
+	QList<Direction> dirList;
+	if (dir == NORTH_WEST) {
+		dirList << NORTH_EAST << SOUTH_WEST;
+	} else if (dir == NORTH_EAST) {
+		dirList << SOUTH_EAST << NORTH_WEST;
+	} else if (dir == SOUTH_EAST) {
+		dirList << SOUTH_WEST << NORTH_EAST;
+	} else if (dir == SOUTH_WEST) {
+		dirList << NORTH_WEST << SOUTH_EAST;
+	}
+	return dirList;
+}
