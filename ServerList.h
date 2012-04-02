@@ -4,6 +4,7 @@
 #include <QStandardItemModel>
 #include <QtNetwork>
 #include "Server.h"
+#include "QTcpSocketTest.h"
 
 class ServerList : public QObject
 {
@@ -12,6 +13,7 @@ class ServerList : public QObject
     QUdpSocket * udpSocket;
     int flg_listen;
     Server * serverObject;
+    QTcpSocketTest * tcpSocket;
 
     QMap <QString, quint16> * serverList;
     QStringList * ipList;
@@ -23,14 +25,15 @@ class ServerList : public QObject
 	public slots:
 		void processPendingDatagrams();
         void stopListening();
-        void testSendUdp();
+        void askForInfos(QHostAddress senderHost, quint16 senderPort);
+        void readDataTcp();
+        void displayErrorTcp(QAbstractSocket::SocketError socketError);
 
 	public:
 		ServerList();
 		~ServerList();
         void run();
         QStandardItemModel * get();
-        void testMode();
 
     private:
         void processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort);
@@ -38,4 +41,5 @@ class ServerList : public QObject
 
     signals:
         void newList();
+        void s_askForInfos(QHostAddress senderHost, quint16 senderPort);
 };

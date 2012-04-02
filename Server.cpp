@@ -9,7 +9,9 @@
 
 Server::Server()
 {
-	tcpServer = new TcpServer();
+    std::cout << "Constructeur Server" << std::endl;
+
+	tcpServer = new TcpServer(this);
 	udpServer = new UdpServer(this);
 
 	brains = new QList<Brain *>;
@@ -58,6 +60,46 @@ void Server::initMessages()
     messages = new QMap <QString, QByteArray>;
     
     messages->insert("UDP_ASK_FOR_SERVER", "Is there any server here ?");
-    messages->insert("ANSWER_UDP_ASK_FOR_SERVER", "I think I'm here. Don't you think that too ?");
+    messages->insert("ANSWER_UDP_ASK_FOR_SERVER", "I think Im here. Don't you think that too ?");
+
+    messages->insert("HELLO_FROM_SERVER", "Hello, I'm a server. What do you want ?");
+
+    messages->insert("ASK_LIST_GAMES", "Could you give me your game list ? Please.");
+    messages->insert("END_GAME_LIST", "End of the game list.");
+
+}
+
+QByteArray Server::message(QString m)
+{
+    QString toto(messages->value(m));
+    std::cout << "Server : " << toto.toStdString() << std::endl;
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_0);
+    out << (quint16)0;
+    out << messages->value(m);
+    out.device()->seek(0);
+    out << (quint16)(block.size() - sizeof(quint16));
+    return block;
+}
+
+QString Server::decodeDatagram(QAbstractSocket * socket)
+{
+    QDataStream in(socket);
+    in.setVersion(QDataStream::Qt_4_0);
+
+    if (socket->bytesAvailable() < (int)sizeof(quint16))
+        return "a";
+    quint16 blockSize;
+    in >> blockSize;
+    
+
+    if (socket->bytesAvailable() < blockSize)
+        return "b";
+
+    QString toto;
+    in >> toto;
+
+    return toto;
 
 }

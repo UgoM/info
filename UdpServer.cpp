@@ -32,6 +32,7 @@ void UdpServer::processPendingDatagrams()
         QHostAddress senderHost;
         quint16 senderPort;
 
+	    std::cout << "UdpServer : Received Udp data : \"" << mainServer->decodeDatagram(udpSocket).toStdString() << "\"" << std::endl; 
         udpSocket->readDatagram(datagram.data(), datagram.size(),
                              &senderHost, &senderPort);
 
@@ -41,14 +42,13 @@ void UdpServer::processPendingDatagrams()
 
 void UdpServer::processTheDatagram (QByteArray datagram, QHostAddress senderHost, quint16 senderPort)
 {
-	std::cout << "Received Udp data : \"" << datagram.data() << "\"" << std::endl; 
 
     if (datagram == mainServer->message("UDP_ASK_FOR_SERVER")) {
         std::cout << "UDP_ASK_FOR_SERVER " << senderHost.toString().toStdString() << ":" << senderPort << std::endl;
 	    /// the Udp server just respond it is there, so the client 
 	    /// can connect himself to the tcp server.
         datagram = mainServer->message("ANSWER_UDP_ASK_FOR_SERVER");
-        udpSocket->writeDatagram(datagram.data(), datagram.size(), senderHost, senderPort);
+        udpSocket->writeDatagram(datagram.data(), datagram.size(), senderHost, 12800);//senderPort);
     }
 }
 

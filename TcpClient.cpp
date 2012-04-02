@@ -18,7 +18,7 @@ TcpClient::TcpClient()
              this, SLOT(displayError(QAbstractSocket::SocketError)));
 
 
-     tcpSocket->connectToHost("127.0.0.1", 12800);
+     tcpSocket->connectToHost("193.54.87.190", 12800);
 
 
 }

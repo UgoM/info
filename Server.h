@@ -9,6 +9,7 @@
 #include <QtCore>
 
 class UdpServer;
+class TcpServer;
 
 class Server : public QObject
 {
@@ -41,6 +42,7 @@ class Server : public QObject
         void initMessages();
 
     public:
-        QByteArray message (QString m) {return messages->value(m);};
+        QByteArray message (QString m);
+        QString decodeDatagram(QAbstractSocket * socket);
 				
 };

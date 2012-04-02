@@ -27,7 +27,9 @@ HEADERS += 	TcpServer.h \
 			Image.h \
 			Checkers.h \
 			MainWindow.h \
-            ServerListWidget.h
+            TcpClientThread.h \
+            ServerListWidget.h \
+            QTcpSocketTest.h
 
 SOURCES += 	main.cpp \
 			TcpServer.cpp \
@@ -43,4 +45,6 @@ SOURCES += 	main.cpp \
 			Image.cpp \
 			Checkers.cpp \
 			MainWindow.cpp \
-            ServerListWidget.cpp
+            TcpClientThread.cpp \
+            ServerListWidget.cpp \
+            QTcpSocketTest.cpp
