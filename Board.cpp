@@ -33,25 +33,6 @@ Board::Board() : QWidget() {
 			screen[i][j]->move(i*CELL_SIZE, j*CELL_SIZE);
 		}
 	}
-	
-	for (int i = 0; i < MAX_COL; i++) {
-		for (int j = 0; j < MAX_ROW; j++) {
-			table[i][j] = NONE;
-			if ( (i + j) % 2 == 0) {
-				screen[i][j]->setPixmap(*image->getEvenCell());
-			} else {
-				screen[i][j]->setPixmap(*image->getOddCell());
-			}
-		}
-	}
-	
-	table[9][2] = WHITE_QUEEN;
-	screen[9][2]->setPixmap(*image->getWhiteQueen());
-	table[6][5] = BLACK_PAWN;
-	screen[6][5]->setPixmap(*image->getBlackPawn());
-	table[3][4] = BLACK_PAWN;
-	screen[3][4]->setPixmap(*image->getBlackPawn());
-	
 	inPlay = NULL;
 	current = true;
 	controller = new BoardController();
