@@ -116,14 +116,16 @@ QByteArray Checkers::encodeBoard() const {
 			byteArray.append(QString::number(table[i][j]) + SEPARATOR);
 		}
 	}
+	byteArray.append(QString::number(current));
 	return byteArray;
 }
 
 void Checkers::decodeBoard(QByteArray byteArray) {
 	QList<QByteArray> tokens = byteArray.split(SEPARATOR);
-	for (int k = 0; k < tokens.size(); k++) {
+	for (int k = 0; k < tokens.size() - 1; k++) {
         table[k % MAX_COL][k / MAX_COL] = tokens[k].toInt();
 	}
+	current = tokens.last().toInt();
 }
 
 int** Checkers::getPieceTable() {
