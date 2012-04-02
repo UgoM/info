@@ -6,6 +6,12 @@ mainwindow::mainwindow()
 {
 	QMdiArea *zoneCentrale = new QMdiArea;
 
+
+	QBrush arrierePlan; // un QBrush
+	arrierePlan.setTexture(QPixmap("images/imageFond2.jpg")); 
+	zoneCentrale->setBackground(arrierePlan); // et on l'affecte à la zone centrale
+	
+
 	/* *zoneTexte1 = new QTextEdit;
     QTextEdit *zoneTexte2 = new QTextEdit;
 
@@ -14,17 +20,19 @@ mainwindow::mainwindow()
 	*/ //ouverture plusieurs fenêtre
 
 	setCentralWidget(zoneCentrale); //fenetre ppale
+	zoneCentrale->setFixedSize(345,345);
+
+
+
 
 	QMenu *menuFile = menuBar()->addMenu("&Partie");
-	QMenu *menuEdition = menuBar()->addMenu("&Edition");
     QMenu *menuQuestion = menuBar()->addMenu("&?");
 
 	QAction *actionNew = menuFile->addAction("&Nouvelle partie");
 	connect(actionNew, SIGNAL(triggered()),this, SLOT(newGameFromMenu()));
+	
 	QAction *actionWatch = menuFile->addAction("&Regarder une partie");
 	QAction *actionCancel = menuFile->addAction("&Annuler");
-	QAction *actionStat = menuFile->addAction("&Statistique");
-	QAction *actionLeave = menuFile->addAction("&Abandonner");
 	QAction *actionHide = menuFile->addAction("&Caches toi de ton Boss");
 	actionHide->setShortcut(QKeySequence("Ctrl+H"));
 	windowBoss = new QDialog;
@@ -34,26 +42,27 @@ mainwindow::mainwindow()
 	actionQuit->setShortcut(QKeySequence("Ctrl+Q"));
 	QAction *actionHelp=menuQuestion->addAction("&Afficher l'aide");
 	QAction *actionAbout=menuQuestion->addAction("&A propos");
+
 	windowAbout = new QDialog;
 	connect(actionAbout, SIGNAL(triggered()),this, SLOT(windowAboutDisp()));
 	
-   
 	//boutons principaux
+
     QPushButton *buttonList = new QPushButton("Liste serveurs");
     serverListWidget = new ServerListWidget();
 	connect(buttonList, SIGNAL(clicked()), this, SLOT(serverListDisp()));
-	QPushButton *buttonWatch= new QPushButton("observation parties en cours");
-	QPushButton *buttonSetup=new QPushButton("configurer joueur");
+	QPushButton *buttonNew= new QPushButton("Nouvelle partie");
+	connect(buttonNew, SIGNAL(clicked()),this, SLOT(newGameFromMenu()));
+	QPushButton *buttonSetup=new QPushButton("Configurer joueur");
 	
 	mainButtonDisp(buttonList);
-	mainButtonDisp(buttonWatch);
+	mainButtonDisp(buttonNew);
 	mainButtonDisp(buttonSetup);
-	
-
 
 	QVBoxLayout *layout = new QVBoxLayout;
+	layout->setAlignment(Qt::AlignJustify);
 	layout->addWidget(buttonList);
-	layout->addWidget(buttonWatch);
+	layout->addWidget(buttonNew);
 	layout->addWidget(buttonSetup);
 	zoneCentrale->setLayout(layout);
 	//
@@ -64,7 +73,7 @@ mainwindow::mainwindow()
     gamerPassword = new QLineEdit;
 	gamerStatute = new QCheckBox("Apparaitre en ligne");
 	create = new QPushButton("&Créer !");
-    cancel = new QPushButton("&Annuler");
+    cancel = new QPushButton("&Remise à zéros");
 	chatStatute = new QCheckBox("Chatter avec l'adversaire");
 	comment= new QTextEdit;
 	groupComment = new QGroupBox("Ajouter des commentaires");
@@ -117,7 +126,7 @@ mainwindow::mainwindow()
     windowSetup->setLayout(layoutPrincipal);
 	windowSetup->setModal(true);
 	windowSetup->setWindowIcon(QIcon("icone2.png"));
-	windowSetup->setWindowTitle("configuration joueur");
+	windowSetup->setWindowTitle("Configuration joueur");
 	//windowSetup->show();
 
 	// connection boutton quit et create
@@ -126,12 +135,9 @@ mainwindow::mainwindow()
 
 
 	///////////////////////:
-
-
-
 	connect(buttonSetup, SIGNAL(clicked()), this, SLOT(setupDisp()));
 	windowServerWatch = new QDialog;
-	connect(buttonWatch, SIGNAL(clicked()), this, SLOT(serverWatchDisp()));
+	
 	
 	
 }
@@ -141,7 +147,7 @@ void mainwindow::serverListDisp()
 }
 void mainwindow::serverWatchDisp()
 {
-	windowServerWatch->setWindowIcon(QIcon("icone2.png"));
+	windowServerWatch->setWindowIcon(QIcon("images/icone2.png"));
 	windowServerWatch->setWindowTitle("observation parties en cours");
 	windowServerWatch->setModal(false);
 	windowServerWatch->show();
@@ -186,15 +192,22 @@ void mainwindow::windowBossDisp()
 {
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	QLabel *imageBoss= new QLabel(windowBoss);
-	imageBoss->setPixmap(QPixmap("imageBoss.png"));
+	imageBoss->setPixmap(QPixmap("images/imageBoss.png"));
 	layout2->addWidget(imageBoss);
     windowBoss->setLayout(layout2);
 	windowBoss->exec();
 }
 void mainwindow::windowAboutDisp()
 {
-	windowAbout->setWindowIcon(QIcon("icone2.png"));
+	windowAbout->setWindowIcon(QIcon("images/icone2.png"));
 	windowAbout->setWindowTitle("A propos du jeu de dame");
+	//QBrush arrierePlan; // un QBrush
+	//arrierePlan.setTexture(QPixmap("images/icone2.jpg")); 
+	//windowAbout->setBackground(arrierePlan); 
+	
+	QLabel *label = new QLabel("Ce logiciel est créé par Guillaune, Ugo et Marine", windowAbout);
+    label->move(30, 20);
+
 	windowAbout->exec();
 }
 
@@ -202,7 +215,8 @@ void mainwindow::windowAboutDisp()
 
 void mainwindow::mainButtonDisp(QPushButton * button)
 {
-	button->setFont(QFont("Arial",60, QFont::Bold));
+	button->setFont(QFont("Times",20, QFont::Bold));
+	button->setFixedWidth (250);
 }
 void mainwindow::log(const char * message,int linenumber)
 {
