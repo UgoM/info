@@ -10,8 +10,8 @@ bool BoardController::isPointClickable(const QPoint & point) {
 	return clickablePieces->contains(point);
 }
 
-Move BoardController::controlMove(Piece** table, const QPoint & point, const QPoint & wanted) {
-	Piece p = table[point.x()][point.y()];
+Move BoardController::controlMove(int** table, const QPoint & point, const QPoint & wanted) {
+	int p = table[point.x()][point.y()];
 	if (p == WHITE_QUEEN || p == BLACK_QUEEN) {
 		queenMovementInProgress = true;
 	}
@@ -54,13 +54,13 @@ Move BoardController::controlMove(Piece** table, const QPoint & point, const QPo
 	}
 }
 
-void BoardController::calculateClickablePieces(Piece** table, bool current) {
+void BoardController::calculateClickablePieces(int** table, bool current) {
 	int max_rafle = 0;
 	canQueenCapture = false;
 	queenMovementInProgress = false;
-	Piece targetPiece = current ? BLACK_PAWN : WHITE_PAWN;
-	Piece currentPiece = current ? WHITE_PAWN : BLACK_PAWN;
-	Piece currentOtherPiece = current ? WHITE_QUEEN : BLACK_QUEEN;
+	int targetPiece = current ? BLACK_PAWN : WHITE_PAWN;
+	int currentPiece = current ? WHITE_PAWN : BLACK_PAWN;
+	int currentOtherPiece = current ? WHITE_QUEEN : BLACK_QUEEN;
 	QList<QPoint> possibleList;
 	clickablePieces = new QMap<QPoint, QList<QList<QPoint> > >();
 	for (int i = 0; i < MAX_COL; i++) {
@@ -143,7 +143,7 @@ bool BoardController::inBounds(int i, int j) {
 	return i>=0 && i<MAX_ROW && j>=0 && j<MAX_COL;
 }
 
-Piece BoardController::getOther(Piece piece) {
+int BoardController::getOther(int piece) {
 	switch (piece) {
 		case WHITE_PAWN : return WHITE_QUEEN;
 		case BLACK_PAWN : return BLACK_QUEEN;
@@ -153,14 +153,14 @@ Piece BoardController::getOther(Piece piece) {
 	}
 }
 
-int BoardController::findPawnCapture(int i, int j, Piece** table, Piece piece) {
+int BoardController::findPawnCapture(int i, int j, int** table, int piece) {
     int rafle = 0, max_rafle = 0, lin = 0, col = 0;
-	Piece pieceOther = getOther(piece);
+	int pieceOther = getOther(piece);
 	foreach (Direction dir, Direction::values()) {
 		int nextCol = (col = i + dir.i()) + dir.i();
 		int nextLin = (lin = j + dir.j()) + dir.j();
         if (inBounds(nextCol, nextLin)) {
-			Piece p = table[col][lin];
+			int p = table[col][lin];
             if ((p == piece || p == pieceOther) && table[nextCol][nextLin] == NONE) {
                 table[col][lin] = NONE;
                 rafle = findPawnCapture(nextCol, nextLin, table, piece) + 1;
@@ -174,15 +174,15 @@ int BoardController::findPawnCapture(int i, int j, Piece** table, Piece piece) {
     return max_rafle;
 }
 
-int BoardController::coordMaxPawnCapture(int i, int j, Piece** table, QList<QList<QPoint> > & coord, int length, int max_rafle, Piece piece) {
+int BoardController::coordMaxPawnCapture(int i, int j, int** table, QList<QList<QPoint> > & coord, int length, int max_rafle, int piece) {
     int lin = 0, col = 0, l = 0, rafle = 0, rafle_tmp = 0;
-    Piece pieceOther = getOther(piece);
+    int pieceOther = getOther(piece);
 	QList<Direction> dirs = Direction::values();
     foreach (Direction dir, Direction::values()) {
         int nextCol = (col = i + dir.i()) + dir.i();
 		int nextLin = (lin = j + dir.j()) + dir.j();
 		if (inBounds(nextCol, nextLin)) {
-			Piece p = table[col][lin];
+			int p = table[col][lin];
 			if ((p == piece || p == pieceOther) && table[nextCol][nextLin] == NONE) {
 				table[col][lin] = NONE;
 				length++;
@@ -214,16 +214,16 @@ int BoardController::coordMaxPawnCapture(int i, int j, Piece** table, QList<QLis
     return rafle;
 }
 
-int BoardController::findQueenCapture(int i, int j, Direction dirPrec, Piece** table, Piece piece){
+int BoardController::findQueenCapture(int i, int j, Direction dirPrec, int** table, int piece){
     int rafle = 0, max_rafle = 0, lin = 0, col = 0;
-	Piece pieceOther = getOther(piece);
+	int pieceOther = getOther(piece);
     if (dirPrec == Direction::UNDEFINED) {
         foreach (Direction dir, Direction::values()) {
 			col = i;
 			lin = j;
             bool end = false;
 			while (inBounds(col+2*dir.i(), lin+2*dir.j()) && !end) {
-				Piece p = table[col+dir.i()][lin+dir.j()];
+				int p = table[col+dir.i()][lin+dir.j()];
                 if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE) {
                     table[col+dir.i()][lin+dir.j()] = TOOK;
                     rafle = findQueenCapture(col+2*dir.i(), lin+2*dir.j(), dir, table, piece) + 1;
@@ -243,7 +243,7 @@ int BoardController::findQueenCapture(int i, int j, Direction dirPrec, Piece** t
 		lin = j;
 		bool end = false;
         while (inBounds(col+2*dirPrec.i(), lin+2*dirPrec.j()) && !end) {
-			Piece p = table[col+dirPrec.i()][lin+dirPrec.j()];
+			int p = table[col+dirPrec.i()][lin+dirPrec.j()];
             if ((p == piece || p == pieceOther) && table[col+2*dirPrec.i()][lin+2*dirPrec.j()] == NONE) {
                 table[col+dirPrec.i()][lin+dirPrec.j()] = TOOK;
                 rafle = findQueenCapture(col+2*dirPrec.i(), lin+2*dirPrec.j(), dirPrec, table, piece) + 1;
@@ -262,7 +262,7 @@ int BoardController::findQueenCapture(int i, int j, Direction dirPrec, Piece** t
                 lin = j;
                 end = false;
 				while (inBounds(col+2*dir.i(), lin+2*dir.j()) && !end) {
-					Piece p = table[col+dir.i()][lin+dir.j()];
+					int p = table[col+dir.i()][lin+dir.j()];
                     if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE){
                         table[col+dir.i()][lin+dir.j()] = TOOK;
                         int rafle_tmp = findQueenCapture(col+2*dir.i(), lin+2*dir.j(), dir, table, piece) + 1;
@@ -289,16 +289,16 @@ int BoardController::findQueenCapture(int i, int j, Direction dirPrec, Piece** t
     return max_rafle;
 }
 
-int BoardController::coordMaxQueenCapture(int i, int j, Direction dirPrec, Piece** table, QList<QList<QPoint> > & coord, int length, int max_rafle, Piece piece) {
+int BoardController::coordMaxQueenCapture(int i, int j, Direction dirPrec, int** table, QList<QList<QPoint> > & coord, int length, int max_rafle, int piece) {
     int rafle=0, res=0, col=0, lin=0, l=0;
-    Piece pieceOther = getOther(piece);
+    int pieceOther = getOther(piece);
     if (dirPrec == Direction::UNDEFINED) {
         foreach (Direction dir, Direction::values()) {
             col = i;
             lin = j;
             bool end = false;
             while (inBounds(col+2*dir.i(),lin+2*dir.j()) && !end) {
-				Piece p = table[col+dir.i()][lin+dir.j()];
+				int p = table[col+dir.i()][lin+dir.j()];
                 if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE) {
                     table[col+dir.i()][lin+dir.j()] = TOOK;
                     length++;
@@ -328,7 +328,7 @@ int BoardController::coordMaxQueenCapture(int i, int j, Direction dirPrec, Piece
         lin = j;
         bool end = false;
         while (inBounds(col+2*dirPrec.i(),lin+2*dirPrec.j()) && !end) {
-            Piece p = table[col+dirPrec.i()][lin+dirPrec.j()];
+            int p = table[col+dirPrec.i()][lin+dirPrec.j()];
 			if ((p == piece || p == pieceOther) && table[col+2*dirPrec.i()][lin+2*dirPrec.j()] == NONE){
                 table[col+dirPrec.i()][lin+dirPrec.j()] = TOOK;
                 length++;
@@ -372,7 +372,7 @@ int BoardController::coordMaxQueenCapture(int i, int j, Direction dirPrec, Piece
                 lin = j;
                 end = false;
                 while (inBounds(col+2*dir.i(),lin+2*dir.j()) && !end) {
-					Piece p = table[col+dir.i()][lin+dir.j()];
+					int p = table[col+dir.i()][lin+dir.j()];
                     if ((p == piece || p == pieceOther) && table[col+2*dir.i()][lin+2*dir.j()] == NONE){
                         table[col+dir.i()][lin+dir.j()] = TOOK;
                         length++;

@@ -10,7 +10,7 @@
 
 class Board : public QWidget {
 
-	Piece** table;
+	int** table;
 	QLabel*** screen;
 	Image* image;
 	bool current;	//true if white to play, false otherwhise
@@ -29,7 +29,7 @@ class Board : public QWidget {
 		~Board();
 
 		void mousePressEvent(QMouseEvent * event);
-		Piece** getPieceTable();
+		int** getPieceTable();
 		QByteArray encodeBoard() const;
 		void decodeBoard(QByteArray byteArray);
 		

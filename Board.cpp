@@ -7,10 +7,10 @@ const char Board::SEPARATOR = ';';
 Board::Board() : QWidget() {
 	setFixedSize(MAX_ROW * CELL_SIZE, MAX_COL * CELL_SIZE);
 	image = new Image();
-	table = new Piece*[MAX_COL];
+	table = new int*[MAX_COL];
 	screen = new QLabel**[MAX_COL];
 	for (int i = 0; i < MAX_COL; i++) {
-		table[i] = new Piece[MAX_ROW];
+		table[i] = new int[MAX_ROW];
 		screen[i] = new QLabel*[MAX_ROW];
 	}
 	for (int i = 0; i < MAX_COL; i++) {
@@ -113,12 +113,13 @@ QByteArray Board::encodeBoard() const {
 	QByteArray byteArray;
 	for (int i = 0; i < MAX_COL; i++) {
 		for (int j = 0; j < MAX_ROW; j++) {
-			char buffer[2];
+			QString buffer;
 			if (i == MAX_COL - 1 && j == MAX_ROW - 1) {
-				sprintf(buffer, "%d", table[i][j]);
+                buffer = QString::number(table[i][j]);
 			} else {
-				sprintf(buffer, "%d%c", table[i][j], SEPARATOR);
+                buffer = QString::number(table[i][j]) + SEPARATOR;
 			}
+            
 			byteArray.append(buffer);
 		}
 	}
@@ -129,19 +130,11 @@ QByteArray Board::encodeBoard() const {
 void Board::decodeBoard(QByteArray byteArray) {
 	QList<QByteArray> tokens = byteArray.split(SEPARATOR);
 	for (int k = 0; k < tokens.size(); k++) {
-		switch (tokens[k].toInt()) {
-			case 0 : table[k % MAX_COL][k / MAX_COL] = WHITE_PAWN; break;
-			case 1 : table[k % MAX_COL][k / MAX_COL] = BLACK_PAWN; break;
-			case 2 : table[k % MAX_COL][k / MAX_COL] = WHITE_QUEEN; break;
-			case 3 : table[k % MAX_COL][k / MAX_COL] = BLACK_QUEEN; break;
-			case 4 : table[k % MAX_COL][k / MAX_COL] = NONE; break;
-			case 5 : table[k % MAX_COL][k / MAX_COL] = EMPTY; break;
-			default :  break;
-		}
+        table[k % MAX_COL][k / MAX_COL] = tokens[k].toInt();
 	}
 }
 
-Piece** Board::getPieceTable() {
+int** Board::getPieceTable() {
 	return table;
 }
 
