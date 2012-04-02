@@ -72,7 +72,7 @@ void Server::initMessages()
 QByteArray Server::message(QString m)
 {
     QString toto(messages->value(m));
-    std::cout << "Server : " << toto.toStdString() << std::endl;
+    std::cout << "Server encode : " << toto.toStdString() << std::endl;
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_0);
@@ -100,6 +100,7 @@ QString Server::decodeDatagram(QAbstractSocket * socket)
     QString toto;
     in >> toto;
 
+    std::cout << "Server decode : " << toto.toStdString() << std::endl;
     return toto;
 
 }
