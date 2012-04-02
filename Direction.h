@@ -1,4 +1,4 @@
-#include "QList.h"
+#include <QList>
 
 class Direction {
 
