@@ -31,6 +31,7 @@ class Board : public QWidget {
 		
 	private:
 		QLabel * setLabelPicture(QPixmap * pixmap);
+		void handleChangeTurn(int ni, int nj);
 
 };
 

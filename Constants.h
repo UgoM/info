@@ -19,7 +19,8 @@ enum Piece {
 	WHITE_QUEEN,
 	BLACK_QUEEN,
 	NONE, //n'a pas de pièces
-	EMPTY //n'en aura jamais (case paire)
+	EMPTY, //n'en aura jamais (case paire)
+	TOOK
 };
 
 #endif

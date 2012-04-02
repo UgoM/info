@@ -5,7 +5,7 @@ Board::Board() : QWidget() {
 	image = new Image();
 	table = new Piece*[MAX_COL];
 	screen = new QLabel**[MAX_COL];
-	for (int i = 0; i < MAX_COL ; i++) {
+	for (int i = 0; i < MAX_COL; i++) {
 		table[i] = new Piece[MAX_ROW];
 		screen[i] = new QLabel*[MAX_ROW];
 	}
@@ -29,6 +29,24 @@ Board::Board() : QWidget() {
 			screen[i][j]->move(i*CELL_SIZE, j*CELL_SIZE);
 		}
 	}
+	
+	for (int i = 0; i < MAX_COL; i++) {
+		for (int j = 0; j < MAX_ROW; j++) {
+			table[i][j] = NONE;
+			if ( (i + j) % 2 == 0) {
+				screen[i][j]->setPixmap(*image->getEvenCell());
+			} else {
+				screen[i][j]->setPixmap(*image->getOddCell());
+			}
+		}
+	}
+	table[9][2] = WHITE_QUEEN;
+	screen[9][2]->setPixmap(*image->getWhiteQueen());
+	table[6][5] = BLACK_PAWN;
+	screen[6][5]->setPixmap(*image->getBlackPawn());
+	table[3][4] = BLACK_PAWN;
+	screen[3][4]->setPixmap(*image->getBlackPawn());
+	
 	inPlay = NULL;
 	current = true;
 	controller = new BoardController();
@@ -53,7 +71,7 @@ void Board::mousePressEvent(QMouseEvent *ev) {
 		}
 	} else {
 		QPoint wanted((ev->pos()).x() / CELL_SIZE, (ev->pos()).y() / CELL_SIZE);
-		Move movePerformed = controller->controlMove(start, wanted);
+		Move movePerformed = controller->controlMove(table, start, wanted);
 		if (movePerformed != ILLEGAL) {
 			int ni = wanted.x(), nj = wanted.y(), i = position.x(), j = position.y();
 			table[ni][nj] = table[i][j];
@@ -67,27 +85,42 @@ void Board::mousePressEvent(QMouseEvent *ev) {
 			table[i][j] = NONE;
 			screen[i][j]->setPixmap(*image->getOddCell());
 			if (movePerformed == SIMPLE) {
-				inPlay = NULL;
-				current = !current;
-				controller->calculateClickablePieces(table, current);
+				handleChangeTurn(ni, nj);
 			} else {
-				table[i + (ni - i) / 2][j + (nj - j) / 2] = NONE;
-				screen[i + (ni - i) / 2][j + (nj - j) / 2]->setPixmap(*image->getOddCell());
+				for (int k = 1; k < qAbs(ni - i); k++) {
+					int deltaY = nj-j > 0 ? k : -k;
+					int deltaX = ni-i > 0 ? k : -k;
+					if (table[i+deltaX][j+deltaY] != NONE) {
+						table[i+deltaX][j+deltaY] = NONE;
+						screen[i+deltaX][j+deltaY]->setPixmap(*image->getOddCell());
+					}
+				}
 				if (current) {
 					blackCount--;
 				} else {
 					whiteCount--;
 				}
 				if (movePerformed == SINGLE_CAPTURE) {
-					inPlay = NULL;
-					current = !current;
-					controller->calculateClickablePieces(table, current);
+					handleChangeTurn(ni, nj);
 				} else {
-					position += QPoint(ni - i, nj - j);
+					position = QPoint(ni, nj);
 				}
 			}
 		}
 	}
+}
+
+void Board::handleChangeTurn(int ni, int nj) {
+	inPlay = NULL;
+	if (current && nj == 0) {
+		table[ni][nj] = WHITE_QUEEN;
+		screen[ni][nj]->setPixmap(*image->getWhiteQueen());
+	} else if (!current && nj == MAX_ROW - 1) {
+		table[ni][nj] = BLACK_QUEEN;
+		screen[ni][nj]->setPixmap(*image->getBlackQueen());
+	}
+	current = !current;
+	controller->calculateClickablePieces(table, current);
 }
 
 Piece** Board::getPieceTable() {
