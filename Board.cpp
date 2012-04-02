@@ -111,19 +111,11 @@ void Board::handleChangeTurn(int ni, int nj) {
 
 QByteArray Board::encodeBoard() const {
 	QByteArray byteArray;
-	for (int i = 0; i < MAX_COL; i++) {
-		for (int j = 0; j < MAX_ROW; j++) {
-			QString buffer;
-			if (i == MAX_COL - 1 && j == MAX_ROW - 1) {
-                buffer = QString::number(table[i][j]);
-			} else {
-                buffer = QString::number(table[i][j]) + SEPARATOR;
-			}
-            
-			byteArray.append(buffer);
+	for (int j = 0; j < MAX_ROW; j++) {
+		for (int i = 0; i < MAX_COL; i++) {
+			byteArray.append(QString::number(table[i][j]) + SEPARATOR);
 		}
 	}
-	qDebug() << byteArray;
 	return byteArray;
 }
 

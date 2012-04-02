@@ -2,7 +2,7 @@
 
 Checkers::Checkers() : Game() {
 	board = new Board();
-	// board->show();
+	board->show();
 	QByteArray b = board->encodeBoard();
 	board->decodeBoard(b);
 }
