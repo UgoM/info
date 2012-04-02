@@ -186,7 +186,7 @@ void mainwindow::windowBossDisp()
 {
 	QVBoxLayout *layout2 = new QVBoxLayout;
 	QLabel *imageBoss= new QLabel(windowBoss);
-	imageBoss->setPixmap(QPixmap("imageBoss.png"));
+	imageBoss->setPixmap(QPixmap("images/imageBoss.png"));
 	layout2->addWidget(imageBoss);
     windowBoss->setLayout(layout2);
 	windowBoss->exec();
