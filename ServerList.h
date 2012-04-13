@@ -29,6 +29,9 @@ class ServerList : public QObject
         void readDataTcp();
         void displayErrorTcp(QAbstractSocket::SocketError socketError);
 
+        void connected();
+        void disconnected();
+
 	public:
 		ServerList();
 		~ServerList();

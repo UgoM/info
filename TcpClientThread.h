@@ -11,7 +11,7 @@ class TcpClientThread : public QThread
 {
 	Q_OBJECT
 
-    int socketDescriptor;
+    int socDes;
     QTcpSocket * tcpSocket;
     Server * mainServer;
 

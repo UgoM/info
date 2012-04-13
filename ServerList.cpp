@@ -32,6 +32,7 @@ ServerList::ServerList()
 
 ServerList::~ServerList()
 {
+	std::cout << "Destructeur ServerList" << std::endl;
     delete udpSocket;
 }
 
@@ -156,7 +157,21 @@ void ServerList::askForInfos(QHostAddress senderHost, quint16 senderPort)
 
     std::cout << "Tcp connection to host " << senderHost.toString().toStdString() << ":" << "12801" << std::endl;
     tcpSocket->connectToHost(senderHost, 12801);
+
+
+    connect(tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
+    connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 }
+
+void ServerList::connected()
+{
+    std::cout << "Connécté au server TCP" << std::endl;
+}
+void ServerList::disconnected()
+{
+    std::cout << "Déconnécté du server TCP" << std::endl;
+}
+
 
 void ServerList::readDataTcp()
 {

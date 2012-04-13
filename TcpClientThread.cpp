@@ -5,9 +5,12 @@
 
 #include <iostream>
 
+ #include <QMetaType>
+Q_DECLARE_METATYPE(QAbstractSocket::SocketError) 
+
 
 TcpClientThread::TcpClientThread(int socketDescriptor, Server * mainServer, QObject * parent)
-    : QThread(parent), socketDescriptor(socketDescriptor), mainServer(mainServer)
+    : QThread(parent), socDes(socketDescriptor), mainServer(mainServer)
 {
     std::cout << "Constructeur TcpClientThread()" << std::endl;
 }
@@ -19,8 +22,10 @@ TcpClientThread::~TcpClientThread()
 
 void TcpClientThread::run()
 {
+    qRegisterMetatype<QAbstractSocket::SocketError>();
+
     tcpSocket = new QTcpSocket();
-    if (!tcpSocket->setSocketDescriptor(socketDescriptor)) {
+    if (!tcpSocket->setSocketDescriptor(socDes)) {
         emit error(tcpSocket->error());
         return;
     }
@@ -31,15 +36,17 @@ void TcpClientThread::run()
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(displayErrorTcp(QAbstractSocket::SocketError)));
 
-    std::cout << "TcpServerThread : run()" << std::endl;
-    std::cout << "Socket Descriptor : " << socketDescriptor << std::endl;
 
-    tcpSocket->write(mainServer->message("HELLO_FROM_SERVER"));
-    std::cout << "Server : HELLO_FROM_SERVER" << std::endl;
+    std::cout << "TcpServerThread : run()" << std::endl;
+
+    //tcpSocket->write(mainServer->message("HELLO_FROM_SERVER"));
+    //std::cout << "Server : HELLO_FROM_SERVER" << std::endl;
 
    /* tcpSocket.write(block);
     tcpSocket.disconnectFromHost();
     tcpSocket.waitForDisconnected();*/
+    tcpSocket->waitForDisconnected();
+    std::cout << "TcpServerThread : run() -- Disconnected" << std::endl;
 }
 
 
@@ -51,7 +58,7 @@ void TcpClientThread::readDataTcp()
     QDataStream in(tcpSocket);
     in >> data;
 
-    if ( data == mainServer->message("ASK_LIST_GAMES")) {
+    if ( data == mainServer->message("ASK_LIST_GAMES")) {   
         std::cout << "TcpServer : ASK_LIST_GAMES" << std::endl;
     }
 
