@@ -3,14 +3,16 @@
 #include <QTcpServer>
 #include <QObject>
 #include "Server.h"
-#include "TcpClientThread.h"
+#include "QTcpSocketTest.h"
 
 class Server;
-class TcpClientThread;
 
 class TcpServer : public QObject
 {
 	Q_OBJECT
+
+    QTcpSocketTest * tcpSocket;
+    QList<QTcpSocket *> clients;
 
 	public:
 		TcpServer(Server * s);
@@ -19,6 +21,9 @@ class TcpServer : public QObject
 
 	public slots:
 		void newConnection();
+        void readDataTcp();
+        void displayErrorTcp(QAbstractSocket::SocketError socketError);
+        void clientDisconnected();
 
 	private:
 		QTcpServer * tcpServer;
