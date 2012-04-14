@@ -11,7 +11,6 @@ class TcpServer : public QObject
 {
 	Q_OBJECT
 
-    QTcpSocketTest * tcpSocket;
     QList<QTcpSocket *> clients;
 
 	public:
@@ -22,7 +21,6 @@ class TcpServer : public QObject
 	public slots:
 		void newConnection();
         void readDataTcp();
-        void displayErrorTcp(QAbstractSocket::SocketError socketError);
         void clientDisconnected();
 
 	private:

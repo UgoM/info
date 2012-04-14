@@ -10,6 +10,9 @@ class Brain : public QObject
 	public:
 		Brain();
 
+        virtual QString name(){return "";};
+        virtual QString nPlayers(){return "";};
+
 	private:
 		void sendTo(int idClient, QString message);
 		void sendToAll(QString message);

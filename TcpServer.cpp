@@ -76,7 +76,7 @@ void TcpServer::newConnection()
     connect(nouveauClient, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
 
 
-    nouveauClient->write(mainServer->message("HELLO_FROM_SERVER"));
+    nouveauClient->write(mainServer->messageByteArray("HELLO_FROM_SERVER"));
     std::cout << "Server : HELLO_FROM_SERVER" << std::endl;
 }
 
@@ -110,9 +110,19 @@ void TcpServer::readDataTcp()
 
     std::cout << "TcpServer : toto" << std::endl;
 */
-    QString data = mainServer->decodeDatagram(socket);
-    if ( data == mainServer->message("ASK_LIST_GAMES")) {   
-        std::cout << "TcpServer : ASK_LIST_GAMES" << std::endl;
+
+    QString data;
+    quint32 type;
+    QDataStream in(socket);
+    in >> type >> data;
+
+ //   std::cout << mainServer->decodeDatagram(in).toStdString() << std::endl ;
+
+    if (type == DataType::MESSAGE) {
+        if (data == mainServer->messageString("ASK_LIST_GAMES")) {
+            std::cout << "TcpServer : ASK_LIST_GAMES" << std::endl;
+            socket->write(mainServer->listOfServers());
+        }
     }
 
     std::cout << "TcpServer : toto" << std::endl;
@@ -130,19 +140,3 @@ void TcpServer::clientDisconnected()
     socket->deleteLater();
 }
 
-void TcpServer::displayErrorTcp(QAbstractSocket::SocketError socketError)
-{
-    switch (socketError) {
-    case QAbstractSocket::RemoteHostClosedError:
-        break;
-    case QAbstractSocket::HostNotFoundError:
-        std::cout << "The host was not found. Please check the host name and port settings." << std::endl;
-        break;
-    case QAbstractSocket::ConnectionRefusedError:
-        std::cout << "The connection was refused by the peer. Make sure the fortune server is running, \
-                        and check that the host name and port settings are correct." << std::endl;
-        break;
-    default:
-        std::cout << "The following error occurred:" << tcpSocket->errorString().toStdString() << std::endl;
-    }
-}

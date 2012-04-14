@@ -48,7 +48,7 @@ void ServerList::run()
     flg_listen = 1;
 
     // broadcast message
-    QByteArray datagram = serverObject->message("UDP_ASK_FOR_SERVER");
+    QByteArray datagram = serverObject->messageByteArray("UDP_ASK_FOR_SERVER");
     QUdpSocket * udpSocket_send = new QUdpSocket(this);
     udpSocket_send->writeDatagram(datagram.data(), datagram.size(), /*QHostAddress("127.0.0.1") *//*QHostAddress("193.54.87.255")*/QHostAddress::Broadcast, 12800);
     std::cout << "ServerList : Broadcast message, now waiting for responses..." << std::endl;
@@ -96,11 +96,21 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHos
 {
     std::cout << "ServerList : processTheDatagram" << std::endl;
 	std::cout << "ServerList : Received Udp data : \"" << datagram.data() << "\"" << std::endl; 
-    if (datagram == serverObject->message("ANSWER_UDP_ASK_FOR_SERVER")) {
-        std::cout << "ServerList : processTheDatagram OK" << std::endl;
-        std::cout << "new server adress " << senderHost.toString().toStdString() << ":" << senderPort << ", asking for games and infos..." << std::endl;
-        serverList->insert(senderHost.toString(), senderPort);
-        emit askForInfos(senderHost, senderPort);
+
+    QString data;
+    quint32 type;
+    QDataStream in(datagram);
+    in >> type >> data;
+
+    
+    if (type == DataType::MESSAGE) {
+        std::cout << "MESSAGE" << std::endl;
+        if (data == serverObject->messageString("ANSWER_UDP_ASK_FOR_SERVER")) {
+            std::cout << "ServerList : processTheDatagram OK" << std::endl;
+            std::cout << "new server adress " << senderHost.toString().toStdString() << ":" << senderPort << ", asking for games and infos..." << std::endl;
+            serverList->insert(senderHost.toString(), senderPort);
+            emit askForInfos(senderHost, senderPort);
+        }
     }
 }
 
@@ -178,12 +188,20 @@ void ServerList::readDataTcp()
     std::cout << "ServerList : Tcp data received" << std::endl;
 
     QString data;
+    quint32 type;
     QDataStream in(tcpSocket);
-    in >> data;
+    in >> type >> data;
 
-    if ( data == serverObject->message("HELLO_FROM_SERVER")) {
-        std::cout << "ServerList : HELLO_FROM_SERVER" << std::endl;
-        tcpSocket->write(serverObject->message("ASK_LIST_GAMES"));
+    //std::cout << serverObject->decodeDatagram(in).toStdString() << std::endl ;
+
+    if (type == DataType::MESSAGE) {
+        std::cout << "MESSAGE" << std::endl;
+        if (data == serverObject->messageString("HELLO_FROM_SERVER")) {
+            std::cout << "ServerList : HELLO_FROM_SERVER" << std::endl;
+            tcpSocket->write(serverObject->messageByteArray("ASK_LIST_GAMES"));
+        }
+    } else if (type == DataType::LISTOFSERVERS) {
+        
     }
 
 }

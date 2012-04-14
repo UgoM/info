@@ -45,22 +45,31 @@ Server::~Server()
 
 void Server::makeNewGame()
 {
+    // Make Server (inherited from Brain)
+	BrainCheckers * newBrain = new BrainCheckers();
+	QThread * newBrainThread = new QThread();
+	newBrain->moveToThread(newBrainThread);
+	newBrainThread->start();
+
+    brains->push_back(newBrain);
+
+	// Make Client (for playing, inherited from Game)
     Checkers * newGame = new Checkers();
-	BrainCheckers * brainCheckers = new BrainCheckers();
-	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), brainCheckers, SLOT(handleMove(QByteArray)));
-	//Game * newGame = new Game();
 	QThread * newGameThread = new QThread();
 	newGame->moveToThread(newGameThread);
 	newGameThread->start();
 
 	games->push_back(newGame);
 
+
+	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), newBrain, SLOT(handleMove(QByteArray)));
+
 	std::cout << "New game created" << std::endl;
 }
 
 void Server::initMessages()
 {
-    messages = new QMap <QString, QByteArray>;
+    messages = new QMap <QString, QString>;
     
     messages->insert("UDP_ASK_FOR_SERVER", "Is there any server here ?");
     messages->insert("ANSWER_UDP_ASK_FOR_SERVER", "I think Im here. Don't you think that too ?");
@@ -71,39 +80,52 @@ void Server::initMessages()
     messages->insert("END_GAME_LIST", "End of the game list.");
 
 }
-
-QByteArray Server::message(QString m)
+QString Server::messageString(QString m)
 {
-    QString toto(messages->value(m));
-    std::cout << "Server encode : " << toto.toStdString() << std::endl;
+    QString out (messages->value(m));
+    return out;
+}
+
+QByteArray Server::messageByteArray(QString m)
+{
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_0);
-    out << (quint16)0;
+    out << (quint32) DataType::MESSAGE ;
     out << messages->value(m);
-    out.device()->seek(0);
-    out << (quint16)(block.size() - sizeof(quint16));
+    
+    std::cout << "Server messageByteArray : ";
+    for (int i = 0; i < block.size(); ++i) {
+        std::cout << block.at(i);
+    }
+    std::cout << std::endl;
+
     return block;
 }
 
-QString Server::decodeDatagram(QAbstractSocket * socket)
+QByteArray Server::listOfServers() const
 {
-    QDataStream in(socket);
-    in.setVersion(QDataStream::Qt_4_0);
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out << (quint32) DataType::LISTOFSERVERS ;
 
-    if (socket->bytesAvailable() < (int)sizeof(quint16))
-        return "a";
-    quint16 blockSize;
-    in >> blockSize;
+    for (int i = 0; i < brains->size(); ++i) {
+        out << brains->at(i)->name() << ";"
+            << brains->at(i)->nPlayers()
+            << "#";
+    }
+
+	return block;
+}
+
+QMap<QString,QString> Server::decodeListOfServers(QString s)
+{
+    QMap<QString,QString> out;
     
-
-    if (socket->bytesAvailable() < blockSize)
-        return "b";
-
-    QString toto;
-    in >> toto;
-
-    std::cout << "Server decode : " << toto.toStdString() << std::endl;
-    return toto;
-
+    QStringList tokens = s.split("#");
+	for (int k = 0; k < tokens.size(); k++) {
+        QStringList a = tokens[k].split(";");
+        out["name"] = a[0];
+        out["nPlayers"] = a[1];
+	}
+    return out;
 }

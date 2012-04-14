@@ -38,11 +38,20 @@ class Server : public QObject
 		void makeNewGame();
 
     private:
-        QMap <QString, QByteArray> * messages;
+        QMap <QString, QString> * messages;
         void initMessages();
 
     public:
-        QByteArray message (QString m);
-        QString decodeDatagram(QAbstractSocket * socket);
+        QByteArray messageByteArray (QString m);
+        QString messageString (QString m);
+        QByteArray listOfServers() const;
+        QMap<QString,QString> decodeListOfServers(QString s);
 				
 };
+
+namespace DataType {
+	enum EDataType {
+		MESSAGE = 1,
+        LISTOFSERVERS
+	};
+}
