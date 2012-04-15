@@ -60,6 +60,8 @@ void ServerList::clearServerList()
 {
     serverList->clear();
     gameList.clear();
+    // rafraichissement de l'affichage
+    emit newList();
 }
 
 void ServerList::stopListening()
@@ -119,6 +121,11 @@ QStandardItemModel * ServerList::get()
 	    QList<QStandardItem *> items;
         {
             QStandardItem * item = new QStandardItem();
+            item->setData( (*gameList.at(i)).value("IP"), Qt::DisplayRole );
+            items.append(item);
+        }
+        {
+            QStandardItem * item = new QStandardItem();
             item->setData( (*gameList.at(i)).value("name"), Qt::DisplayRole );
             items.append(item);
         }
@@ -130,8 +137,9 @@ QStandardItemModel * ServerList::get()
 	    model->appendRow(items);
     }
 
-	model->setHeaderData(0 , Qt::Horizontal, "Jeu");
-	model->setHeaderData(1 , Qt::Horizontal, "# Joueurs");
+	model->setHeaderData(0 , Qt::Horizontal, "IP");
+	model->setHeaderData(1 , Qt::Horizontal, "Jeu");
+	model->setHeaderData(2 , Qt::Horizontal, "# Joueurs");
 
     return model;
 }
@@ -182,7 +190,13 @@ void ServerList::readDataTcp()
             tcpSocket->write(serverObject->messageByteArray("ASK_LIST_GAMES"));
         }
     } else if (type == DataType::LISTOFSERVERS) {
-        gameList << serverObject->decodeListOfServers(data);
+        // get infos from server
+        QList<QMap<QString,QString> *> l = serverObject->decodeListOfServers(data);
+        // add ip to the list
+        for (int i=0; i<l.size(); ++i) {
+            l.at(i)->insert("IP", tcpSocket->peerAddress().toString());
+        }
+        gameList << l;
     }
 
     for (int i=0; i<gameList.size(); ++i) {
@@ -194,6 +208,8 @@ void ServerList::readDataTcp()
         }
         // émission du signal pour rafraichir l'affichage
         emit newList();
+        // fermeture de la connexion
+        tcpSocket->close();
     }
 
 }

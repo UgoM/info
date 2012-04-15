@@ -68,6 +68,7 @@ class mainwindow : public QMainWindow
 		QDialog *windowServerWatch;
 
 
+        Server * server;
         ServerListWidget * serverListWidget;		
 		
 
