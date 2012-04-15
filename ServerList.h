@@ -16,10 +16,7 @@ class ServerList : public QObject
     QTcpSocketTest * tcpSocket;
 
     QMap <QString, quint16> * serverList;
-    QStringList * ipList;
-    QStringList * gameList;
-    QList <int> * nPlayersList;
-    QList <int> * nMaxPlayersList;
+    QList<QMap<QString,QString> *> gameList;
     
 
 	public slots:

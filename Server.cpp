@@ -90,6 +90,7 @@ QByteArray Server::messageByteArray(QString m)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
     out << (quint32) DataType::MESSAGE ;
     out << messages->value(m);
     
@@ -106,26 +107,35 @@ QByteArray Server::listOfServers() const
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
     out << (quint32) DataType::LISTOFSERVERS ;
 
+    QString s ("");
     for (int i = 0; i < brains->size(); ++i) {
-        out << brains->at(i)->name() << ";"
-            << brains->at(i)->nPlayers()
-            << "#";
+        s.append(brains->at(i)->name()) ;
+        s.append(";") ;
+        s.append(brains->at(i)->nPlayers()) ;
+        if (i != brains->size()-1)
+            s.append("#") ;
     }
+    out << s;
 
 	return block;
 }
 
-QMap<QString,QString> Server::decodeListOfServers(QString s)
+QList<QMap<QString,QString> *> Server::decodeListOfServers(QString s)
 {
-    QMap<QString,QString> out;
+    QList<QMap<QString,QString> *> out;
     
+    std::cout << s.toStdString() << std::endl;
+    std::cout << "Server::decodeListOfServers" << std::endl;
     QStringList tokens = s.split("#");
 	for (int k = 0; k < tokens.size(); k++) {
+        QMap<QString,QString> * m = new QMap<QString,QString>;
         QStringList a = tokens[k].split(";");
-        out["name"] = a[0];
-        out["nPlayers"] = a[1];
+        m->insert("name", a[0]);
+        m->insert("nPlayers", a[1]);
+        out << m;
 	}
     return out;
 }

@@ -9,5 +9,5 @@ void BrainCheckers::handleMove(QByteArray boardEnc) {
 
 QString BrainCheckers::nPlayers()
 {
-    return QString("A implementer");
+    return QString("2/2");
 }

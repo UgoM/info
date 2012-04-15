@@ -20,10 +20,6 @@ ServerList::ServerList()
     /* variables */
     flg_listen = 0;
     serverList =  new QMap <QString, quint16> ;
-    ipList =  new QStringList ;
-    gameList =  new QStringList ;
-    nPlayersList =  new QList <int> ;
-    nMaxPlayersList =  new QList <int> ;
 
     /* create an empty Server object, just to get messages definitions */
     serverObject = new Server(0);
@@ -34,6 +30,8 @@ ServerList::~ServerList()
 {
 	std::cout << "Destructeur ServerList" << std::endl;
     delete udpSocket;
+    delete serverList;
+    delete serverObject;
 }
 
 void ServerList::run()
@@ -61,10 +59,7 @@ void ServerList::run()
 void ServerList::clearServerList()
 {
     serverList->clear();
-    ipList->clear();
-    gameList->clear();
-    nPlayersList->clear();
-    nMaxPlayersList->clear();
+    gameList.clear();
 }
 
 void ServerList::stopListening()
@@ -100,6 +95,7 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHos
     QString data;
     quint32 type;
     QDataStream in(datagram);
+    in.setVersion(QDataStream::Qt_4_6);
     in >> type >> data;
 
     
@@ -119,41 +115,23 @@ QStandardItemModel * ServerList::get()
     QStandardItemModel * model = new QStandardItemModel();
 
     //row
-    for (int i=0; i<ipList->size(); ++i)
-    {
+    for (int i=0; i<gameList.size(); ++i) {
 	    QList<QStandardItem *> items;
-
         {
             QStandardItem * item = new QStandardItem();
-            item->setData(ipList->at(i));
+            item->setData( (*gameList.at(i)).value("name"), Qt::DisplayRole );
             items.append(item);
         }
-
         {
             QStandardItem * item = new QStandardItem();
-            item->setData(gameList->at(i));
-            items.append(item);
-        }
-
-        {
-            QStandardItem * item = new QStandardItem();
-            item->setData(nPlayersList->at(i));
-            items.append(item);
-        }
-
-        {
-            QStandardItem * item = new QStandardItem();
-            item->setData(nMaxPlayersList->at(i));
+            item->setData( (*gameList.at(i)).value("nPlayers"), Qt::DisplayRole );
             items.append(item);
         }
 	    model->appendRow(items);
     }
 
-
-	model->setHeaderData(0 , Qt::Horizontal, "IP");
-	model->setHeaderData(1 , Qt::Horizontal, "Jeu");
-	model->setHeaderData(2 , Qt::Horizontal, "# Joueurs");
-	model->setHeaderData(3 , Qt::Horizontal, "# Joueurs Max");
+	model->setHeaderData(0 , Qt::Horizontal, "Jeu");
+	model->setHeaderData(1 , Qt::Horizontal, "# Joueurs");
 
     return model;
 }
@@ -190,7 +168,10 @@ void ServerList::readDataTcp()
     QString data;
     quint32 type;
     QDataStream in(tcpSocket);
+    in.setVersion(QDataStream::Qt_4_6);
     in >> type >> data;
+    std::cout << type << std::endl;
+    std::cout << data.toStdString() << std::endl;
 
     //std::cout << serverObject->decodeDatagram(in).toStdString() << std::endl ;
 
@@ -201,7 +182,18 @@ void ServerList::readDataTcp()
             tcpSocket->write(serverObject->messageByteArray("ASK_LIST_GAMES"));
         }
     } else if (type == DataType::LISTOFSERVERS) {
-        
+        gameList << serverObject->decodeListOfServers(data);
+    }
+
+    for (int i=0; i<gameList.size(); ++i) {
+        std::cout << "gameList : " << i << std::endl;
+        QMapIterator<QString, QString> it(*gameList.at(i));
+        while (it.hasNext()) {
+            it.next();
+            std::cout << it.key().toStdString() << ": " << it.value().toStdString() << std::endl;
+        }
+        // émission du signal pour rafraichir l'affichage
+        emit newList();
     }
 
 }

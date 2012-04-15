@@ -114,6 +114,7 @@ void TcpServer::readDataTcp()
     QString data;
     quint32 type;
     QDataStream in(socket);
+    in.setVersion(QDataStream::Qt_4_6);
     in >> type >> data;
 
  //   std::cout << mainServer->decodeDatagram(in).toStdString() << std::endl ;

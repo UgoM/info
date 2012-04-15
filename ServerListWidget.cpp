@@ -1,11 +1,12 @@
 #include "ServerListWidget.h"
 #include <QGridLayout>
 #include <QPushButton>
+#include <QHeaderView>
 
 ServerListWidget::ServerListWidget()
 {
     serverList = new ServerList();
-	model = serverList->get();
+	model = new QStandardItemModel();
 
     connect(serverList, SIGNAL(newList()), this, SLOT(refreshDisplay()));
 
@@ -34,10 +35,14 @@ ServerListWidget::ServerListWidget()
 }
 void ServerListWidget::config()
 {
-	this->setWindowIcon(QIcon("icone2.png"));
-	this->setWindowTitle("Liste des serveurs disponibles pour jouer");
+	this->setWindowIcon(QIcon("images/icone2.png"));
+	this->setWindowTitle("Liste des serveurs disponibles");
 
     tableView->setModel(model);
+    tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    tableView->verticalHeader()->hide();
+    tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //resultTableView->resizeColumnsToContents();
 
 }
 

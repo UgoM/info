@@ -45,7 +45,7 @@ class Server : public QObject
         QByteArray messageByteArray (QString m);
         QString messageString (QString m);
         QByteArray listOfServers() const;
-        QMap<QString,QString> decodeListOfServers(QString s);
+        QList <QMap<QString,QString> *> decodeListOfServers(QString s);
 				
 };
 
