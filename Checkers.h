@@ -33,8 +33,9 @@ class Checkers : public Game {
 		void mousePressEvent(QMouseEvent * event);
 		int** getPieceTable();
 		void decodeBoard(QByteArray byteArray);
+        void drawBoard();
 		
-		void processReceive(QString message);
+		void processReceive(QByteArray data);
 		void processClick();
 		void processKey();
 		

@@ -37,6 +37,8 @@ class mainwindow : public QMainWindow
 		void windowBossDisp();
 		void windowAboutDisp();
 
+        void newObserver( QString hostAddress, quint32 id );
+
 		
 
 	private:
@@ -69,7 +71,8 @@ class mainwindow : public QMainWindow
 
 
         Server * server;
-        ServerListWidget * serverListWidget;		
+        ServerListWidget * serverListWidget;
+        QList<Game *> games;		
 		
 
 };

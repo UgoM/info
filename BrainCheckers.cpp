@@ -5,6 +5,7 @@
 void BrainCheckers::handleMove(QByteArray boardEnc) {
 	qDebug() << "Board received :";
 	qDebug() << boardEnc;
+    sendToAll( boardEnc);
 }
 
 QString BrainCheckers::nPlayers()

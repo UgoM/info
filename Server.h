@@ -31,8 +31,10 @@ class Server : public QObject
 		/// their Brain associated
 
 		/// each time a new Brain or Game is created, we keep a track of them here
-		QList <Brain *> * brains;
-		QList <Game *> * games;
+		QMap <quint32, Brain *> * brains;
+		QMap <quint32, Game *> * games;
+
+        quint32 lastIdGame;
 
 	public slots:
 		void makeNewGame();
@@ -52,6 +54,7 @@ class Server : public QObject
 namespace DataType {
 	enum EDataType {
 		MESSAGE = 1,
-        LISTOFSERVERS
+        LISTOFSERVERS,
+        GAMEDATA
 	};
 }

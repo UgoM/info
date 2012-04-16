@@ -122,24 +122,38 @@ QStandardItemModel * ServerList::get()
         {
             QStandardItem * item = new QStandardItem();
             item->setData( (*gameList.at(i)).value("IP"), Qt::DisplayRole );
+            item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
+            item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
+            items.append(item);
+        }
+        {
+            QStandardItem * item = new QStandardItem();
+            item->setData( (*gameList.at(i)).value("port").toInt(), Qt::DisplayRole );
+            item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
+            item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
             items.append(item);
         }
         {
             QStandardItem * item = new QStandardItem();
             item->setData( (*gameList.at(i)).value("name"), Qt::DisplayRole );
+            item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
+            item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
             items.append(item);
         }
         {
             QStandardItem * item = new QStandardItem();
             item->setData( (*gameList.at(i)).value("nPlayers"), Qt::DisplayRole );
+            item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
+            item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
             items.append(item);
         }
 	    model->appendRow(items);
     }
 
 	model->setHeaderData(0 , Qt::Horizontal, "IP");
-	model->setHeaderData(1 , Qt::Horizontal, "Jeu");
-	model->setHeaderData(2 , Qt::Horizontal, "# Joueurs");
+	model->setHeaderData(1 , Qt::Horizontal, "port");
+	model->setHeaderData(2 , Qt::Horizontal, "Jeu");
+	model->setHeaderData(3 , Qt::Horizontal, "# Joueurs");
 
     return model;
 }

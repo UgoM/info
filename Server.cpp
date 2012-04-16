@@ -15,8 +15,10 @@ Server::Server()
 	tcpServer = new TcpServer(this);
 	udpServer = new UdpServer(this);
 
-	brains = new QList<Brain *>;
-	games = new QList<Game *>;
+	brains = new QMap <quint32, Brain *>;
+	games = new QMap <quint32, Game *>;
+
+    lastIdGame = 1;
 
  	connect(tcpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
  	connect(udpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
@@ -51,7 +53,8 @@ void Server::makeNewGame()
 	newBrain->moveToThread(newBrainThread);
 	newBrainThread->start();
 
-    brains->push_back(newBrain);
+    quint32 port = newBrain->getPort();
+    brains->insert(port, newBrain);
 
 	// Make Client (for playing, inherited from Game)
     Checkers * newGame = new Checkers();
@@ -59,7 +62,8 @@ void Server::makeNewGame()
 	newGame->moveToThread(newGameThread);
 	newGameThread->start();
 
-	games->push_back(newGame);
+    lastIdGame ++;
+	games->insert(lastIdGame, newGame);
 
 
 	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), newBrain, SLOT(handleMove(QByteArray)));
@@ -111,12 +115,17 @@ QByteArray Server::listOfServers() const
     out << (quint32) DataType::LISTOFSERVERS ;
 
     QString s ("");
-    for (int i = 0; i < brains->size(); ++i) {
-        s.append(brains->at(i)->name()) ;
+
+    QMap<quint32, Brain *>::const_iterator it = brains->constBegin();
+    while (it != brains->constEnd()) {
+        s.append(QVariant(it.key()).toString()) ;
         s.append(";") ;
-        s.append(brains->at(i)->nPlayers()) ;
-        if (i != brains->size()-1)
+        s.append(it.value()->name()) ;
+        s.append(";") ;
+        s.append(it.value()->nPlayers()) ;
+        if (it != brains->constEnd()-1)
             s.append("#") ;
+        ++it;
     }
     out << s;
 
@@ -133,8 +142,9 @@ QList<QMap<QString,QString> *> Server::decodeListOfServers(QString s)
 	for (int k = 0; k < tokens.size(); k++) {
         QMap<QString,QString> * m = new QMap<QString,QString>;
         QStringList a = tokens[k].split(";");
-        m->insert("name", a[0]);
-        m->insert("nPlayers", a[1]);
+        m->insert("port", a[0]);
+        m->insert("name", a[1]);
+        m->insert("nPlayers", a[2]);
         out << m;
 	}
     return out;

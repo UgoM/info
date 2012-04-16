@@ -34,7 +34,7 @@ TcpServer::~TcpServer()
 
 void TcpServer::newConnection()
 {
-    std::cout << "New connection Tcp !" << std::endl;
+    std::cout << "TcpServer : New connection Tcp !" << std::endl;
 
     //QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     //int socketDescriptor = clientConnection->socketDescriptor();

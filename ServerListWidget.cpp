@@ -2,6 +2,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QHeaderView>
+#include <iostream>
 
 ServerListWidget::ServerListWidget()
 {
@@ -17,6 +18,7 @@ ServerListWidget::ServerListWidget()
 	connect(buttonGetList, SIGNAL(clicked()), this, SLOT(buttonRefresh()));
     QPushButton * buttonConnect = new QPushButton("Connecter");
     QPushButton * buttonWatch = new QPushButton("Observer");
+	connect(buttonWatch, SIGNAL(clicked()), this, SLOT(buttonObserv()));
 
 
     
@@ -55,4 +57,14 @@ void ServerListWidget::refreshDisplay()
 {
 	model = serverList->get();
     tableView->setModel(model);
+}
+
+void ServerListWidget::buttonObserv()
+{
+    std::cout << "ServerListWidget::buttonObserv()" << std::endl;
+    QModelIndex index = tableView->currentIndex();
+
+    QString hostAddress = index.data(Qt::UserRole).toString();
+    quint32 port = index.data(Qt::UserRole+1).toInt();
+    emit newObserver( hostAddress, port );
 }

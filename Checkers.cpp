@@ -45,6 +45,23 @@ QLabel * Checkers::setLabelPicture(QPixmap * pixmap) {
 	return label;
 }
 
+void Checkers::drawBoard()
+{
+	for (int j = 0; j < MAX_ROW; j++) {
+		for (int i = 0; i < MAX_COL; i++) {
+			switch(table[i][j]) {
+				case WHITE_PAWN : screen[i][j]->setPixmap(*image->getWhitePawn()); break;
+				case BLACK_PAWN : screen[i][j]->setPixmap(*image->getBlackPawn()); break;
+				case WHITE_QUEEN : screen[i][j]->setPixmap(*image->getWhiteQueen()); break;
+				case BLACK_QUEEN : screen[i][j]->setPixmap(*image->getBlackQueen()); break;
+                case NONE : screen[i][j]->setPixmap(*image->getOddCell());
+				default : break;
+			}
+        }
+    }
+            
+}
+
 void Checkers::mousePressEvent(QMouseEvent *ev) {
     if (!inPlay) {
 		inPlay = static_cast<QLabel*>(childAt(ev->pos()));
@@ -147,8 +164,10 @@ Checkers::~Checkers() {
 }
 
 
-void Checkers::processReceive(QString message) {
-
+void Checkers::processReceive(QByteArray data)
+{
+    decodeBoard(data);
+    drawBoard();
 }
 
 void Checkers::processClick() {

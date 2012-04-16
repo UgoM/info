@@ -22,5 +22,9 @@ class ServerListWidget : public QWidget
     public slots:
         void buttonRefresh();
         void refreshDisplay();
+        void buttonObserv();
+
+	signals:
+        void newObserver( QString hostAddress, quint32 id );
 
 };

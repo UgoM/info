@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "Checkers.h"
 #include "ServerList.h"
+#include <iostream>
 
 mainwindow::mainwindow() 
 {
@@ -49,12 +50,17 @@ mainwindow::mainwindow()
 	//boutons principaux
 
     QPushButton *buttonList = new QPushButton("Liste serveurs");
-    serverListWidget = new ServerListWidget();
 	connect(buttonList, SIGNAL(clicked()), this, SLOT(serverListDisp()));
 	QPushButton *buttonNew= new QPushButton("Nouvelle partie");
 	connect(buttonNew, SIGNAL(clicked()),this, SLOT(newGameFromMenu()));
 	QPushButton *buttonSetup=new QPushButton("Configurer joueur");
 	
+    // ServerList widget
+    serverListWidget = new ServerListWidget();
+    connect( serverListWidget, SIGNAL(newObserver( QString, quint32 )),
+                this, SLOT(newObserver( QString, quint32 )) );
+
+
 	mainButtonDisp(buttonList);
 	mainButtonDisp(buttonNew);
 	mainButtonDisp(buttonSetup);
@@ -234,5 +240,16 @@ void mainwindow::newGameFromMenu()
     if (!server)
         server = new Server();
     server->makeNewGame();
+}
+
+void mainwindow::newObserver( QString hostAddress, quint32 id )
+{
+    std::cout << "mainwindow::newObserver" << std::endl;
+    std::cout << "hostAddress : " << hostAddress.toStdString()
+                << ", id : " << id << std::endl;
+    Checkers * newGame = new Checkers ();
+    newGame->setServer(hostAddress, id);
+    
+    games << newGame;
 }
 
