@@ -8,7 +8,7 @@ Game::Game()
     connect(this, SIGNAL(newGameData(QByteArray)), this, SLOT(processReceive(QByteArray)));
 	std::cout << "Constructeur Game" << std::endl;
     clientType = ClientType::NONE;
-    idPlayer = O;
+    idPlayer = 0;
 }
 
 Game::~Game()
