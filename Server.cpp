@@ -53,7 +53,7 @@ void Server::makeNewGame()
 	newBrain->moveToThread(newBrainThread);
 	newBrainThread->start();
 
-    quint32 port = newBrain->getPort();
+    quint32 port = newBrain->getPort();	
     brains->insert(port, newBrain);
 
 	// Make Client (for playing, inherited from Game)

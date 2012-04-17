@@ -8,8 +8,9 @@ class Game : public QWidget
 {
 	Q_OBJECT
 
-    int clientType;
-    int idPlayer;
+    protected:
+		int clientType;
+		int idPlayer;
 
 	public:
 		Game();

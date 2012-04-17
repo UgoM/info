@@ -63,7 +63,10 @@ void Checkers::drawBoard()
 }
 
 void Checkers::mousePressEvent(QMouseEvent *ev) {
-    if (!inPlay) {
+    if (clientType == ClientType::OBSERVER) {
+		return;
+	}
+	if (!inPlay) {
 		inPlay = static_cast<QLabel*>(childAt(ev->pos()));
 		position.setX((inPlay->pos()).x() / CELL_SIZE);
 		position.setY((inPlay->pos()).y() / CELL_SIZE);
