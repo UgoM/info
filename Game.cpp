@@ -7,6 +7,8 @@ Game::Game()
 {
     connect(this, SIGNAL(newGameData(QByteArray)), this, SLOT(processReceive(QByteArray)));
 	std::cout << "Constructeur Game" << std::endl;
+    clientType = ClientType::NONE;
+    idPlayer = O;
 }
 
 Game::~Game()
@@ -90,4 +92,9 @@ void Game::displayErrorTcp(QAbstractSocket::SocketError socketError)
     default:
         std::cout << "The following error occurred:" << tcpSocket->errorString().toStdString() << std::endl;
     }
+}
+
+void Game::setClientType( int id)
+{
+    clientType = id;
 }

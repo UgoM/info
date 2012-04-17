@@ -8,10 +8,14 @@ class Game : public QWidget
 {
 	Q_OBJECT
 
+    int clientType;
+    int idPlayer;
+
 	public:
 		Game();
 		~Game();
         void setServer(QString hostAddress, quint32 port);
+        void setClientType(int clientType); 
 
 	private:
 		void send(QByteArray data);
@@ -21,7 +25,7 @@ class Game : public QWidget
     private:
         QTcpSocket * tcpSocket;
 
-    private slots:       
+    private slots:  
         void connected();
         void disconnected();
         void readDataTcp();
@@ -32,3 +36,11 @@ class Game : public QWidget
     signals:
         void newGameData(QByteArray data);
 };
+
+namespace ClientType {
+    enum EClientType {
+        NONE,
+        OBSERVER,
+        PLAYER_1
+    };
+}
