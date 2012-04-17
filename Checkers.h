@@ -35,7 +35,7 @@ class Checkers : public Game {
 		void decodeBoard(QByteArray byteArray);
         void drawBoard();
 		
-		void processReceive(QByteArray data);
+		void processReceive(QByteArray block);
 		void processClick();
 		void processKey();
 		

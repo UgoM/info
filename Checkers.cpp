@@ -164,9 +164,9 @@ Checkers::~Checkers() {
 }
 
 
-void Checkers::processReceive(QByteArray data)
+void Checkers::processReceive(QByteArray block)
 {
-    decodeBoard(data);
+    decodeBoard(block);
     drawBoard();
 }
 

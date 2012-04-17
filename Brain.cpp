@@ -20,17 +20,17 @@ Brain::Brain()
 }
 
 
-void Brain::sendTo(int idClient, QByteArray data)
+void Brain::sendTo(int idClient, QByteArray block)
 {
 }
 
-void Brain::sendToAll(QByteArray data)
+void Brain::sendToAll(QByteArray dat)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
     out << DataType::GAMEDATA;
-    out << data;
+    out << dat;
 
     std::cout << "Brain::sendToAll" << std::endl;
     for (int i = 0; i < clients.size(); i++)
@@ -40,9 +40,9 @@ void Brain::sendToAll(QByteArray data)
     }
 }
 
-void Brain::processReceive(QString data)
+void Brain::processReceive(QString block)
 {
-    std::cout << "new data : " << data.toStdString() << std::endl;
+    std::cout << "new data : " << block.toStdString() << std::endl;
 }
 
 void Brain::newConnection()
@@ -67,14 +67,14 @@ void Brain::readDataTcp()
 
     std::cout << "Brain : Sender found" << std::endl;
 
-    QString data;
+    QString block;
     quint32 type;
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_4_6);
-    in >> type >> data;
+    in >> type >> block;
 
     if (type == DataType::GAMEDATA) {
-        emit newGameData( data );   
+        emit newGameData( block );   
     }
 }
 

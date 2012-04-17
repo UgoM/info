@@ -16,8 +16,8 @@ class Brain : public QObject
         virtual QString nPlayers(){return "";};
 
 	protected:
-		void sendTo(int idClient, QByteArray data);
-		void sendToAll(QByteArray data);
+		void sendTo(int idClient, QByteArray dat);
+		void sendToAll(QByteArray block);
 
     private:
         quint32 port;
@@ -28,8 +28,8 @@ class Brain : public QObject
         void newConnection();
         void readDataTcp();
         void clientDisconnected();
-		virtual void processReceive(QString data);
+		virtual void processReceive(QString block);
 
     signals:
-        void newGameData(QString data);
+        void newGameData(QString block);
 };

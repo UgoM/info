@@ -18,7 +18,7 @@ class Game : public QWidget
         void setClientType(int clientType); 
 
 	private:
-		void send(QByteArray data);
+		void send(QByteArray block);
 		virtual void processClick();
 		virtual void processKey();
 
@@ -31,10 +31,10 @@ class Game : public QWidget
         void readDataTcp();
         void displayErrorTcp(QAbstractSocket::SocketError socketError);
 
-		virtual void processReceive(QByteArray data);
+		virtual void processReceive(QByteArray block);
 
     signals:
-        void newGameData(QByteArray data);
+        void newGameData(QByteArray block);
 };
 
 namespace ClientType {

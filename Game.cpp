@@ -16,11 +16,11 @@ Game::~Game()
 	std::cout << "Destructeur Game" << std::endl;
 }
 
-void Game::send(QByteArray data)
+void Game::send(QByteArray block)
 {
 }
 
-void Game::processReceive(QByteArray data)
+void Game::processReceive(QByteArray block)
 {
 }
 
@@ -64,16 +64,16 @@ void Game::readDataTcp()
 {
     std::cout << "Game : Tcp data received" << std::endl;
 
-    QByteArray data;
+    QByteArray block;
     quint32 type;
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_6);
-    in >> type >> data;
+    in >> type >> block;
 
     if (type == DataType::GAMEDATA) {
         std::cout << "GAMEDATA" << std::endl;
-	    qDebug() << data;
-        emit newGameData( data );  
+	    qDebug() << block;
+        emit newGameData( block );  
     } 
 }
 
