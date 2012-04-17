@@ -13,7 +13,7 @@ ServerList::ServerList()
 
     /* test UDP */
     udpSocket = new QUdpSocket(this);
-	udpSocket->bind(12800, QUdpSocket::ShareAddress);
+	udpSocket->bind(12801, QUdpSocket::ShareAddress);
 	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
     connect(this, SIGNAL(s_askForInfos(QHostAddress, quint16)), this, SLOT(askForInfos(QHostAddress, quint16)));
 

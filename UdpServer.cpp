@@ -64,7 +64,7 @@ void UdpServer::processTheDatagram (QByteArray datagram, QHostAddress senderHost
 	        /// the Udp server just respond it is there, so the client 
 	        /// can connect himself to the tcp server.
             datagram = mainServer->messageByteArray("ANSWER_UDP_ASK_FOR_SERVER");
-            udpSocket->writeDatagram(datagram.data(), datagram.size(), senderHost, 12800);//senderPort);
+            udpSocket->writeDatagram(datagram.data(), datagram.size(), senderHost, 12801);//senderPort);
         }
     }
 }
