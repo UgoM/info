@@ -9,6 +9,8 @@
 class BoardController {
 
 	QMap<QPoint, QList<QList<QPoint> > > * clickablePieces;
+	bool canQueenCapture;
+	bool queenMovementInProgress;
 	
 	public:
 		void calculateClickablePieces(int** table, bool current);
