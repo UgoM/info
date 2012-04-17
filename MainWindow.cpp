@@ -250,6 +250,7 @@ void mainwindow::newObserver( QString hostAddress, quint32 id )
                 << ", id : " << id << std::endl;
     Checkers * newGame = new Checkers ();
     newGame->setServer(hostAddress, id);
+    newGame->setClientType(ClientType::OBSERVER);
     
     games << newGame;
 }
