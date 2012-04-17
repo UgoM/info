@@ -59,6 +59,7 @@ mainwindow::mainwindow()
     serverListWidget = new ServerListWidget();
     connect( serverListWidget, SIGNAL(newObserver( QString, quint32 )),
                 this, SLOT(newObserver( QString, quint32 )) );
+    server = NULL;
 
 
 	mainButtonDisp(buttonList);
