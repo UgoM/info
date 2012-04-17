@@ -6,9 +6,9 @@ const Direction Direction::SOUTH_WEST = Direction(1, -1);
 const Direction Direction::SOUTH_EAST = Direction(1, 1);
 const Direction Direction::UNDEFINED = Direction(0, 0);
 
-Direction::Direction(int i, int j) {
-	di = i;
-	dj = j;
+Direction::Direction(int ii, int jj) {
+	di = ii;
+	dj = jj;
 }
 
 int Direction::i() const {

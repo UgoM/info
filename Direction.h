@@ -5,7 +5,7 @@ class Direction {
 	int di, dj;
 	
 	private:
-		Direction(int i, int j);
+		Direction(int ii, int jj);
 	
 	public:
 	
