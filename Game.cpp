@@ -18,10 +18,12 @@ Game::~Game()
 
 void Game::send(QByteArray block)
 {
+    (void) block;
 }
 
 void Game::processReceive(QByteArray block)
 {
+    (void) block;
 }
 
 void Game::processClick()

@@ -7,6 +7,6 @@ class QTcpSocketTest : public QTcpSocket
 	Q_OBJECT
 
 	public:
-        QTcpSocketTest(QObject * parent);
+        QTcpSocketTest(QObject * p);
         ~QTcpSocketTest();
 };

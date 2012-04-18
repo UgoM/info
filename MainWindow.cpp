@@ -32,8 +32,8 @@ mainwindow::mainwindow()
 	QAction *actionNew = menuFile->addAction("&Nouvelle partie");
 	connect(actionNew, SIGNAL(triggered()),this, SLOT(newGameFromMenu()));
 	
-	QAction *actionWatch = menuFile->addAction("&Regarder une partie");
-	QAction *actionCancel = menuFile->addAction("&Annuler");
+	/*QAction *actionWatch = */menuFile->addAction("&Regarder une partie");
+	/*QAction *actionCancel = */menuFile->addAction("&Annuler");
 	QAction *actionHide = menuFile->addAction("&Caches toi de ton Boss");
 	actionHide->setShortcut(QKeySequence("Ctrl+H"));
 	windowBoss = new QDialog;
@@ -41,7 +41,7 @@ mainwindow::mainwindow()
 	QAction *actionQuit = menuFile->addAction("&Quitter");
 	connect(actionQuit, SIGNAL(triggered()), qApp, SLOT(quit()));
 	actionQuit->setShortcut(QKeySequence("Ctrl+Q"));
-	QAction *actionHelp=menuQuestion->addAction("&Afficher l'aide");
+	/*QAction *actionHelp=*/menuQuestion->addAction("&Afficher l'aide");
 	QAction *actionAbout=menuQuestion->addAction("&A propos");
 
 	windowAbout = new QDialog;
@@ -66,12 +66,12 @@ mainwindow::mainwindow()
 	mainButtonDisp(buttonNew);
 	mainButtonDisp(buttonSetup);
 
-	QVBoxLayout *layout = new QVBoxLayout;
-	layout->setAlignment(Qt::AlignJustify);
-	layout->addWidget(buttonList);
-	layout->addWidget(buttonNew);
-	layout->addWidget(buttonSetup);
-	zoneCentrale->setLayout(layout);
+	QVBoxLayout *layoutP = new QVBoxLayout;
+	layoutP->setAlignment(Qt::AlignJustify);
+	layoutP->addWidget(buttonList);
+	layoutP->addWidget(buttonNew);
+	layoutP->addWidget(buttonSetup);
+	zoneCentrale->setLayout(layoutP);
 	//
     
 	windowSetup = new QDialog;

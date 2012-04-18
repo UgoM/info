@@ -22,6 +22,8 @@ Brain::Brain()
 
 void Brain::sendTo(int idClient, QByteArray block)
 {
+    (void) idClient;
+    (void) block;
 }
 
 void Brain::sendToAll(QByteArray dat)
@@ -43,6 +45,7 @@ void Brain::sendToAll(QByteArray dat)
 void Brain::processReceive(QString block)
 {
     std::cout << "new data : " << block.toStdString() << std::endl;
+    (void) block;
 }
 
 void Brain::newConnection()

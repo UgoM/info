@@ -1,7 +1,7 @@
 #include <iostream>
 #include "QTcpSocketTest.h"
 
-QTcpSocketTest::QTcpSocketTest (QObject *parent): QTcpSocket(parent)
+QTcpSocketTest::QTcpSocketTest (QObject *p): QTcpSocket(p)
 {
     std::cout << "Constructeur QTcpSocketTest" << std::endl;
 }

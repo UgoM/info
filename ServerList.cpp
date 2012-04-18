@@ -171,6 +171,8 @@ void ServerList::askForInfos(QHostAddress senderHost, quint16 senderPort)
 
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+
+    (void) senderPort;
 }
 
 void ServerList::connected()
