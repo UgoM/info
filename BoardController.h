@@ -8,14 +8,16 @@
 
 class BoardController {
 
+	/*map de tous les points cliquables : clé = le point en question, valeur = liste (plusieurs chemins peuvent mener à la rafle maximale)
+	de la liste des points où ce pion doit aller, dans l'ordre du mouvement. */
 	QMap<QPoint, QList<QList<QPoint> > > * clickablePieces;
-	bool canQueenCapture;
-	bool queenMovementInProgress;
+	QPoint start;
 	
 	public:
 		void calculateClickablePieces(int** table, bool current);
+		void setStartPoint(const QPoint & point);
 		bool isPointClickable(const QPoint & point);
-		Move controlMove(int** table, const QPoint & point, const QPoint & wanted);
+		Move controlMove(const QPoint & wanted);
 		~BoardController();
 
 	private:

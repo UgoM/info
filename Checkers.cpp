@@ -1,97 +1,96 @@
 #include "Checkers.h"
 
+/** Séparateur utilisé dans l'encodage du damier **/
 const char Checkers::SEPARATOR = ';';
 
+/** Construit un nouveau damier. **/
 Checkers::Checkers() : Game() {
 	setFixedSize(MAX_ROW * CELL_SIZE, MAX_COL * CELL_SIZE);
 	image = new Image();
 	table = new int*[MAX_COL];
 	screen = new QLabel**[MAX_COL];
+	//initialisation du damier (pion et affichage)
 	for (int i = 0; i < MAX_COL; i++) {
 		table[i] = new int[MAX_ROW];
 		screen[i] = new QLabel*[MAX_ROW];
 	}
 	for (int i = 0; i < MAX_COL; i++) {
 		for (int j = 0; j < MAX_ROW; j++) {
+			screen[i][j] = new QLabel(this);
 			if ( (i + j) % 2 == 0) {
-				table[i][j] = EMPTY;
-				screen[i][j] = setLabelPicture(image->getEvenCell());
+				setPieceAt(i, j, EMPTY);
 			} else {
 				if (j <= 3) {
-					table[i][j] = BLACK_PAWN;
-					screen[i][j] = setLabelPicture(image->getBlackPawn());
+					setPieceAt(i, j, BLACK_PAWN);
 				} else if (j >= 6) {
-					table[i][j] = WHITE_PAWN;
-					screen[i][j] = setLabelPicture(image->getWhitePawn());
+					setPieceAt(i, j, WHITE_PAWN);
 				} else {
-					table[i][j] = NONE;
-					screen[i][j] = setLabelPicture(image->getOddCell());
+					setPieceAt(i, j, NONE);
 				}
 			}
 			screen[i][j]->move(i*CELL_SIZE, j*CELL_SIZE);
 		}
 	}
-	inPlay = NULL;
-	current = true;
+	moveInProgress = false;
+	current = true;	//les blancs commencent le jeu
 	controller = new BoardController();
 	controller->calculateClickablePieces(table, current);
 	whiteCount = blackCount = (MAX_COL / 2) * (MAX_ROW / 2 - 1);
 	show();
 }
 
-QLabel * Checkers::setLabelPicture(QPixmap * pixmap) {
-	QLabel * label = new QLabel(this);
-	label->setPixmap(*pixmap);
-	return label;
+/** Set the given piece at column i et row j. Update the screen accordingly. **/
+void Checkers::setPieceAt(int i, int j, int piece) {
+	table[i][j] = piece;
+	drawCell(i, j);
 }
 
-void Checkers::drawBoard()
-{
+/** Set the correct display image corresponding to the piece at the given column i and row j. **/
+void Checkers::drawCell(int i, int j) {
+	switch(table[i][j]) {
+		case WHITE_PAWN : screen[i][j]->setPixmap(*image->getWhitePawn()); break;
+		case BLACK_PAWN : screen[i][j]->setPixmap(*image->getBlackPawn()); break;
+		case WHITE_QUEEN : screen[i][j]->setPixmap(*image->getWhiteQueen()); break;
+		case BLACK_QUEEN : screen[i][j]->setPixmap(*image->getBlackQueen()); break;
+		case NONE : screen[i][j]->setPixmap(*image->getOddCell()); break;
+		case EMPTY : screen[i][j]->setPixmap(*image->getEvenCell()); break;
+		default : break;
+	}
+}
+
+/** Draw the whole board. **/
+void Checkers::drawBoard() {
 	for (int j = 0; j < MAX_ROW; j++) {
 		for (int i = 0; i < MAX_COL; i++) {
-			switch(table[i][j]) {
-				case WHITE_PAWN : screen[i][j]->setPixmap(*image->getWhitePawn()); break;
-				case BLACK_PAWN : screen[i][j]->setPixmap(*image->getBlackPawn()); break;
-				case WHITE_QUEEN : screen[i][j]->setPixmap(*image->getWhiteQueen()); break;
-				case BLACK_QUEEN : screen[i][j]->setPixmap(*image->getBlackQueen()); break;
-                case NONE : screen[i][j]->setPixmap(*image->getOddCell());
-				default : break;
-			}
-        }
-    }
-            
+			drawCell(i, j);
+		}
+	}
 }
 
+/** Handle mouse press event. **/
 void Checkers::mousePressEvent(QMouseEvent *ev) {
-    if (clientType == ClientType::OBSERVER) {
-		return;
+	if (clientType == ClientType::OBSERVER) {
+		return;	//si c'est un observeur qui clique, on le coupe
 	}
-	if (!inPlay) {
-		inPlay = static_cast<QLabel*>(childAt(ev->pos()));
+	if (!moveInProgress) {	//aucun mouvement en cours
+		QLabel * inPlay = static_cast<QLabel*>(childAt(ev->pos()));	//récupération de l'image cliquée
 		position.setX((inPlay->pos()).x() / CELL_SIZE);
 		position.setY((inPlay->pos()).y() / CELL_SIZE);
-		start = position;
-		if (!controller->isPointClickable(position)) {
-			inPlay = NULL;
-		}
-	} else {
-		QPoint wanted((ev->pos()).x() / CELL_SIZE, (ev->pos()).y() / CELL_SIZE);
-		Move movePerformed = controller->controlMove(table, start, wanted);
-		if (movePerformed != ILLEGAL) {
+		controller->setStartPoint(position);
+		moveInProgress = controller->isPointClickable(position);	//on vérifie si le pion est bien cliquable
+	} else {	//mouvement en cours
+		QPoint wanted((ev->pos()).x() / CELL_SIZE, (ev->pos()).y() / CELL_SIZE);	//position voulue
+		Move movePerformed = controller->controlMove(wanted);	//cette position est-elle acceptable ?
+		if (movePerformed != ILLEGAL) {	//oui, elle est acceptable (sinon, il ne se passe rien)
 			int ni = wanted.x(), nj = wanted.y(), i = position.x(), j = position.y();
-			table[ni][nj] = table[i][j];
-			switch(table[i][j]) {
-				case WHITE_PAWN : screen[ni][nj]->setPixmap(*image->getWhitePawn()); break;
-				case BLACK_PAWN : screen[ni][nj]->setPixmap(*image->getBlackPawn()); break;
-				case WHITE_QUEEN : screen[ni][nj]->setPixmap(*image->getWhiteQueen()); break;
-				case BLACK_QUEEN : screen[ni][nj]->setPixmap(*image->getBlackQueen()); break;
-				default : break;
-			}
-			table[i][j] = NONE;
-			screen[i][j]->setPixmap(*image->getOddCell());
-			if (movePerformed == SIMPLE) {
+			//transfert du pion et mise à jour de l'affichage
+			setPieceAt(ni, nj, table[i][j]);
+			setPieceAt(i, j, NONE);
+			if (movePerformed == SIMPLE) {	//pas de prise
 				handleChangeTurn(ni, nj);
-			} else {
+			} else {	//une prise
+				/*afin de s'affranchir des subtilités de la dame, tous les pions situés sur la diagonale
+				reliant la position finale à la position initiale sont enlevés. En fait, il ne peut y en avoir qu'un seul (mais on se pas à priori où)*/
 				for (int k = 1; k < qAbs(ni - i); k++) {
 					int deltaY = nj-j > 0 ? k : -k;
 					int deltaX = ni-i > 0 ? k : -k;
@@ -100,35 +99,37 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 						screen[i+deltaX][j+deltaY]->setPixmap(*image->getOddCell());
 					}
 				}
+				//mise à jour du nombre de pion
 				if (current) {
 					blackCount--;
 				} else {
 					whiteCount--;
 				}
-				if (movePerformed == SINGLE_CAPTURE) {
+				if (movePerformed == SINGLE_CAPTURE) {	//prise simple (au sens où il ne peut pas y en avoir une autre et le mouvement est terminé)
 					handleChangeTurn(ni, nj);
-				} else {
+				} else {	//il reste des pions à prendre
 					position = QPoint(ni, nj);
 				}
 			}
-			emit moveMade(encodeBoard());
+			emit moveMade(encodeBoard());	//on prévient qu'un coup est joué à tous ceux qui écoutent
 		}
 	}
 }
 
+/** Handle the change turn. **/
 void Checkers::handleChangeTurn(int ni, int nj) {
-	inPlay = NULL;
+	moveInProgress = false;
+	//fait la promotion des pions en dames, s'il y en a
 	if (current && nj == 0) {
-		table[ni][nj] = WHITE_QUEEN;
-		screen[ni][nj]->setPixmap(*image->getWhiteQueen());
+		setPieceAt(ni, nj, WHITE_QUEEN);
 	} else if (!current && nj == MAX_ROW - 1) {
-		table[ni][nj] = BLACK_QUEEN;
-		screen[ni][nj]->setPixmap(*image->getBlackQueen());
+		setPieceAt(ni, nj, BLACK_QUEEN);
 	}
-	current = !current;
-	controller->calculateClickablePieces(table, current);
+	current = !current;	//le tour change
+	controller->calculateClickablePieces(table, current);	//il faut recalculer les pions cliquables en conséquence
 }
 
+/** Encode the board into a QByteArray to prepare transmission. **/
 QByteArray Checkers::encodeBoard() const {
 	QByteArray byteArray;
 	for (int j = 0; j < MAX_ROW; j++) {
@@ -140,18 +141,21 @@ QByteArray Checkers::encodeBoard() const {
 	return byteArray;
 }
 
+/** Decode the board according to the given QByteArray. **/
 void Checkers::decodeBoard(QByteArray byteArray) {
 	QList<QByteArray> tokens = byteArray.split(SEPARATOR);
 	for (int k = 0; k < tokens.size() - 1; k++) {
-        table[k % MAX_COL][k / MAX_COL] = tokens[k].toInt();
+		table[k % MAX_COL][k / MAX_COL] = tokens[k].toInt();
 	}
 	current = tokens.last().toInt();
 }
 
+/** Return the matrix of pieces of the board. **/
 int** Checkers::getPieceTable() {
 	return table;
 }
 
+/** Delete this checkers instance. **/
 Checkers::~Checkers() {
 	delete image;
 	for (int i = 0; i < MAX_ROW; i++) {
@@ -163,14 +167,12 @@ Checkers::~Checkers() {
 	}
 	delete[] table;
 	delete[] screen;
-	delete inPlay;
 }
 
 
-void Checkers::processReceive(QByteArray block)
-{
-    decodeBoard(block);
-    drawBoard();
+void Checkers::processReceive(QByteArray block) {
+	decodeBoard(block);
+	drawBoard();
 }
 
 void Checkers::processClick() {
@@ -181,7 +183,6 @@ void Checkers::processKey() {
 
 }
 
-void Checkers::reSendData()
-{
-    emit moveMade(encodeBoard());
+void Checkers::reSendData() {
+	emit moveMade(encodeBoard());
 }

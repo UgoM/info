@@ -12,17 +12,16 @@ class Checkers : public Game {
 
 	Q_OBJECT
 	
-	int** table;
-	QLabel*** screen;
-	Image* image;
-	bool current;	//true if white to play, false otherwhise
+	int** table;	//contient une matrice de l'enum Pion.
+	QLabel*** screen;	//contient l'image à affichier dans chaque case dans un QLabel.
+	Image* image;	//pointeur vers tous les fichiers images
+	bool current;	//true si les blancs jouent, false sinon
 	BoardController * controller;
-	int whiteCount;
-	int blackCount;
+	int whiteCount;	//nombre de pions blancs sur le damier
+	int blackCount;	//nombre de pions noirs sur le damier
 	
-	QLabel * inPlay;
-	QPoint position;
-	QPoint start;
+	bool moveInProgress;	//true si un mouvement est un cours, false sinon
+	QPoint position;	//contient la position courant du pion en cours de mouvement
 	
 	static const char SEPARATOR;
 
@@ -43,9 +42,10 @@ class Checkers : public Game {
         void reSendData();
 
 	private:
-		QLabel * setLabelPicture(QPixmap * pixmap);
 		void handleChangeTurn(int ni, int nj);
 		QByteArray encodeBoard() const;
+		void setPieceAt(int i, int j, int piece);
+		void drawCell(int i, int j);
 		
 	signals:
 		void moveMade(QByteArray boardEnc);
