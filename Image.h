@@ -7,6 +7,7 @@ class Image {
 
 	QPixmap * oddCell;
 	QPixmap * evenCell;
+	QPixmap * grayCell;
 	
 	QPixmap * whitePawn;
 	QPixmap * blackPawn;
@@ -16,23 +17,26 @@ class Image {
 	public:
 		Image();
 		~Image();
-		QPixmap * getOddCell() {
-			return oddCell;
+		QPixmap getOddCell() {
+			return *oddCell;
 		}
-		QPixmap * getEvenCell() {
-			return evenCell;
+		QPixmap getEvenCell() {
+			return *evenCell;
 		}
-		QPixmap * getWhitePawn() {
-			return whitePawn;
+		QPixmap getGrayCell() {
+			return *grayCell;
 		}
-		QPixmap * getBlackPawn() {
-			return blackPawn;
+		QPixmap getWhitePawn() {
+			return *whitePawn;
 		}
-		QPixmap * getWhiteQueen() {
-			return whiteQueen;
+		QPixmap getBlackPawn() {
+			return *blackPawn;
 		}
-		QPixmap * getBlackQueen() {
-			return blackQueen;
+		QPixmap getWhiteQueen() {
+			return *whiteQueen;
+		}
+		QPixmap getBlackQueen() {
+			return *blackQueen;
 		}
 
 };

@@ -6,6 +6,7 @@ const char Checkers::SEPARATOR = ';';
 /** Construit un nouveau damier. **/
 Checkers::Checkers() : Game() {
 	setFixedSize(MAX_ROW * CELL_SIZE, MAX_COL * CELL_SIZE);
+	controller = new BoardController();
 	image = new Image();
 	table = new int*[MAX_COL];
 	screen = new QLabel**[MAX_COL];
@@ -33,7 +34,6 @@ Checkers::Checkers() : Game() {
 	}
 	moveInProgress = false;
 	current = true;	//les blancs commencent le jeu
-	controller = new BoardController();
 	controller->calculateClickablePieces(table, current);
 	whiteCount = blackCount = (MAX_COL / 2) * (MAX_ROW / 2 - 1);
 	show();
@@ -41,19 +41,22 @@ Checkers::Checkers() : Game() {
 
 /** Set the given piece at column i et row j. Update the screen accordingly. **/
 void Checkers::setPieceAt(int i, int j, int piece) {
-	table[i][j] = piece;
-	drawCell(i, j);
+	if (controller->inBounds(i, j)) {
+		table[i][j] = piece;
+		drawCell(i, j);
+	}
 }
 
 /** Set the correct display image corresponding to the piece at the given column i and row j. **/
 void Checkers::drawCell(int i, int j) {
 	switch(table[i][j]) {
-		case WHITE_PAWN : screen[i][j]->setPixmap(*image->getWhitePawn()); break;
-		case BLACK_PAWN : screen[i][j]->setPixmap(*image->getBlackPawn()); break;
-		case WHITE_QUEEN : screen[i][j]->setPixmap(*image->getWhiteQueen()); break;
-		case BLACK_QUEEN : screen[i][j]->setPixmap(*image->getBlackQueen()); break;
-		case NONE : screen[i][j]->setPixmap(*image->getOddCell()); break;
-		case EMPTY : screen[i][j]->setPixmap(*image->getEvenCell()); break;
+		case WHITE_PAWN : screen[i][j]->setPixmap(image->getWhitePawn()); break;
+		case BLACK_PAWN : screen[i][j]->setPixmap(image->getBlackPawn()); break;
+		case WHITE_QUEEN : screen[i][j]->setPixmap(image->getWhiteQueen()); break;
+		case BLACK_QUEEN : screen[i][j]->setPixmap(image->getBlackQueen()); break;
+		case NONE : screen[i][j]->setPixmap(image->getOddCell()); break;
+		case EMPTY : screen[i][j]->setPixmap(image->getEvenCell()); break;
+		case GRAY : screen[i][j]->setPixmap(image->getGrayCell()); break;
 		default : break;
 	}
 }
@@ -77,7 +80,11 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 		position.setX((inPlay->pos()).x() / CELL_SIZE);
 		position.setY((inPlay->pos()).y() / CELL_SIZE);
 		controller->setStartPoint(position);
-		moveInProgress = controller->isPointClickable(position);	//on vérifie si le pion est bien cliquable
+		if (controller->isPointClickable(position)) {	//on vérifie si le pion est bien cliquable
+			moveInProgress = true;
+			grayAllowedPositions();
+		}
+		// moveInProgress = controller->isPointClickable(position);
 	} else {	//mouvement en cours
 		QPoint wanted((ev->pos()).x() / CELL_SIZE, (ev->pos()).y() / CELL_SIZE);	//position voulue
 		Move movePerformed = controller->controlMove(wanted);	//cette position est-elle acceptable ?
@@ -94,9 +101,8 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 				for (int k = 1; k < qAbs(ni - i); k++) {
 					int deltaY = nj-j > 0 ? k : -k;
 					int deltaX = ni-i > 0 ? k : -k;
-					if (table[i+deltaX][j+deltaY] != NONE) {
-						table[i+deltaX][j+deltaY] = NONE;
-						screen[i+deltaX][j+deltaY]->setPixmap(*image->getOddCell());
+					if (table[i + deltaX][j + deltaY] != NONE) {
+						setPieceAt(i + deltaX, j + deltaY, NONE);
 					}
 				}
 				//mise à jour du nombre de pion
@@ -112,6 +118,26 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 				}
 			}
 			emit moveMade(encodeBoard());	//on prévient qu'un coup est joué à tous ceux qui écoutent
+			grayAllowedPositions();
+		}
+	}
+}
+
+/** Gray on the screen all positions that are allowed for the current move. **/
+void Checkers::grayAllowedPositions() {
+	//remise à zéro
+	for (int i = 0; i < MAX_COL; i++) {
+		for (int j = 0; j < MAX_ROW; j++) {
+			if (table[i][j] == GRAY) {
+				setPieceAt(i, j, NONE);
+			}
+		}
+	}
+	//les cases accepatbles sont grisées
+	foreach (QList<QPoint> list, controller->getAllowedPositions()) {
+		for (int i = 0; i < list.size(); i++) {
+			QPoint point = list[i];
+			setPieceAt(point.x(), point.y(), GRAY);
 		}
 	}
 }

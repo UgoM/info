@@ -46,6 +46,7 @@ class Checkers : public Game {
 		QByteArray encodeBoard() const;
 		void setPieceAt(int i, int j, int piece);
 		void drawCell(int i, int j);
+		void grayAllowedPositions();
 		
 	signals:
 		void moveMade(QByteArray boardEnc);

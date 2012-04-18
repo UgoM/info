@@ -20,7 +20,8 @@ enum Piece {
 	BLACK_QUEEN,
 	NONE, //n'a pas de pièces
 	EMPTY, //n'en aura jamais (case paire)
-	TOOK
+	GRAY,	//case grise (aide pour cliquer sur les bonnes cases)
+	TOOK	//précise que la pièce est prise (utile pour les calculs de rafle avec une dame)
 };
 
 #endif

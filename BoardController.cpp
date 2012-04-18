@@ -6,10 +6,16 @@ bool operator<(const QPoint & lhs, const QPoint & rhs) {
 }
 
 /** Return true if the given point is a clickable, false otherwise. **/
-bool BoardController::isPointClickable(const QPoint & point) {
+bool BoardController::isPointClickable(const QPoint & point) const {
 	return clickablePieces->contains(point);
 }
 
+/** Return all of the allowed positions for the current move. **/
+QList<QList<QPoint> > BoardController::getAllowedPositions() const {
+	return clickablePieces->value(start);
+}
+
+/** Set the starting point of the current move. **/
 void BoardController::setStartPoint(const QPoint & point) {
 	start = point;
 }
@@ -17,7 +23,7 @@ void BoardController::setStartPoint(const QPoint & point) {
 /** Control the move by the new wanted position of the piece in movement. Return a value of the enum Move accordingly. **/
 Move BoardController::controlMove(const QPoint & wanted) {
 	QList<QList<QPoint> > newlyAllowedPositions;	//va contenir les nouvelles positions auxquelles que le pion en cours de mouvement aura accès.
-	foreach (QList<QPoint> list, clickablePieces->value(start)) {
+	foreach (QList<QPoint> list, getAllowedPositions()) {
 		if (list.startsWith(wanted)) {	//est bien voulue la première case légale, les nouvelles positions sont toutes sauf celle-là
 			list.removeFirst();
 			newlyAllowedPositions << list;
@@ -121,12 +127,12 @@ void BoardController::calculateClickablePieces(int** table, bool current) {
 }
 
 /** True if the given column i and row j are within the bounds of the board. **/
-bool BoardController::inBounds(int i, int j) {
+bool BoardController::inBounds(int i, int j) const {
 	return i >= 0 && i < MAX_COL && j >= 0 && j < MAX_ROW;
 }
 
 /** If the given piece is a pawn, return the correspoding queen (same suit), and inversingly. **/
-int BoardController::getOther(int piece) {
+int BoardController::getOther(int piece) const {
 	switch (piece) {
 		case WHITE_PAWN : return WHITE_QUEEN;
 		case BLACK_PAWN : return BLACK_QUEEN;
@@ -138,7 +144,7 @@ int BoardController::getOther(int piece) {
 
 /** Find the maximum number of pieces that can be captured by the pawn at column i and row j for the given board configuration.
 Argument 'piece' corresponds to the target piece. **/
-int BoardController::findPawnCapture(int i, int j, int** table, int piece) {
+int BoardController::findPawnCapture(int i, int j, int** table, int piece) const {
 	int rafle = 0, maxRafle = 0, lin = 0, col = 0;
 	int pieceOther = getOther(piece);
 	foreach (Direction dir, Direction::values()) {
@@ -164,7 +170,7 @@ Argument 'coord' is the list (possibly several captures) of the list of QPoint c
 Argument 'length' has to be 0 when this method is called.
 Argument 'maxRafle' is the number returned by 'findPawnCapture'.
 Argument 'piece' is the target piece. **/
-int BoardController::coordMaxPawnCapture(int i, int j, int** table, QList<QList<QPoint> > & coord, int length, int maxRafle, int piece) {
+int BoardController::coordMaxPawnCapture(int i, int j, int** table, QList<QList<QPoint> > & coord, int length, int maxRafle, int piece) const {
 	int lin = 0, col = 0, l = 0, rafle = 0, rafleTmp = 0;
 	int pieceOther = getOther(piece);
 	foreach (Direction dir, Direction::values()) {
@@ -206,7 +212,7 @@ int BoardController::coordMaxPawnCapture(int i, int j, int** table, QList<QList<
 /** Find the maximum number of pieces that can be captured by the queen at column i and row j for the given board configuration.
 Argument 'dirPrec' has to be Direction::UNDEFINED when this method is called.
 Argument 'piece' corresponds to the target piece. **/
-int BoardController::findQueenCapture(int i, int j, Direction dirPrec, int** table, int piece){
+int BoardController::findQueenCapture(int i, int j, Direction dirPrec, int** table, int piece) const {
 	int rafle = 0, maxRafle = 0, lin = 0, col = 0;
 	int pieceOther = getOther(piece);
 	if (dirPrec == Direction::UNDEFINED) {
@@ -293,7 +299,7 @@ Argument 'coord' is the list (possibly several captures) of the list of QPoint c
 Argument 'length' has to be 0 when this method is called.
 Argument 'maxRafle' is the number returned by 'findQueenCapture'.
 Argument 'piece' is the target piece. **/
-int BoardController::coordMaxQueenCapture(int i, int j, Direction dirPrec, int** table, QList<QList<QPoint> > & coord, int length, int maxRafle, int piece) {
+int BoardController::coordMaxQueenCapture(int i, int j, Direction dirPrec, int** table, QList<QList<QPoint> > & coord, int length, int maxRafle, int piece) const {
 	int rafle=0, res=0, col=0, lin=0, l=0;
 	int pieceOther = getOther(piece);
 	if (dirPrec == Direction::UNDEFINED) {
