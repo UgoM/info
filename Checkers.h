@@ -38,7 +38,10 @@ class Checkers : public Game {
 		void processReceive(QByteArray block);
 		void processClick();
 		void processKey();
-		
+
+    public slots:
+        void reSendData();
+
 	private:
 		QLabel * setLabelPicture(QPixmap * pixmap);
 		void handleChangeTurn(int ni, int nj);

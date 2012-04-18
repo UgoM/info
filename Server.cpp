@@ -67,7 +67,7 @@ void Server::makeNewGame()
 
 
 	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), newBrain, SLOT(handleMove(QByteArray)));
-
+	QObject::connect(newBrain, SIGNAL(newObs()), newGame, SLOT(reSendData()));
 	std::cout << "New game created" << std::endl;
 }
 

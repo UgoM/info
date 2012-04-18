@@ -180,3 +180,8 @@ void Checkers::processClick() {
 void Checkers::processKey() {
 
 }
+
+void Checkers::reSendData()
+{
+    emit moveMade(encodeBoard());
+}

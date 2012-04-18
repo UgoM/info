@@ -34,6 +34,9 @@ class Game : public QWidget
 
 		virtual void processReceive(QByteArray block);
 
+    public slots:
+        virtual void reSendData(){};
+
     signals:
         void newGameData(QByteArray block);
 };

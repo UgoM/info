@@ -54,6 +54,8 @@ void Brain::newConnection()
 
     connect(nouveauClient, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(nouveauClient, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
+
+    emit newObs(); 
 }
 
 void Brain::readDataTcp()

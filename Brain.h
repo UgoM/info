@@ -32,4 +32,5 @@ class Brain : public QObject
 
     signals:
         void newGameData(QString block);
+        void newObs();
 };
