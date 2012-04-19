@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QMouseEvent>
+#include <QMessageBox>
 #include "Game.h"
 #include "Constants.h"
 #include "Image.h"
@@ -47,6 +48,8 @@ class Checkers : public Game {
 		void setPieceAt(int i, int j, int piece);
 		void drawCell(int i, int j);
 		void grayAllowedPositions();
+		void resetGrayPositions();
+		void endGame();
 		
 	signals:
 		void moveMade(QByteArray boardEnc);

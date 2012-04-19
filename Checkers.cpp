@@ -115,17 +115,17 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 					handleChangeTurn(ni, nj);
 				} else {	//il reste des pions à prendre
 					position = QPoint(ni, nj);
+					grayAllowedPositions();
 				}
 			}
 			emit moveMade(encodeBoard());	//on prévient qu'un coup est joué à tous ceux qui écoutent
-			grayAllowedPositions();
 		}
 	}
 }
 
-/** Gray on the screen all positions that are allowed for the current move. **/
-void Checkers::grayAllowedPositions() {
-	//remise à zéro
+/** Reset gray cell on screen back to NONE. **/
+void Checkers::resetGrayPositions() {
+	//remise à zéro des aides de localisation
 	for (int i = 0; i < MAX_COL; i++) {
 		for (int j = 0; j < MAX_ROW; j++) {
 			if (table[i][j] == GRAY) {
@@ -133,6 +133,10 @@ void Checkers::grayAllowedPositions() {
 			}
 		}
 	}
+}
+
+/** Gray on the screen all positions that are allowed for the current move. **/
+void Checkers::grayAllowedPositions() {
 	//les cases accepatbles sont grisées
 	foreach (QList<QPoint> list, controller->getAllowedPositions()) {
 		for (int i = 0; i < list.size(); i++) {
@@ -142,9 +146,13 @@ void Checkers::grayAllowedPositions() {
 	}
 }
 
-/** Handle the change turn. **/
+/** Handle the change in turn. **/
 void Checkers::handleChangeTurn(int ni, int nj) {
+	if (whiteCount == 0 || blackCount == 0) {
+		return endGame();
+	}
 	moveInProgress = false;
+	resetGrayPositions();
 	//fait la promotion des pions en dames, s'il y en a
 	if (current && nj == 0) {
 		setPieceAt(ni, nj, WHITE_QUEEN);
@@ -153,6 +161,17 @@ void Checkers::handleChangeTurn(int ni, int nj) {
 	}
 	current = !current;	//le tour change
 	controller->calculateClickablePieces(table, current);	//il faut recalculer les pions cliquables en conséquence
+}
+
+void Checkers::endGame() {
+	QString endText("Les ");
+	endText.append(whiteCount == 0 ? "noirs " : "blancs ");
+	endText.append("ont gagné la partie !");
+	QMessageBox endMessageBox(QMessageBox::Information, tr("Fin de la partie !"), endText);
+	endMessageBox.setWindowModality(Qt::WindowModal);
+	endMessageBox.addButton(tr("Fermer la partie"), QMessageBox::AcceptRole);
+	endMessageBox.exec();
+	hide();
 }
 
 /** Encode the board into a QByteArray to prepare transmission. **/
