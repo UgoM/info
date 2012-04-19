@@ -1,16 +1,19 @@
-#pragma once
+#ifndef DEF_SERVERLISTWIDGET
+#define DEF_SERVERLISTWIDGET
 
-#include "ServerList.h"
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QTableView>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QHeaderView>
+#include "ServerList.h"
 
-class ServerListWidget : public QWidget
-{
+class ServerListWidget : public QWidget {
+
     Q_OBJECT
 
     ServerList * serverList;
-    QStandardItemModel * model;
     QTableView * tableView;
 
     public:
@@ -25,6 +28,8 @@ class ServerListWidget : public QWidget
         void buttonObserv();
 
 	signals:
-        void newObserver( QString hostAddress, quint32 id );
+        void newObserver(QString hostAddress, quint32 id);
 
 };
+
+#endif

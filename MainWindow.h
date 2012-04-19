@@ -1,27 +1,33 @@
 #ifndef HEADER_MAINWINDOW
 #define HEADER_MAINWINDOW
 
-
-#include <QtGui>
-#include <QVBoxLayout>
-
-#include <QApplication>
-#include <QWidget>
-#include <QPushButton>
+#include <QMainWindow>
+#include <QMdiArea>
+#include <QAction>
+#include <QMenuBar>
 
 #include "ServerListWidget.h"
-
-#include <QMessageBox>
+#include "PlayerConfigurationWindow.h"
+#include "Checkers.h"
+#include "ServerList.h"
  
-class mainwindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
+
 	Q_OBJECT
+	
+	QDialog * windowBoss;
+	QDialog * windowAbout;
+	QDialog * windowServerWatch;
+
+	Server * server;
+	ServerListWidget * serverListWidget;
+	PlayerConfigurationWindow * playerConfigurationWindow;
+	QList<Game *> games;	
 
     public:
-		mainwindow();
+		MainWindow();
 	
 	public:
-		void log(const char * message, int);
 		void mainButtonDisp(QPushButton * button);
 
 	public slots:
@@ -29,51 +35,12 @@ class mainwindow : public QMainWindow
 		void serverListDisp();
 		void setupDisp();
 		void serverWatchDisp();
-		void setupClose();
-		void setupCancel();
 	    void newGameFromMenu();
 
-		
 		void windowBossDisp();
 		void windowAboutDisp();
 
-        void newObserver( QString hostAddress, quint32 id );
-
-		
-
-	private:
-		
-		QDialog *windowBoss;
-		QDialog *windowAbout;
-
-
-
-		QDialog *windowSetup;
-
-		QString SgamerName;
-		QString SgamerPseudo;
-		QString SgamerPassword;
-		QLineEdit *gamerName;
-		QLineEdit *gamerPassword;
-		QLineEdit *gamerPseudo;
-
-
-
-
-		QTextEdit *comment;
-		QGroupBox *groupComment;
-		QCheckBox *gamerStatute;
-		QCheckBox *chatStatute;
-		QPushButton *create;
-        QPushButton *cancel;
-
-		QDialog *windowServerWatch;
-
-
-        Server * server;
-        ServerListWidget * serverListWidget;
-        QList<Game *> games;		
-		
+        void newObserver(QString hostAddress, quint32 id);
 
 };
  
