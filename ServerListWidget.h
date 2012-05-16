@@ -7,6 +7,9 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QHeaderView>
+#include <QLineEdit>
+#include <QLabel>
+#include <QSettings>
 #include "ServerList.h"
 
 class ServerListWidget : public QWidget {
@@ -15,6 +18,8 @@ class ServerListWidget : public QWidget {
 
     ServerList * serverList;
     QTableView * tableView;
+
+    QLineEdit * fieldBroadcastAddress;
 
     public:
         ServerListWidget();
@@ -26,6 +31,7 @@ class ServerListWidget : public QWidget {
         void buttonRefresh();
         void refreshDisplay();
         void buttonObserv();
+        void textBroadcastAddressChanged(QString);
 
 	signals:
         void newObserver(QString hostAddress, quint32 id);

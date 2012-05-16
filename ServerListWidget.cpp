@@ -8,13 +8,19 @@ ServerListWidget::ServerListWidget() {
     QPushButton * buttonGetList = new QPushButton(tr("Rafraîchir"));
     QPushButton * buttonConnect = new QPushButton(tr("Connecter"));
     QPushButton * buttonWatch = new QPushButton(tr("Observer"));
+    QLabel      * labelBroadcast = new QLabel(tr("Broadcast Address :"));
+    fieldBroadcastAddress = new QLineEdit();
 	connect(buttonGetList, SIGNAL(clicked()), this, SLOT(buttonRefresh()));
 	connect(buttonWatch, SIGNAL(clicked()), this, SLOT(buttonObserv()));
+    connect(fieldBroadcastAddress, SIGNAL(textChanged(QString)),
+                    this, SLOT(textBroadcastAddressChanged(QString)));
 	QGridLayout * gridLayout = new QGridLayout();
     gridLayout->addWidget(tableView, 0, 0, 0, 10);
     gridLayout->addWidget(buttonGetList, 1, 0);
     gridLayout->addWidget(buttonConnect, 1, 1);
     gridLayout->addWidget(buttonWatch, 1, 2);
+    gridLayout->addWidget(labelBroadcast, 2, 0, 2, 1);
+    gridLayout->addWidget(fieldBroadcastAddress, 2, 1, 2, 3);
 	setLayout(gridLayout);
     config();
 }
@@ -26,6 +32,20 @@ void ServerListWidget::config() {
     tableView->verticalHeader()->hide();
     tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //resultTableView->resizeColumnsToContents();
+
+    // import setting
+    QSettings settings;
+    QStringList broadcastAddresses = settings.value("network/broadcastAdresses").toStringList();
+    QString text = broadcastAddresses.join(", ");
+    fieldBroadcastAddress->setText(text);
+}
+
+// When the Broadcast Addresses are manually changed, it is saved to 
+// the configuration file
+void ServerListWidget::textBroadcastAddressChanged(QString text)
+{
+    QSettings settings;
+    settings.setValue("network/broadcastAdresses", text.split(","));
 }
 
 void ServerListWidget::buttonRefresh() {
