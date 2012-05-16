@@ -45,6 +45,9 @@ void initConfig()
     foreach (key, allDefaultKeys) {
         if (!settings.contains(key)) {
             settings.setValue(key, defSettings.value(key));
+            qDebug() << "put default value (" << defSettings.value(key) << ")"
+                        << "for missing key (" << key << ")"
+                        << " in configuration file";
         }
     }
 }
