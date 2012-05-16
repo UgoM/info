@@ -45,11 +45,25 @@ void ServerList::run()
     // start listening for 5s
     flg_listen = 1;
 
+    // get broadcast addresses
+    QSettings settings;
+    QStringList broadcastAddresses = settings.value("network/broadcastAdresses").toStringList();
+
     // broadcast message
+    QString broadcastAddress;
     QByteArray datagram = serverObject->messageByteArray("UDP_ASK_FOR_SERVER");
     QUdpSocket * udpSocket_send = new QUdpSocket(this);
-    udpSocket_send->writeDatagram(datagram.data(), datagram.size(), /*QHostAddress("127.0.0.1") *//*QHostAddress("193.54.87.255")*/QHostAddress("192.168.0.255")/*QHostAddress::Broadcast*/, 12800);
-    std::cout << "ServerList : Broadcast message, now waiting for responses..." << std::endl;
+    qDebug() << "ServerList : Broadcasting message ... "; 
+    foreach(broadcastAddress, broadcastAddresses) {
+        QHostAddress address (broadcastAddress);
+        if (address.isNull()) {
+            qDebug() << "invalid Host Address : " << broadcastAddress;
+        } else {
+            udpSocket_send->writeDatagram(datagram.data(), datagram.size(), address, 12800);
+            qDebug() << "sending to  : " << broadcastAddress;
+        }
+   }
+    qDebug() << "Now waiting for responses...";
 
 
     // end listening after timeout
