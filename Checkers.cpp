@@ -83,6 +83,13 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 		if (controller->isPointClickable(position)) {	//on vérifie si le pion est bien cliquable
 			moveInProgress = true;
 			grayAllowedPositions();
+		} else {
+			int pion = table[position.x()][position.y()];
+			if ((current && (pion == WHITE_PAWN || pion == WHITE_QUEEN)) ||
+				(!current && (pion == BLACK_PAWN|| pion == BLACK_QUEEN))) {
+				//le pion cliqué n'est pas le pion qui prend le plus de pion adverse
+				QMessageBox::information(this, tr("Rafle maximale"), tr("Vous devez prendre le plus de pions adverses !"));
+			}
 		}
 		// moveInProgress = controller->isPointClickable(position);
 	} else {	//mouvement en cours
