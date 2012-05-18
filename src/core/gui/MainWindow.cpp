@@ -132,7 +132,7 @@ void MainWindow::newObserver(QString hostAddress, quint32 id) {
 
 // Make a new window, where the game will be (for players AND observers)
 // Will someday contain other widget like a chat, or game infos
-void MainWindow::newGameWindow(QWidget * widget)
+void MainWindow::newGameWindow(QWidget * newGame)
 {
     // Widget that will be the window
     QWidget * newWindow = new QWidget();
@@ -147,15 +147,21 @@ void MainWindow::newGameWindow(QWidget * widget)
     gif->setFrameStyle(QFrame::Box | QFrame::Raised);
     gif->setLineWidth(2);
     gig->addWidget(giw);
-    gif->setLayout(gig);
-    
+    gif->setLayout(gig);   
 
     // Positioning
 	QGridLayout * gridLayout = new QGridLayout();
-    gridLayout->addWidget(widget, 0, 0, 10, 10);
+    gridLayout->addWidget(newGame, 0, 0, 10, 10);
     gridLayout->addWidget(gif, 0, 11, 1, 3);
     gridLayout->addWidget(empty, 3, 11, 1, 7);
 	newWindow->setLayout(gridLayout);
 
     newWindow->show();
+
+    // Connecting Game to GameInfoWidget to refresh infos
+    connect(newGame, SIGNAL(nPlayersChanged(int)), 
+        giw, SLOT(nPlayersChanged(int)) );
+    connect(newGame, SIGNAL(nObsChanged(int)), 
+        giw, SLOT(nObsChanged(int)) );
+//TODO ajouter gestion du nombre de joueurs/observateurs par Brain
 }

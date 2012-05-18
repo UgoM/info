@@ -52,6 +52,8 @@ namespace DataType {
 	enum EDataType {
 		MESSAGE = 1,
         LISTOFSERVERS,
-        GAMEDATA
+        GAMEDATA,
+        NPLAYERS,
+        NOBS
 	};
 }

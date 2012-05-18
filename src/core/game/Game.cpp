@@ -7,6 +7,9 @@ Game::Game()
 	qDebug() << "Constructeur Game";
     clientType = ClientType::NONE;
     idPlayer = 0;
+
+    nPlayers = 0;
+    nObs = 0;
 }
 
 Game::~Game()
@@ -73,7 +76,13 @@ void Game::readDataTcp()
         qDebug() << "GAMEDATA";
 	    qDebug() << block;
         emit newGameData( block );  
-    } 
+    } else if (type == DataType::NPLAYERS) {
+        nPlayers = block.toInt();        
+        emit nPlayersChanged(nPlayers);
+    } else if (type == DataType::NOBS) {
+        nObs = block.toInt();        
+        emit nObsChanged(nObs);
+    }
 }
 
 void Game::displayErrorTcp(QAbstractSocket::SocketError socketError)

@@ -13,7 +13,7 @@ class Brain : public QObject
         quint32 getPort() { return port; };
 
         virtual QString name(){return "";};
-        virtual QString nPlayers(){return "";};
+        int getNPlayers(){return nPlayers;};
 
 	protected:
 		void sendTo(int idClient, QByteArray dat);
@@ -23,6 +23,11 @@ class Brain : public QObject
         quint32 port;
         QTcpServer * tcpServer;
         QList<QTcpSocket *> clients;
+        int nObs;
+        int nPlayers;
+
+        void sendNObs();
+        void sendNPlayers();
 
     private slots:
         void newConnection();

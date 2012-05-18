@@ -16,6 +16,9 @@ Brain::Brain()
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
     connect(this, SIGNAL(newGameData(QString)), this, SLOT(processReceive(QString)));
+
+    nPlayers = 0;
+    nObs = 0;
 }
 
 
@@ -57,7 +60,44 @@ void Brain::newConnection()
     connect(nouveauClient, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(nouveauClient, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
 
-    emit newObs(); 
+    emit newObs();
+
+    // update clients (players and obs)
+    nObs ++;
+    sendNObs();
+}
+
+// send to everybody the new number of obs
+void Brain::sendNObs()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << DataType::NOBS;
+    out << nObs;
+
+    std::cout << "Brain::sendNObs" << std::endl;
+    for (int i = 0; i < clients.size(); i++)
+    {
+        std::cout << "-> client " << i << std::endl;
+        clients[i]->write(block);
+    }
+}
+// send to everybody the new number of players
+void Brain::sendNPlayers()
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << DataType::NOBS;
+    out << nPlayers;
+
+    std::cout << "Brain::sendNObs" << std::endl;
+    for (int i = 0; i < clients.size(); i++)
+    {
+        std::cout << "-> client " << i << std::endl;
+        clients[i]->write(block);
+    }
 }
 
 void Brain::readDataTcp()

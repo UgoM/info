@@ -12,6 +12,10 @@ class Game : public QWidget
 		int clientType;
 		int idPlayer;
 
+        // number of players and obs, can only be modified by brain
+        quint32 nPlayers;
+        quint32 nObs;
+
 	public:
 		Game();
 		~Game();
@@ -39,6 +43,8 @@ class Game : public QWidget
 
     signals:
         void newGameData(QByteArray block);
+        void nPlayersChanged(int n);
+        void nObsChanged(int n);
 };
 
 namespace ClientType {

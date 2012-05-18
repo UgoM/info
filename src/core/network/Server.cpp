@@ -125,7 +125,7 @@ QByteArray Server::listOfServers() const
         s.append(";") ;
         s.append(it.value()->name()) ;
         s.append(";") ;
-        s.append(it.value()->nPlayers()) ;
+        s.append(QString::number(it.value()->getNPlayers())) ;
         if (it != brains->constEnd()-1)
             s.append("#") ;
         ++it;
