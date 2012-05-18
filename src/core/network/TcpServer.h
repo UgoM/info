@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QtCore>
 #include "Server.h"
-#include "src/core/network/QTcpSocketTest.h"
 
 
 class Server;

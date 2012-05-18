@@ -3,8 +3,6 @@
 #include <QTimer>
 #include <QtNetwork>
 
-#include "QTcpSocketTest.h"
-
 
 ServerList::ServerList()
 {
@@ -174,7 +172,7 @@ QStandardItemModel * ServerList::get()
 void ServerList::askForInfos(QHostAddress senderHost, quint16 senderPort)
 {
     /* tcpClient */    
-    tcpSocket = new QTcpSocketTest(this);
+    tcpSocket = new QTcpSocket(this);
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(displayErrorTcp(QAbstractSocket::SocketError)));
 

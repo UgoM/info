@@ -40,7 +40,7 @@ void TcpServer::newConnection()
    /* QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     connect(clientConnection, SIGNAL(disconnected()), clientConnection, SLOT(deleteLater()));
 
-    tcpSocket = new QTcpSocketTest(this);
+    tcpSocket = new QTcpSocket(this);
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(displayErrorTcp(QAbstractSocket::SocketError)));
 
@@ -48,19 +48,6 @@ void TcpServer::newConnection()
     clientConnection->write(mainServer->message("HELLO_FROM_SERVER"));
     std::cout << "Server : HELLO_FROM_SERVER" << std::endl;*/
     //clientConnection->disconnectFromHost();
-
-	/// we need to know in which case we are :
-	/// - the client wants to know the list of servers available
-	///     -> we send him back the list
-
-
-	/// - the client wants to join an existing game
-	///     -> we connect him to the Brain (pipe with new thread ? QT signals/slots ?)
-
-
-	// to create a new game : just use newGame() signal
-	//emit newGame();	
-	//std::cout << "newGame() emitted" << std::endl;
 
     QTcpSocket *nouveauClient = tcpServer->nextPendingConnection();
     clients << nouveauClient;

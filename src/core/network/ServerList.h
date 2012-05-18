@@ -4,7 +4,6 @@
 #include <QStandardItemModel>
 #include <QtNetwork>
 #include "src/core/network/Server.h"
-#include "src/core/network/QTcpSocketTest.h"
 
 class ServerList : public QObject
 {
@@ -13,7 +12,7 @@ class ServerList : public QObject
     QUdpSocket * udpSocket;
     int flg_listen;
     Server * serverObject;
-    QTcpSocketTest * tcpSocket;
+    QTcpSocket * tcpSocket;
 
     QMap <QString, quint16> * serverList;
     QList<QMap<QString,QString> *> gameList;

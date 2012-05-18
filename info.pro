@@ -14,7 +14,6 @@ HEADERS += 	src/core/network/TcpServer.h \
             src/core/network/UdpServer.h \
             src/core/network/ServerList.h \
 			src/core/network/Server.h \
-            src/core/network/QTcpSocketTest.h \
 			src/core/game/Game.h \
 			src/core/game/Brain.h \
 			src/core/gui/MainWindow.h \
@@ -34,7 +33,6 @@ SOURCES += 	src/core/main.cpp \
             src/core/network/UdpServer.cpp \
             src/core/network/ServerList.cpp \
 			src/core/network/Server.cpp \
-            src/core/network/QTcpSocketTest.cpp \
 			src/core/game/Game.cpp \
 			src/core/game/Brain.cpp \
 			src/core/gui/MainWindow.cpp \
