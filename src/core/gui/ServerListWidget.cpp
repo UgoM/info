@@ -15,12 +15,12 @@ ServerListWidget::ServerListWidget() {
     connect(fieldBroadcastAddress, SIGNAL(textChanged(QString)),
                     this, SLOT(textBroadcastAddressChanged(QString)));
 	QGridLayout * gridLayout = new QGridLayout();
-    gridLayout->addWidget(tableView, 0, 0, 0, 10);
+    gridLayout->addWidget(tableView, 0, 0, 1, 10);
     gridLayout->addWidget(buttonGetList, 1, 0);
     gridLayout->addWidget(buttonConnect, 1, 1);
     gridLayout->addWidget(buttonWatch, 1, 2);
-    gridLayout->addWidget(labelBroadcast, 2, 0, 2, 1);
-    gridLayout->addWidget(fieldBroadcastAddress, 2, 1, 2, 3);
+    gridLayout->addWidget(labelBroadcast, 2, 0);
+    gridLayout->addWidget(fieldBroadcastAddress, 2, 1, 1, 2);
 	setLayout(gridLayout);
     config();
 }
