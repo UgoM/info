@@ -1,5 +1,5 @@
 #include <iostream>
-#include "QTcpSocketTest.h"
+#include "src/core/network/QTcpSocketTest.h"
 
 QTcpSocketTest::QTcpSocketTest (QObject *p): QTcpSocket(p)
 {

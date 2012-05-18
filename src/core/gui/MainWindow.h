@@ -6,10 +6,10 @@
 #include <QAction>
 #include <QMenuBar>
 
-#include "ServerListWidget.h"
-#include "PlayerConfigurationWindow.h"
-#include "Checkers.h"
-#include "ServerList.h"
+#include "src/core/gui/ServerListWidget.h"
+#include "src/core/gui/PlayerConfigurationWindow.h"
+#include "src/games/checkers/Checkers.h"
+#include "src/core/network/ServerList.h"
  
 class MainWindow : public QMainWindow {
 

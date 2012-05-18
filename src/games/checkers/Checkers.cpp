@@ -1,4 +1,4 @@
-#include "Checkers.h"
+#include "src/games/checkers/Checkers.h"
 
 /** Séparateur utilisé dans l'encodage du damier **/
 const char Checkers::SEPARATOR = ';';

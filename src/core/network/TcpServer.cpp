@@ -1,13 +1,6 @@
-#include "TcpServer.h"
-#include "Game.h"
-
-#include <QtNetwork>
-#include <QtCore>
-#include <QApplication>
-
+#include "src/core/network/TcpServer.h"
+#include "src/core/game/Game.h"
 #include <iostream>
-#include "QTcpSocketTest.h"
-
 
 TcpServer::TcpServer(Server * s)
 {

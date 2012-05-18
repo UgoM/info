@@ -1,4 +1,4 @@
-#include "Direction.h"
+#include "src/games/checkers/Direction.h"
 
 const Direction Direction::NORTH_WEST = Direction(-1, -1);
 const Direction Direction::NORTH_EAST = Direction(-1, 1);

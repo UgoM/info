@@ -1,7 +1,7 @@
 #ifndef DEF_BRAINCHECKERS
 #define DEF_BRAINCHECKERS
 
-#include "Brain.h"
+#include "src/core/game/Brain.h"
 
 class BrainCheckers : public Brain {
 

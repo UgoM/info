@@ -1,5 +1,4 @@
-#include "ServerList.h"
-
+#include "src/core/network/ServerList.h"
 #include <iostream>
 #include <QTimer>
 #include <QtNetwork>

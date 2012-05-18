@@ -1,6 +1,6 @@
 #include <QObject>
-
-#include <QTcpSocket>
+#include <QtNetwork>
+#include <QtCore>
 
 class TcpClient : QObject
 {

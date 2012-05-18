@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+#include "src/core/gui/MainWindow.h"
 #include <iostream>
 
 MainWindow::MainWindow() {

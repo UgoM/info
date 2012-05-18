@@ -2,7 +2,8 @@
 
 #include <QObject>
 #include <QtNetwork>
-#include "Server.h"
+#include <QtCore>
+#include "src/core/network/Server.h"
 
 class Server;
 

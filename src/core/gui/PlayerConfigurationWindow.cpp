@@ -1,4 +1,4 @@
-#include "PlayerConfigurationWindow.h"
+#include "src/core/gui/PlayerConfigurationWindow.h"
 
 PlayerConfigurationWindow::PlayerConfigurationWindow() : QDialog() {
 	// Groupe caractéristique profile (nom....)

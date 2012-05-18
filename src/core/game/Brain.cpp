@@ -1,5 +1,5 @@
-#include "Brain.h"
-#include "Server.h"
+#include "src/core/game/Brain.h"
+#include "src/core/network/Server.h"
 #include <iostream>
 
 Brain::Brain()

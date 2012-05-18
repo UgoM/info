@@ -1,6 +1,5 @@
-#include "Game.h"
-#include "Server.h"
-
+#include "src/core/game/Game.h"
+#include "src/core/network/Server.h"
 #include <iostream>
 
 Game::Game()

@@ -1,8 +1,4 @@
-#include "UdpServer.h"
-
-#include <QtNetwork>
-#include <QtCore>
-
+#include "src/core/network/UdpServer.h"
 #include <iostream>
 
 

@@ -10,7 +10,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QSettings>
-#include "ServerList.h"
+#include "src/core/network/ServerList.h"
 
 class ServerListWidget : public QWidget {
 

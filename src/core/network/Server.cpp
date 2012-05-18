@@ -1,6 +1,6 @@
-#include "Server.h"
-#include "Checkers.h"
-#include "BrainCheckers.h"
+#include "src/core/network/Server.h"
+#include "src/games/checkers/Checkers.h"
+#include "src/games/checkers/BrainCheckers.h"
 
 #include <QtCore>
 #include <QApplication>

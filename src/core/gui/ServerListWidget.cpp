@@ -1,4 +1,4 @@
-#include "ServerListWidget.h"
+#include "src/core/gui/ServerListWidget.h"
 #include <iostream>
 
 ServerListWidget::ServerListWidget() {

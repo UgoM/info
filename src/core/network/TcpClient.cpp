@@ -1,9 +1,4 @@
-#include "TcpClient.h"
-
-#include <QtNetwork>
-#include <QtCore>
-#include <QApplication>
-
+#include "src/core/network/TcpClient.h"
 #include <iostream>
 
 

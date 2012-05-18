@@ -4,10 +4,10 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QMessageBox>
-#include "Game.h"
-#include "Constants.h"
-#include "Image.h"
-#include "BoardController.h"
+#include "src/core/game/Game.h"
+#include "src/games/checkers/Constants.h"
+#include "src/games/checkers/Image.h"
+#include "src/games/checkers/BoardController.h"
 
 class Checkers : public Game {
 

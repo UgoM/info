@@ -3,8 +3,8 @@
 #include <QObject>
 #include <QStandardItemModel>
 #include <QtNetwork>
-#include "Server.h"
-#include "QTcpSocketTest.h"
+#include "src/core/network/Server.h"
+#include "src/core/network/QTcpSocketTest.h"
 
 class ServerList : public QObject
 {

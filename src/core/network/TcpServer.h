@@ -1,9 +1,11 @@
 #pragma once
 
-#include <QTcpServer>
+#include <QtNetwork>
 #include <QObject>
+#include <QtCore>
 #include "Server.h"
-#include "QTcpSocketTest.h"
+#include "src/core/network/QTcpSocketTest.h"
+
 
 class Server;
 

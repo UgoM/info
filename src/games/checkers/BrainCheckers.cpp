@@ -1,4 +1,4 @@
-#include "BrainCheckers.h"
+#include "src/games/checkers/BrainCheckers.h"
 
 #include <QDebug>
 
