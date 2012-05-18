@@ -20,6 +20,7 @@ HEADERS += 	src/core/network/TcpServer.h \
 			src/core/gui/MainWindow.h \
             src/core/gui/ServerListWidget.h \
 			src/core/gui/PlayerConfigurationWindow.h \
+			src/core/gui/GameInfoWidget.h \
 			src/games/checkers/BrainCheckers.h \
 			src/games/checkers/BoardController.h \
 			src/games/checkers/Direction.h \
@@ -39,6 +40,7 @@ SOURCES += 	src/core/main.cpp \
 			src/core/gui/MainWindow.cpp \
             src/core/gui/ServerListWidget.cpp \
 			src/core/gui/PlayerConfigurationWindow.cpp \
+			src/core/gui/GameInfoWidget.cpp \
 			src/games/checkers/BrainCheckers.cpp \
 			src/games/checkers/BoardController.cpp \
 			src/games/checkers/Direction.cpp \

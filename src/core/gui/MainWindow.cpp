@@ -1,5 +1,6 @@
 #include "src/core/gui/MainWindow.h"
 #include <iostream>
+#include <QFrame>
 
 MainWindow::MainWindow() {
 	QMdiArea * centralZone = new QMdiArea;
@@ -110,7 +111,9 @@ void MainWindow::newGameFromMenu() {
     if (!server) {
         server = new Server();
 	}
-    server->makeNewGame();
+    QWidget * w = server->makeNewGame();
+
+    newGameWindow(w);
 }
 
 void MainWindow::newObserver(QString hostAddress, quint32 id) {
@@ -121,4 +124,36 @@ void MainWindow::newObserver(QString hostAddress, quint32 id) {
     newGame->setServer(hostAddress, id);
     newGame->setClientType(ClientType::OBSERVER);
     games << newGame;
+
+    newGameWindow(newGame);
+}
+
+// Make a new window, where the game will be (for players AND observers)
+// Will someday contain other widget like a chat, or game infos
+void MainWindow::newGameWindow(QWidget * widget)
+{
+    // Widget that will be the window
+    QWidget * newWindow = new QWidget();
+    
+    // other widget in the window (arg widget is the game's widget)
+    GameInfoWidget * giw = new GameInfoWidget();
+    QFrame * empty = new QFrame();
+
+    // Formating
+    QFrame * gif = new QFrame();
+    QGridLayout * gig = new QGridLayout();
+    gif->setFrameStyle(QFrame::Box | QFrame::Raised);
+    gif->setLineWidth(2);
+    gig->addWidget(giw);
+    gif->setLayout(gig);
+    
+
+    // Positioning
+	QGridLayout * gridLayout = new QGridLayout();
+    gridLayout->addWidget(widget, 0, 0, 10, 10);
+    gridLayout->addWidget(gif, 0, 11, 1, 3);
+    gridLayout->addWidget(empty, 3, 11, 1, 7);
+	newWindow->setLayout(gridLayout);
+
+    newWindow->show();
 }

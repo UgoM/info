@@ -10,6 +10,7 @@
 #include "src/core/gui/PlayerConfigurationWindow.h"
 #include "src/games/checkers/Checkers.h"
 #include "src/core/network/ServerList.h"
+#include "src/core/gui/GameInfoWidget.h"
  
 class MainWindow : public QMainWindow {
 
@@ -41,6 +42,7 @@ class MainWindow : public QMainWindow {
 		void windowAboutDisp();
 
         void newObserver(QString hostAddress, quint32 id);
+        void newGameWindow(QWidget * widget);
 
 };
  

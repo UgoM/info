@@ -45,7 +45,7 @@ Server::~Server()
 	delete games;
 }
 
-void Server::makeNewGame()
+Game * Server::makeNewGame()
 {
     // Make Server (inherited from Brain)
 	BrainCheckers * newBrain = new BrainCheckers();
@@ -69,6 +69,9 @@ void Server::makeNewGame()
 	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), newBrain, SLOT(handleMove(QByteArray)));
 	QObject::connect(newBrain, SIGNAL(newObs()), newGame, SLOT(reSendData()));
 	std::cout << "New game created" << std::endl;
+
+    // return a pointer of the newGame for custom displaying
+    return newGame;
 }
 
 void Server::initMessages()

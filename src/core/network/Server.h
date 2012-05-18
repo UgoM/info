@@ -37,7 +37,7 @@ class Server : public QObject
         quint32 lastIdGame;
 
 	public slots:
-		void makeNewGame();
+		Game * makeNewGame();
 
     private:
         QMap <QString, QString> * messages;
