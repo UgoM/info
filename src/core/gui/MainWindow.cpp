@@ -4,6 +4,7 @@
 #include "src/core/network/Server.h"
 #include "src/games/checkers/Checkers.h"
 #include "src/core/gui/GameInfoWidget.h"
+#include "src/core/gui/ChatWidget.h"
 #include "src/core/type.h"
 
 MainWindow::MainWindow() {
@@ -156,7 +157,7 @@ void MainWindow::newGameWindow(QWidget * newGame)
     
     // other widget in the window (arg widget is the game's widget)
     GameInfoWidget * giw = new GameInfoWidget();
-    QFrame * empty = new QFrame();
+    ChatWidget * cw = new ChatWidget();
 
     // Formating
     QFrame * gif = new QFrame();
@@ -164,13 +165,20 @@ void MainWindow::newGameWindow(QWidget * newGame)
     gif->setFrameStyle(QFrame::Box | QFrame::Raised);
     gif->setLineWidth(2);
     gig->addWidget(giw);
-    gif->setLayout(gig);   
+    gif->setLayout(gig);
+
+    QFrame * cf = new QFrame();
+    QGridLayout * cg = new QGridLayout();
+    cf->setFrameStyle(QFrame::Box | QFrame::Raised);
+    cf->setLineWidth(2);
+    cg->addWidget(cw);
+    cf->setLayout(cg);
 
     // Positioning
 	QGridLayout * gridLayout = new QGridLayout();
     gridLayout->addWidget(newGame, 0, 0, 10, 10);
     gridLayout->addWidget(gif, 0, 11, 1, 3);
-    gridLayout->addWidget(empty, 3, 11, 1, 7);
+    gridLayout->addWidget(cf, 3, 11, 1, 7);
 	newWindow->setLayout(gridLayout);
 
     newWindow->show();
