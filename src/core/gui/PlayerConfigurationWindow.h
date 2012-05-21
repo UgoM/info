@@ -1,15 +1,7 @@
 #ifndef DEF_PLAYER_CONFIGURATION_WINDOW
 #define DEF_PLAYER_CONFIGURATION_WINDOW
 
-#include <QDialog>
-#include <QTextEdit>
-#include <QCheckBox>
-#include <QLineEdit>
-#include <QGroupBox>
-#include <QFormLayout>
-#include <QVBoxLayout>
-#include <QMessageBox>
-#include <QPushButton>
+#include <QtGui>
 
 class PlayerConfigurationWindow : public QDialog {
 

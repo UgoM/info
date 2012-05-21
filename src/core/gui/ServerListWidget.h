@@ -1,14 +1,7 @@
 #ifndef DEF_SERVERLISTWIDGET
 #define DEF_SERVERLISTWIDGET
 
-#include <QWidget>
-#include <QStandardItemModel>
-#include <QTableView>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QHeaderView>
-#include <QLineEdit>
-#include <QLabel>
+#include <QtGui>
 #include <QSettings>
 #include "src/core/network/ServerList.h"
 

@@ -1,5 +1,4 @@
 #include "src/core/gui/MainWindow.h"
-#include <QFrame>
 
 MainWindow::MainWindow() {
 	QMdiArea * centralZone = new QMdiArea;

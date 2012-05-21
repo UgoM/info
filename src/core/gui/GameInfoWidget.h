@@ -1,8 +1,6 @@
 #pragma once
 
-#include <QWidget>
-#include <QLabel>
-#include <QGridLayout>
+#include <QtGui>
 
 class GameInfoWidget : public QWidget {
 

@@ -1,10 +1,7 @@
 #ifndef HEADER_MAINWINDOW
 #define HEADER_MAINWINDOW
 
-#include <QMainWindow>
-#include <QMdiArea>
-#include <QAction>
-#include <QMenuBar>
+#include <QtGui>
 
 #include "src/core/gui/ServerListWidget.h"
 #include "src/core/gui/PlayerConfigurationWindow.h"
