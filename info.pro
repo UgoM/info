@@ -10,7 +10,6 @@ QMAKE_CXXFLAGS += -Wshadow
 
 # Input
 HEADERS += 	src/core/network/TcpServer.h \
-			src/core/network/TcpClient.h \
             src/core/network/UdpServer.h \
             src/core/network/ServerList.h \
 			src/core/network/Server.h \
@@ -29,7 +28,6 @@ HEADERS += 	src/core/network/TcpServer.h \
 
 SOURCES += 	src/core/main.cpp \
 			src/core/network/TcpServer.cpp \
-			src/core/network/TcpClient.cpp \
             src/core/network/UdpServer.cpp \
             src/core/network/ServerList.cpp \
 			src/core/network/Server.cpp \
