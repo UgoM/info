@@ -1,4 +1,5 @@
 #include "src/games/checkers/BoardController.h"
+#include "src/games/checkers/Direction.h"
 
 /** Implement the < operator for two QPoint. **/
 bool operator<(const QPoint & lhs, const QPoint & rhs) {

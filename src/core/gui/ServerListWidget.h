@@ -3,7 +3,8 @@
 
 #include <QtGui>
 #include <QSettings>
-#include "src/core/network/ServerList.h"
+
+class ServerList;
 
 class ServerListWidget : public QWidget {
 

@@ -1,11 +1,12 @@
 #include "src/core/network/Server.h"
+#include "src/core/network/TcpServer.h"
+#include "src/core/network/UdpServer.h"
+#include "src/core/game/Brain.h"
+#include "src/core/game/Game.h"
+#include <iostream>
+
 #include "src/games/checkers/Checkers.h"
 #include "src/games/checkers/BrainCheckers.h"
-
-#include <QtCore>
-#include <QApplication>
-#include <QObject>
-#include <iostream>
 
 Server::Server()
 {

@@ -3,7 +3,9 @@
 #include <QObject>
 #include <QStandardItemModel>
 #include <QtNetwork>
-#include "src/core/network/Server.h"
+#include <QTimer>
+
+class Server;
 
 class ServerList : public QObject
 {

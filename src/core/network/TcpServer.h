@@ -3,8 +3,6 @@
 #include <QtNetwork>
 #include <QObject>
 #include <QtCore>
-#include "Server.h"
-
 
 class Server;
 

@@ -1,7 +1,5 @@
 #include "src/core/network/ServerList.h"
-#include <QTimer>
-#include <QtNetwork>
-
+#include "src/core/network/Server.h"
 
 ServerList::ServerList()
 {

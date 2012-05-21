@@ -1,4 +1,7 @@
 #include "src/games/checkers/Checkers.h"
+#include "src/games/checkers/Constants.h"
+#include "src/games/checkers/Image.h"
+#include "src/games/checkers/BoardController.h"
 
 /** Séparateur utilisé dans l'encodage du damier **/
 const char Checkers::SEPARATOR = ';';

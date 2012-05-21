@@ -1,6 +1,8 @@
 #ifndef DEF_BRAINCHECKERS
 #define DEF_BRAINCHECKERS
 
+#include <QString>
+#include <QObject>
 #include "src/core/game/Brain.h"
 
 class BrainCheckers : public Brain {

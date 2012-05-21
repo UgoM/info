@@ -1,5 +1,5 @@
 #include "src/core/network/TcpServer.h"
-#include "src/core/game/Game.h"
+#include "src/core/network/Server.h"
 
 TcpServer::TcpServer(Server * s)
 {

@@ -3,11 +3,10 @@
 
 #include <QtGui>
 
-#include "src/core/gui/ServerListWidget.h"
-#include "src/core/gui/PlayerConfigurationWindow.h"
-#include "src/games/checkers/Checkers.h"
-#include "src/core/network/ServerList.h"
-#include "src/core/gui/GameInfoWidget.h"
+class Server;
+class ServerListWidget;
+class PlayerConfigurationWindow;
+class Game;
  
 class MainWindow : public QMainWindow {
 

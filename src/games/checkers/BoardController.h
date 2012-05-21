@@ -3,8 +3,10 @@
 
 #include <QMap>
 #include <QPoint>
+#include <QList>
+
 #include "src/games/checkers/Constants.h"
-#include "src/games/checkers/Direction.h"
+class Direction;
 
 class BoardController {
 

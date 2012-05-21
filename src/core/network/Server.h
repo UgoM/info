@@ -1,13 +1,10 @@
 #pragma once
 
-#include "src/core/network/TcpServer.h"
-#include "src/core/network/UdpServer.h"
-#include "src/core/game/Brain.h"
-#include "src/core/game/Game.h"
-
-#include <QObject>
 #include <QtCore>
+#include <QApplication>
 
+class Brain;
+class Game;
 class UdpServer;
 class TcpServer;
 

@@ -1,4 +1,9 @@
 #include "src/core/gui/MainWindow.h"
+#include "src/core/gui/ServerListWidget.h"
+#include "src/core/gui/PlayerConfigurationWindow.h"
+#include "src/core/network/Server.h"
+#include "src/games/checkers/Checkers.h"
+#include "src/core/gui/GameInfoWidget.h"
 
 MainWindow::MainWindow() {
 	QMdiArea * centralZone = new QMdiArea;

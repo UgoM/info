@@ -1,13 +1,12 @@
 #ifndef DEF_CHECKERS
 #define DEF_CHECKERS
 
-#include <QLabel>
-#include <QMouseEvent>
-#include <QMessageBox>
+#include <QtGui>
+
 #include "src/core/game/Game.h"
-#include "src/games/checkers/Constants.h"
-#include "src/games/checkers/Image.h"
-#include "src/games/checkers/BoardController.h"
+
+class Image;
+class BoardController;
 
 class Checkers : public Game {
 
