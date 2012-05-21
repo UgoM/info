@@ -1,17 +1,16 @@
 #include "src/core/network/TcpServer.h"
 #include "src/core/game/Game.h"
-#include <iostream>
 
 TcpServer::TcpServer(Server * s)
 {
-	std::cout << "Constructeur TcpServer" << std::endl;
+	qDebug() << "Constructeur TcpServer";
 
 	// Démarrage serveur TCP
     tcpServer = new QTcpServer();
 
 	// Vérification
 	if (!tcpServer->listen(QHostAddress::Any, 12801)) {
-        std::cout << "Unable to start the server Tcp : " << tcpServer->errorString().toStdString() << std::endl;
+        qDebug() << "Unable to start the server Tcp : " << tcpServer->errorString();
         return;
     }
 
@@ -22,16 +21,16 @@ TcpServer::TcpServer(Server * s)
 
 TcpServer::~TcpServer()
 {
-	std::cout << "Destructeur TcpServer" << std::endl;
+	qDebug() << "Destructeur TcpServer";
 }
 
 void TcpServer::newConnection()
 {
-    std::cout << "TcpServer : New connection Tcp !" << std::endl;
+    qDebug() << "TcpServer : New connection Tcp !";
 
     //QTcpSocket *clientConnection = tcpServer->nextPendingConnection();
     //int socketDescriptor = clientConnection->socketDescriptor();
-    //std::cout << "Socket Descriptor : " << socketDescriptor << std::endl;
+    //qDebug() << "Socket Descriptor : " << socketDescriptor;
 
     //TcpClientThread * t = new TcpClientThread(socketDescriptor, mainServer, this);
     //connect(t, SIGNAL(finished()), t, SLOT(deleteLater()));
@@ -46,7 +45,7 @@ void TcpServer::newConnection()
 
     clientConnection->write(mainServer->message("HELLO_FROM_SERVER"));
     clientConnection->write(mainServer->message("HELLO_FROM_SERVER"));
-    std::cout << "Server : HELLO_FROM_SERVER" << std::endl;*/
+    qDebug() << "Server : HELLO_FROM_SERVER";*/
     //clientConnection->disconnectFromHost();
 
     QTcpSocket *nouveauClient = tcpServer->nextPendingConnection();
@@ -57,19 +56,19 @@ void TcpServer::newConnection()
 
 
     nouveauClient->write(mainServer->messageByteArray("HELLO_FROM_SERVER"));
-    std::cout << "Server : HELLO_FROM_SERVER" << std::endl;
+    qDebug() << "Server : HELLO_FROM_SERVER";
 }
 
 void TcpServer::readDataTcp()
 {
-    std::cout << "TcpServer : Tcp data received" << std::endl;
+    qDebug() << "TcpServer : Tcp data received";
 
     // On détermine quel client envoie le message (recherche du QTcpSocket du client)
     QTcpSocket *socket = qobject_cast<QTcpSocket *>(sender());
     if (socket == 0)
         return;
 
-    std::cout << "TcpServer : Sender found" << std::endl;
+    qDebug() << "TcpServer : Sender found";
 
    /* int tailleMessage = 0;
     if (tailleMessage == 0) // Si on ne connaît pas encore la taille du message, on essaie de la récupérer
@@ -85,10 +84,10 @@ void TcpServer::readDataTcp()
 
     QString data;
     QDataStream in(tcpSocket);
-    std::cout << "TcpServer : toto" << std::endl;
+    qDebug() << "TcpServer : toto";
     in >> data;
 
-    std::cout << "TcpServer : toto" << std::endl;
+    qDebug() << "TcpServer : toto";
 */
 
     QString data;
@@ -97,16 +96,16 @@ void TcpServer::readDataTcp()
     in.setVersion(QDataStream::Qt_4_6);
     in >> type >> data;
 
- //   std::cout << mainServer->decodeDatagram(in).toStdString() << std::endl ;
+ //   qDebug() << mainServer->decodeDatagram(in);
 
     if (type == DataType::MESSAGE) {
         if (data == mainServer->messageString("ASK_LIST_GAMES")) {
-            std::cout << "TcpServer : ASK_LIST_GAMES" << std::endl;
+            qDebug() << "TcpServer : ASK_LIST_GAMES";
             socket->write(mainServer->listOfServers());
         }
     }
 
-    std::cout << "TcpServer : toto" << std::endl;
+    qDebug() << "TcpServer : toto";
 }
 
 void TcpServer::clientDisconnected()

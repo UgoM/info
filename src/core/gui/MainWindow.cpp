@@ -1,5 +1,4 @@
 #include "src/core/gui/MainWindow.h"
-#include <iostream>
 #include <QFrame>
 
 MainWindow::MainWindow() {
@@ -117,9 +116,8 @@ void MainWindow::newGameFromMenu() {
 }
 
 void MainWindow::newObserver(QString hostAddress, quint32 id) {
-    std::cout << "MainWindow::newObserver" << std::endl;
-    std::cout << "hostAddress : " << hostAddress.toStdString()
-                << ", id : " << id << std::endl;
+    qDebug() << "MainWindow::newObserver";
+    qDebug() << "hostAddress : " << hostAddress << ", id : " << id;
     Checkers * newGame = new Checkers();
     newGame->setServer(hostAddress, id);
     newGame->setClientType(ClientType::OBSERVER);

@@ -20,7 +20,7 @@ UdpServer::~UdpServer()
 
 void UdpServer::processPendingDatagrams()
 {
-	std::cout << "New connection UDP on port 12800" << std::endl;
+	qDebug() << "New connection UDP on port 12800";
 
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
@@ -38,7 +38,7 @@ void UdpServer::processPendingDatagrams()
 void UdpServer::processTheDatagram (QByteArray datagram, QHostAddress senderHost, quint16 senderPort)
 {
 
-    std::cout << "UdpServer::processTheDatagram" << std::endl;
+    qDebug() << "UdpServer::processTheDatagram";
 
     QString data;
     quint32 type;
@@ -46,17 +46,17 @@ void UdpServer::processTheDatagram (QByteArray datagram, QHostAddress senderHost
     in >> type >> data;
 
     if (type == DataType::MESSAGE) {
-        std::cout << "MESSAGE" << std::endl;
-        std::cout << type << std::endl;
-        std::cout << data.toStdString() << std::endl;
-        std::cout << "UdpServer messageByteArray : ";
+        qDebug() << "MESSAGE";
+        qDebug() << type;
+        qDebug() << data;
+        qDebug() << "UdpServer messageByteArray : ";
         for (int i = 0; i < data.size(); ++i) {
-            std::cout << data.at(i).toAscii();
+            qDebug() << data.at(i).toAscii();
         }
-    std::cout << std::endl;
-        std::cout << mainServer->messageString("UDP_ASK_FOR_SERVER").toStdString() << std::endl;
+    qDebug();
+        qDebug() << mainServer->messageString("UDP_ASK_FOR_SERVER");
         if (data == mainServer->messageString("UDP_ASK_FOR_SERVER")) {
-            std::cout << "UDP_ASK_FOR_SERVER " << senderHost.toString().toStdString() << ":" << senderPort << std::endl;
+            qDebug() << "UDP_ASK_FOR_SERVER " << senderHost.toString() << ":" << senderPort;
 	        /// the Udp server just respond it is there, so the client 
 	        /// can connect himself to the tcp server.
             datagram = mainServer->messageByteArray("ANSWER_UDP_ASK_FOR_SERVER");

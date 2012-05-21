@@ -1,12 +1,11 @@
 #include "src/core/network/ServerList.h"
-#include <iostream>
 #include <QTimer>
 #include <QtNetwork>
 
 
 ServerList::ServerList()
 {
-	std::cout << "Constructeur ServerList" << std::endl;
+	qDebug() << "Constructeur ServerList";
 
     /* test UDP */
     udpSocket = new QUdpSocket(this);
@@ -25,7 +24,7 @@ ServerList::ServerList()
 
 ServerList::~ServerList()
 {
-	std::cout << "Destructeur ServerList" << std::endl;
+	qDebug() << "Destructeur ServerList";
     delete udpSocket;
     delete serverList;
     delete serverObject;
@@ -33,10 +32,10 @@ ServerList::~ServerList()
 
 void ServerList::run()
 {
-    std::cout << "ServerList : run" << std::endl;
+    qDebug() << "ServerList : run";
 
     // clear server list
-    std::cout << "ServerList : clear list" << std::endl;
+    qDebug() << "ServerList : clear list";
     clearServerList();
 
     // start listening for 5s
@@ -78,14 +77,14 @@ void ServerList::clearServerList()
 void ServerList::stopListening()
 {
     flg_listen = 0;
-    std::cout << "ServerList : stop listening" << std::endl;
+    qDebug() << "ServerList : stop listening";
 }
 
 void ServerList::processPendingDatagrams()
 {
-	std::cout << "ServerList : Received Udp data : \"" << std::endl; 
+	qDebug() << "ServerList : Received Udp data : \""; 
     if (!flg_listen) return;
-	std::cout << "ok" << std::endl; 
+	qDebug() << "ok"; 
 
     while (udpSocket->hasPendingDatagrams()) {
         QByteArray datagram;
@@ -102,8 +101,8 @@ void ServerList::processPendingDatagrams()
 
 void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHost, quint16 senderPort)
 {
-    std::cout << "ServerList : processTheDatagram" << std::endl;
-	std::cout << "ServerList : Received Udp data : \"" << datagram.data() << "\"" << std::endl; 
+    qDebug() << "ServerList : processTheDatagram";
+	qDebug() << "ServerList : Received Udp data : \"" << datagram.data() << "\""; 
 
     QString data;
     quint32 type;
@@ -113,10 +112,10 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHos
 
     
     if (type == DataType::MESSAGE) {
-        std::cout << "MESSAGE" << std::endl;
+        qDebug() << "MESSAGE";
         if (data == serverObject->messageString("ANSWER_UDP_ASK_FOR_SERVER")) {
-            std::cout << "ServerList : processTheDatagram OK" << std::endl;
-            std::cout << "new server adress " << senderHost.toString().toStdString() << ":" << senderPort << ", asking for games and infos..." << std::endl;
+            qDebug() << "ServerList : processTheDatagram OK";
+            qDebug() << "new server adress " << senderHost.toString() << ":" << senderPort << ", asking for games and infos...";
             serverList->insert(senderHost.toString(), senderPort);
             emit askForInfos(senderHost, senderPort);
         }
@@ -176,7 +175,7 @@ void ServerList::askForInfos(QHostAddress senderHost, quint16 senderPort)
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(displayErrorTcp(QAbstractSocket::SocketError)));
 
-    std::cout << "Tcp connection to host " << senderHost.toString().toStdString() << ":" << "12801" << std::endl;
+    qDebug() << "Tcp connection to host " << senderHost.toString() << ":" << "12801";
     tcpSocket->connectToHost(senderHost, 12801);
 
 
@@ -188,32 +187,32 @@ void ServerList::askForInfos(QHostAddress senderHost, quint16 senderPort)
 
 void ServerList::connected()
 {
-    std::cout << "Connécté au server TCP" << std::endl;
+    qDebug() << "Connécté au server TCP";
 }
 void ServerList::disconnected()
 {
-    std::cout << "Déconnécté du server TCP" << std::endl;
+    qDebug() << "Déconnécté du server TCP";
 }
 
 
 void ServerList::readDataTcp()
 {
-    std::cout << "ServerList : Tcp data received" << std::endl;
+    qDebug() << "ServerList : Tcp data received";
 
     QString data;
     quint32 type;
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_6);
     in >> type >> data;
-    std::cout << type << std::endl;
-    std::cout << data.toStdString() << std::endl;
+    qDebug() << type;
+    qDebug() << data;
 
-    //std::cout << serverObject->decodeDatagram(in).toStdString() << std::endl ;
+    //qDebug() << serverObject->decodeDatagram(in);
 
     if (type == DataType::MESSAGE) {
-        std::cout << "MESSAGE" << std::endl;
+        qDebug() << "MESSAGE";
         if (data == serverObject->messageString("HELLO_FROM_SERVER")) {
-            std::cout << "ServerList : HELLO_FROM_SERVER" << std::endl;
+            qDebug() << "ServerList : HELLO_FROM_SERVER";
             tcpSocket->write(serverObject->messageByteArray("ASK_LIST_GAMES"));
         }
     } else if (type == DataType::LISTOFSERVERS) {
@@ -227,11 +226,11 @@ void ServerList::readDataTcp()
     }
 
     for (int i=0; i<gameList.size(); ++i) {
-        std::cout << "gameList : " << i << std::endl;
+        qDebug() << "gameList : " << i;
         QMapIterator<QString, QString> it(*gameList.at(i));
         while (it.hasNext()) {
             it.next();
-            std::cout << it.key().toStdString() << ": " << it.value().toStdString() << std::endl;
+            qDebug() << it.key() << ": " << it.value();
         }
         // émission du signal pour rafraichir l'affichage
         emit newList();
@@ -247,13 +246,13 @@ void ServerList::displayErrorTcp(QAbstractSocket::SocketError socketError)
     case QAbstractSocket::RemoteHostClosedError:
         break;
     case QAbstractSocket::HostNotFoundError:
-        std::cout << "The host was not found. Please check the host name and port settings." << std::endl;
+        qDebug() << "The host was not found. Please check the host name and port settings.";
         break;
     case QAbstractSocket::ConnectionRefusedError:
-        std::cout << "The connection was refused by the peer. Make sure the fortune server is running, \
-                        and check that the host name and port settings are correct." << std::endl;
+        qDebug() << "The connection was refused by the peer. Make sure the fortune server is running, \
+                        and check that the host name and port settings are correct.";
         break;
     default:
-        std::cout << "The following error occurred:" << tcpSocket->errorString().toStdString() << std::endl;
+        qDebug() << "The following error occurred:" << tcpSocket->errorString();
     }
 }

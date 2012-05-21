@@ -1,18 +1,17 @@
 #include "src/core/game/Game.h"
 #include "src/core/network/Server.h"
-#include <iostream>
 
 Game::Game()
 {
     connect(this, SIGNAL(newGameData(QByteArray)), this, SLOT(processReceive(QByteArray)));
-	std::cout << "Constructeur Game" << std::endl;
+	qDebug() << "Constructeur Game";
     clientType = ClientType::NONE;
     idPlayer = 0;
 }
 
 Game::~Game()
 {
-	std::cout << "Destructeur Game" << std::endl;
+	qDebug() << "Destructeur Game";
 }
 
 void Game::send(QByteArray block)
@@ -35,16 +34,15 @@ void Game::processKey()
 
 void Game::setServer(QString hostAddress, quint32 port)
 {
-    std::cout << "Game::setServer" << std::endl;
-    std::cout << "hostAddress : " << hostAddress.toStdString()
-                << ", id : " << port << std::endl;
+    qDebug() << "Game::setServer";
+    qDebug() << "hostAddress : " << hostAddress << ", id : " << port;
 
     tcpSocket = new QTcpSocket();
 
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),this, SLOT(displayErrorTcp(QAbstractSocket::SocketError)));
 
-    std::cout << "Game : Tcp connection to host " << hostAddress.toStdString() << ":" << port << std::endl;
+    qDebug() << "Game : Tcp connection to host " << hostAddress << ":" << port;
     tcpSocket->connectToHost(hostAddress, port);
 
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
@@ -53,17 +51,17 @@ void Game::setServer(QString hostAddress, quint32 port)
 
 void Game::connected()
 {
-    std::cout << "Game : Connecté au server TCP" << std::endl;
+    qDebug() << "Game : Connecté au server TCP";
 }
 void Game::disconnected()
 {
-    std::cout << "Game : Déconnécté du server TCP" << std::endl;
+    qDebug() << "Game : Déconnécté du server TCP";
 }
 
 
 void Game::readDataTcp()
 {
-    std::cout << "Game : Tcp data received" << std::endl;
+    qDebug() << "Game : Tcp data received";
 
     QByteArray block;
     quint32 type;
@@ -72,7 +70,7 @@ void Game::readDataTcp()
     in >> type >> block;
 
     if (type == DataType::GAMEDATA) {
-        std::cout << "GAMEDATA" << std::endl;
+        qDebug() << "GAMEDATA";
 	    qDebug() << block;
         emit newGameData( block );  
     } 
@@ -84,14 +82,14 @@ void Game::displayErrorTcp(QAbstractSocket::SocketError socketError)
     case QAbstractSocket::RemoteHostClosedError:
         break;
     case QAbstractSocket::HostNotFoundError:
-        std::cout << "The host was not found. Please check the host name and port settings." << std::endl;
+        qDebug() << "The host was not found. Please check the host name and port settings.";
         break;
     case QAbstractSocket::ConnectionRefusedError:
-        std::cout << "The connection was refused by the peer. Make sure the fortune server is running, \
-                        and check that the host name and port settings are correct." << std::endl;
+        qDebug() << "The connection was refused by the peer. Make sure the fortune server is running, \
+                        and check that the host name and port settings are correct.";
         break;
     default:
-        std::cout << "The following error occurred:" << tcpSocket->errorString().toStdString() << std::endl;
+        qDebug() << "The following error occurred:" << tcpSocket->errorString();
     }
 }
 

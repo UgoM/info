@@ -5,12 +5,11 @@
 #include <QtCore>
 #include <QApplication>
 #include <QObject>
-
 #include <iostream>
 
 Server::Server()
 {
-    std::cout << "Constructeur Server" << std::endl;
+    qDebug() << "Constructeur Server";
 
 	tcpServer = new TcpServer(this);
 	udpServer = new UdpServer(this);
@@ -68,7 +67,7 @@ Game * Server::makeNewGame()
 
 	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), newBrain, SLOT(handleMove(QByteArray)));
 	QObject::connect(newBrain, SIGNAL(newObs()), newGame, SLOT(reSendData()));
-	std::cout << "New game created" << std::endl;
+	qDebug() << "New game created";
 
     // return a pointer of the newGame for custom displaying
     return newGame;
@@ -101,10 +100,10 @@ QByteArray Server::messageByteArray(QString m)
     out << (quint32) DataType::MESSAGE ;
     out << messages->value(m);
     
-    std::cout << "Server messageByteArray : ";
+    qDebug() << "Server messageByteArray : ";
     for (int i = 0; i < block.size(); ++i) {
         std::cout << block.at(i);
-    }
+    }   
     std::cout << std::endl;
 
     return block;
@@ -139,8 +138,8 @@ QList<QMap<QString,QString> *> Server::decodeListOfServers(QString s)
 {
     QList<QMap<QString,QString> *> out;
     
-    std::cout << s.toStdString() << std::endl;
-    std::cout << "Server::decodeListOfServers" << std::endl;
+    qDebug() << s;
+    qDebug() << "Server::decodeListOfServers";
     QStringList tokens = s.split("#");
 	for (int k = 0; k < tokens.size(); k++) {
         QMap<QString,QString> * m = new QMap<QString,QString>;

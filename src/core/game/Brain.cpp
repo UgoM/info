@@ -1,10 +1,9 @@
 #include "src/core/game/Brain.h"
 #include "src/core/network/Server.h"
-#include <iostream>
 
 Brain::Brain()
 {
-	std::cout << "Constructeur Brain" << std::endl;
+	qDebug() << "Constructeur Brain";
 
     // Start TcpServer on an unused port
     tcpServer = new QTcpServer();
@@ -12,7 +11,7 @@ Brain::Brain()
     while (!tcpServer->listen(QHostAddress::Any, port)) {
         port ++;
     }
-    std::cout << "Start the server Tcp on port " << port << std::endl;
+    qDebug() << "Start the server Tcp on port " << port;
 
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
@@ -34,23 +33,23 @@ void Brain::sendToAll(QByteArray dat)
     out << DataType::GAMEDATA;
     out << dat;
 
-    std::cout << "Brain::sendToAll" << std::endl;
+    qDebug() << "Brain::sendToAll";
     for (int i = 0; i < clients.size(); i++)
     {
-        std::cout << "-> client " << i << std::endl;
+        qDebug() << "-> client " << i;
         clients[i]->write(block);
     }
 }
 
 void Brain::processReceive(QString block)
 {
-    std::cout << "new data : " << block.toStdString() << std::endl;
+    qDebug() << "new data : " << block;
     (void) block;
 }
 
 void Brain::newConnection()
 {
-    std::cout << "Brain : New connection Tcp !" << std::endl;
+    qDebug() << "Brain : New connection Tcp !";
 
     QTcpSocket *nouveauClient = tcpServer->nextPendingConnection();
     clients << nouveauClient;
@@ -63,14 +62,14 @@ void Brain::newConnection()
 
 void Brain::readDataTcp()
 {
-    std::cout << "Brain : Tcp data received" << std::endl;
+    qDebug() << "Brain : Tcp data received";
 
     // On détermine quel client envoie le message (recherche du QTcpSocket du client)
     QTcpSocket *socket = qobject_cast<QTcpSocket *>(sender());
     if (socket == 0)
         return;
 
-    std::cout << "Brain : Sender found" << std::endl;
+    qDebug() << "Brain : Sender found";
 
     QString block;
     quint32 type;

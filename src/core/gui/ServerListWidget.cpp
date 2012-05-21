@@ -1,5 +1,4 @@
 #include "src/core/gui/ServerListWidget.h"
-#include <iostream>
 
 ServerListWidget::ServerListWidget() {
     serverList = new ServerList();
@@ -57,7 +56,7 @@ void ServerListWidget::refreshDisplay() {
 }
 
 void ServerListWidget::buttonObserv() {
-    std::cout << "ServerListWidget::buttonObserv()" << std::endl;
+    qDebug() << "ServerListWidget::buttonObserv()";
     QModelIndex index = tableView->currentIndex();
     QString hostAddress = index.data(Qt::UserRole).toString();
     quint32 port = index.data(Qt::UserRole + 1).toInt();
