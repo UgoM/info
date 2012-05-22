@@ -20,9 +20,6 @@ Server::Server()
 
     lastIdGame = 1;
 
- 	connect(tcpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
- 	connect(udpServer, SIGNAL(newGame()), this, SLOT(makeNewGame()));
-
     initMessages();
 }
 

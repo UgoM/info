@@ -17,9 +17,6 @@ class UdpServer : public QObject
 	public slots:
 		void processPendingDatagrams();
 
-	signals:
-		void newGame();
-
 	private:
         void processTheDatagram (QByteArray datagram, QHostAddress senderHost, quint16 senderPort);
 

@@ -25,7 +25,4 @@ class TcpServer : public QObject
 	private:
 		QTcpServer * tcpServer;
         Server * mainServer;
-
-	signals:
-		void newGame();
 };
