@@ -43,8 +43,7 @@ class Game : public QWidget
 
     signals:
         void newGameData(QByteArray block);
-        void nPlayersChanged(int n);
-        void nObsChanged(int n);
+        void nConnectedChanged(int nPlayers, int nObs);
 };
 
 namespace ClientType {

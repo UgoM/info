@@ -1,5 +1,6 @@
 #include "src/core/game/Brain.h"
 #include "src/core/network/Server.h"
+#include <QTimer>
 
 Brain::Brain()
 {
@@ -62,40 +63,25 @@ void Brain::newConnection()
 
     emit newObs();
 
-    // update clients (players and obs)
+    // update clients (players and obs) after 2 sec
+    // so the new client has time to create his window
     nObs ++;
-    sendNObs();
+    QTimer::singleShot(2000, this, SLOT(sendNConnected()));
 }
 
-// send to everybody the new number of obs
-void Brain::sendNObs()
+// send to everybody the new number of obs and players
+void Brain::sendNConnected()
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
-    out << DataType::NOBS;
-    out << nObs;
+    out << DataType::NCONNECTED;
+    out << QVariant(QString::number(nPlayers) + "," + QString::number(nObs)).toByteArray();
 
-    std::cout << "Brain::sendNObs" << std::endl;
+    qDebug() << "Brain::sendNConnected";
     for (int i = 0; i < clients.size(); i++)
     {
-        std::cout << "-> client " << i << std::endl;
-        clients[i]->write(block);
-    }
-}
-// send to everybody the new number of players
-void Brain::sendNPlayers()
-{
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_6);
-    out << DataType::NOBS;
-    out << nPlayers;
-
-    std::cout << "Brain::sendNObs" << std::endl;
-    for (int i = 0; i < clients.size(); i++)
-    {
-        std::cout << "-> client " << i << std::endl;
+        qDebug() << "-> client " << i;
         clients[i]->write(block);
     }
 }

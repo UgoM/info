@@ -17,12 +17,8 @@ GameInfoWidget::GameInfoWidget()
 	setLayout(gridLayout);
 }
 
-void GameInfoWidget::nPlayersChanged(int n)
+void GameInfoWidget::nConnectedChanged(int nPlayers, int nObs)
 {
-    labelNPlayers->setText(QString::number(n));
-}
-
-void GameInfoWidget::nObsChanged(int n)
-{
-    labelNObs->setText(QString::number(n));
+    labelNPlayers->setText(QString::number(nPlayers));
+    labelNObs->setText(QString::number(nObs));
 }

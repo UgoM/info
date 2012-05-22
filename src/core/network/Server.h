@@ -53,7 +53,6 @@ namespace DataType {
 		MESSAGE = 1,
         LISTOFSERVERS,
         GAMEDATA,
-        NPLAYERS,
-        NOBS
+        NCONNECTED
 	};
 }

@@ -76,12 +76,12 @@ void Game::readDataTcp()
         qDebug() << "GAMEDATA";
 	    qDebug() << block;
         emit newGameData( block );  
-    } else if (type == DataType::NPLAYERS) {
-        nPlayers = block.toInt();        
-        emit nPlayersChanged(nPlayers);
-    } else if (type == DataType::NOBS) {
-        nObs = block.toInt();        
-        emit nObsChanged(nObs);
+    } else if (type == DataType::NCONNECTED) {
+        qDebug() << "NCONNECTED";
+        qDebug() << block;
+        QList<QByteArray> l = block.split(',');
+        nPlayers = l[0].toInt(); nObs = l[1].toInt();
+        emit nConnectedChanged(nPlayers, nObs);
     }
 }
 

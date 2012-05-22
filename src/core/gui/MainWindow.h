@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow {
 	Server * server;
 	ServerListWidget * serverListWidget;
 	PlayerConfigurationWindow * playerConfigurationWindow;
-	QList<Game *> games;	
+	QList<Game *> * games;	
 
     public:
 		MainWindow();

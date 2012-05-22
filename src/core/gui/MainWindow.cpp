@@ -51,6 +51,7 @@ MainWindow::MainWindow() {
 	windowAbout = NULL;
 	windowServerWatch = NULL;
     server = NULL;
+    games = new QList<Game *>;
 }
 
 void MainWindow::serverListDisp() {
@@ -125,7 +126,7 @@ void MainWindow::newObserver(QString hostAddress, quint32 id) {
     Checkers * newGame = new Checkers();
     newGame->setServer(hostAddress, id);
     newGame->setClientType(ClientType::OBSERVER);
-    games << newGame;
+    games->append(newGame);
 
     newGameWindow(newGame);
 }
@@ -159,9 +160,6 @@ void MainWindow::newGameWindow(QWidget * newGame)
     newWindow->show();
 
     // Connecting Game to GameInfoWidget to refresh infos
-    connect(newGame, SIGNAL(nPlayersChanged(int)), 
-        giw, SLOT(nPlayersChanged(int)) );
-    connect(newGame, SIGNAL(nObsChanged(int)), 
-        giw, SLOT(nObsChanged(int)) );
-//TODO ajouter gestion du nombre de joueurs/observateurs par Brain
+    connect(newGame, SIGNAL(nConnectedChanged(int, int)), 
+        giw, SLOT(nConnectedChanged(int, int)) );
 }

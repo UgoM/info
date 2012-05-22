@@ -15,8 +15,7 @@ class GameInfoWidget : public QWidget {
     private:
 
     public slots:
-        void nPlayersChanged(int n);
-        void nObsChanged(int n);
+        void nConnectedChanged(int nPlayers, int nObs);
 
 
 };

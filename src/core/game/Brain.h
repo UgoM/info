@@ -23,17 +23,15 @@ class Brain : public QObject
         quint32 port;
         QTcpServer * tcpServer;
         QList<QTcpSocket *> clients;
-        int nObs;
-        int nPlayers;
-
-        void sendNObs();
-        void sendNPlayers();
+        quint32 nObs;
+        quint32 nPlayers;
 
     private slots:
         void newConnection();
         void readDataTcp();
         void clientDisconnected();
 		virtual void processReceive(QString block);
+        void sendNConnected();
 
     signals:
         void newGameData(QString block);
