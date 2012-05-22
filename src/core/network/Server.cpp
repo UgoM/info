@@ -49,18 +49,18 @@ Game * Server::makeNewGame()
 {
     // Make Server (inherited from Brain)
 	BrainCheckers * newBrain = new BrainCheckers();
-	QThread * newBrainThread = new QThread();
-	newBrain->moveToThread(newBrainThread);
-	newBrainThread->start();
+	//QThread * newBrainThread = new QThread();
+	//newBrain->moveToThread(newBrainThread);
+	//newBrainThread->start();
 
     quint32 port = newBrain->getPort();	
     brains->insert(port, newBrain);
 
 	// Make Client (for playing, inherited from Game)
     Checkers * newGame = new Checkers();
-	QThread * newGameThread = new QThread();
-	newGame->moveToThread(newGameThread);
-	newGameThread->start();
+	//QThread * newGameThread = new QThread();
+	//newGame->moveToThread(newGameThread);
+	//newGameThread->start();
 
     lastIdGame ++;
 	games->insert(lastIdGame, newGame);
