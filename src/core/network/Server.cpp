@@ -8,6 +8,8 @@
 #include "src/games/checkers/Checkers.h"
 #include "src/games/checkers/BrainCheckers.h"
 
+/** \brief Constructor
+  */
 Server::Server()
 {
     qDebug() << "Constructeur Server";
@@ -31,7 +33,8 @@ Server::Server(int n)
         initMessages();
     }
 }
-
+/** \brief Destructor
+  */
 Server::~Server()
 {
 	delete tcpServer;
@@ -42,6 +45,11 @@ Server::~Server()
 	delete games;
 }
 
+/** \return the Game object so we can put it in a window for example
+  *
+  * Create a both the server of the Game (class derived from Brain)
+  * and the first client (derived from Game).
+  */
 Game * Server::makeNewGame()
 {
     // Make Server (inherited from Brain)
@@ -62,7 +70,7 @@ Game * Server::makeNewGame()
     lastIdGame ++;
 	games->insert(lastIdGame, newGame);
 
-
+    /// \todo supprimer ces liens en connectant le joueur au serveur par tcp
 	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), newBrain, SLOT(handleMove(QByteArray)));
 	QObject::connect(newBrain, SIGNAL(newObs()), newGame, SLOT(reSendData()));
 	qDebug() << "New game created";
@@ -71,6 +79,8 @@ Game * Server::makeNewGame()
     return newGame;
 }
 
+/** \brief initialize messages that are used for network communication
+  */
 void Server::initMessages()
 {
     messages = new QMap <QString, QString>;
@@ -82,12 +92,13 @@ void Server::initMessages()
 
     messages->insert("ASK_LIST_GAMES", "Could you give me your game list ? Please.");
     messages->insert("END_GAME_LIST", "End of the game list.");
-
+    /// \todo to be moved in a separate class
 }
 QString Server::messageString(QString m)
 {
     QString out (messages->value(m));
     return out;
+    /// \todo to be moved in a separate class alongside with initMessage()
 }
 
 QByteArray Server::messageByteArray(QString m)
@@ -105,8 +116,15 @@ QByteArray Server::messageByteArray(QString m)
     std::cout << std::endl;
 
     return block;
+    /// \todo to be moved in a separate class alongside with initMessage()
 }
 
+/** \return The list of game's servers, formated for network sending
+  * 
+  * Take all the Brain (game servers) currently running, and return the list
+  * formated in a way that can be send trought the network (QByteArray), to
+  * read the list, use Server::decodeListOfServers()
+  */
 QByteArray Server::listOfServers() const
 {
     QByteArray block;
@@ -132,6 +150,8 @@ QByteArray Server::listOfServers() const
 	return block;
 }
 
+/** see Server::listOfServers() for more informations
+  */
 QList<QMap<QString,QString> *> Server::decodeListOfServers(QString s)
 {
     QList<QMap<QString,QString> *> out;
