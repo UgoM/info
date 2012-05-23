@@ -30,10 +30,9 @@ class Brain : public QObject
         void newConnection();
         void readDataTcp();
         void clientDisconnected();
-		virtual void processReceive(QString block);
+		virtual void processReceive(QByteArray block);
         void sendNConnected();
 
     signals:
-        void newGameData(QString block);
         void newObs();
 };

@@ -16,8 +16,6 @@ Brain::Brain()
 
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
-    connect(this, SIGNAL(newGameData(QString)), this, SLOT(processReceive(QString)));
-
     nPlayers = 0;
     nObs = 0;
 }
@@ -45,7 +43,7 @@ void Brain::sendToAll(QByteArray dat)
     }
 }
 
-void Brain::processReceive(QString block)
+void Brain::processReceive(QByteArray block)
 {
     qDebug() << "new data : " << block;
     (void) block;
@@ -97,14 +95,14 @@ void Brain::readDataTcp()
 
     qDebug() << "Brain : Sender found";
 
-    QString block;
+    QByteArray block;
     quint32 type;
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_4_6);
     in >> type >> block;
 
     if (type == DataType::GAMEDATA) {
-        emit newGameData( block );   
+        processReceive( block );   
     }
 }
 
