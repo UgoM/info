@@ -9,7 +9,8 @@ DESTDIR = ./
 QMAKE_CXXFLAGS += -Wshadow 
 
 # Input
-HEADERS += 	src/core/network/TcpServer.h \
+HEADERS += 	src/core/type.h \
+            src/core/network/TcpServer.h \
             src/core/network/UdpServer.h \
             src/core/network/ServerList.h \
 			src/core/network/Server.h \

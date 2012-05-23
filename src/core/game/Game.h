@@ -45,11 +45,3 @@ class Game : public QWidget
         void newGameData(QByteArray block);
         void nConnectedChanged(int nPlayers, int nObs);
 };
-
-namespace ClientType {
-    enum EClientType {
-        NONE,
-        OBSERVER,
-        PLAYER_1
-    };
-}

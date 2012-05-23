@@ -4,6 +4,7 @@
 #include "src/core/network/Server.h"
 #include "src/games/checkers/Checkers.h"
 #include "src/core/gui/GameInfoWidget.h"
+#include "src/core/type.h"
 
 MainWindow::MainWindow() {
 	QMdiArea * centralZone = new QMdiArea;
