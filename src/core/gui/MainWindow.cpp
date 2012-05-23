@@ -111,20 +111,35 @@ void MainWindow::mainButtonDisp(QPushButton * button) {
 	button->setFixedWidth(250);
 }
 
-void MainWindow::newGameFromMenu() {
+/** \brief start a new game
+  *
+  * Will start a new Brain (game server), managed by Server, and a client (Game)
+  * Will connect the client to the Brain as a player
+  */
+void MainWindow::newGameFromMenu()
+{
+    // if no server started, start it    
     if (!server) {
         server = new Server();
 	}
-    QWidget * w = server->makeNewGame();
 
-    newGameWindow(w);
+    // start the game server
+    quint32 port = server->makeNewBrain();
+
+    // start the game client
+    Checkers * newGame = new Checkers();
+    newGame->setServer("127.0.0.1", port);
+    newGame->setClientType(ClientType::PLAYER_1);
+
+    // create the display
+    newGameWindow(newGame);
 }
 
-void MainWindow::newObserver(QString hostAddress, quint32 id) {
+void MainWindow::newObserver(QString hostAddress, quint32 port) {
     qDebug() << "MainWindow::newObserver";
-    qDebug() << "hostAddress : " << hostAddress << ", id : " << id;
+    qDebug() << "hostAddress : " << hostAddress << ", port : " << port;
     Checkers * newGame = new Checkers();
-    newGame->setServer(hostAddress, id);
+    newGame->setServer(hostAddress, port);
     newGame->setClientType(ClientType::OBSERVER);
     games->append(newGame);
 

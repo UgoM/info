@@ -28,12 +28,9 @@ class Server : public QObject
 		UdpServer * udpServer;
 		TcpServer * tcpServer;
 		QMap <quint32, Brain *> * brains;
-		QMap <quint32, Game *> * games;
-
-        quint32 lastIdGame;
 
 	public slots:
-		Game * makeNewGame();
+		quint32 makeNewBrain();
 
     private:
         QMap <QString, QString> * messages;

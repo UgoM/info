@@ -18,9 +18,6 @@ Server::Server()
 	udpServer = new UdpServer(this);
 
 	brains = new QMap <quint32, Brain *>;
-	games = new QMap <quint32, Game *>;
-
-    lastIdGame = 1;
 
     initMessages();
 }
@@ -41,16 +38,13 @@ Server::~Server()
     delete udpServer;
 	brains->clear();
 	delete brains;
-	games->clear();
-	delete games;
 }
 
-/** \return the Game object so we can put it in a window for example
+/** \return port of the game server, so we can connect the client to it
   *
-  * Create a both the server of the Game (class derived from Brain)
-  * and the first client (derived from Game).
+  * Create the server of the game (class derived from Brain)
   */
-Game * Server::makeNewGame()
+quint32 Server::makeNewBrain()
 {
     // Make Server (inherited from Brain)
 	BrainCheckers * newBrain = new BrainCheckers();
@@ -61,22 +55,7 @@ Game * Server::makeNewGame()
     quint32 port = newBrain->getPort();	
     brains->insert(port, newBrain);
 
-	// Make Client (for playing, inherited from Game)
-    Checkers * newGame = new Checkers();
-	//QThread * newGameThread = new QThread();
-	//newGame->moveToThread(newGameThread);
-	//newGameThread->start();
-
-    lastIdGame ++;
-	games->insert(lastIdGame, newGame);
-
-    /// \todo supprimer ces liens en connectant le joueur au serveur par tcp
-	QObject::connect(newGame, SIGNAL(moveMade(QByteArray)), newBrain, SLOT(handleMove(QByteArray)));
-	QObject::connect(newBrain, SIGNAL(newObs()), newGame, SLOT(reSendData()));
-	qDebug() << "New game created";
-
-    // return a pointer of the newGame for custom displaying
-    return newGame;
+    return port;
 }
 
 /** \brief initialize messages that are used for network communication
