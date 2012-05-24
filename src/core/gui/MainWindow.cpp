@@ -130,7 +130,7 @@ void MainWindow::newGameFromMenu()
     // start the game client
     Checkers * newGame = new Checkers();
     newGame->setServer("127.0.0.1", port);
-    newGame->setClientType(ClientType::PLAYER_1);
+    newGame->setClientType(ClientType::PLAYER);
 
     // create the display
     newGameWindow(newGame);
@@ -178,4 +178,7 @@ void MainWindow::newGameWindow(QWidget * newGame)
     // Connecting Game to GameInfoWidget to refresh infos
     connect(newGame, SIGNAL(nConnectedChanged(int, int)), 
         giw, SLOT(nConnectedChanged(int, int)) );
+    /// \todo add a status label to giw
+    //connect(newGame, SIGNAL(newStatus(QString)), 
+    //    giw, SLOT(statusChanged(QString)) );
 }

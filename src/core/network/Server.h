@@ -44,6 +44,7 @@ class Server : public QObject
 				
 };
 
+/// \todo move DataType to type.h
 namespace DataType {
 	enum EDataType {
 		MESSAGE = 1,

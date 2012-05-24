@@ -1,5 +1,10 @@
 #include "src/games/checkers/BrainCheckers.h"
 
+void BrainCheckers::init()
+{
+    nMaxPlayers = 2;
+}
+
 void BrainCheckers::handleMove(QByteArray boardEnc){
 	qDebug() << "Board received :";
 	qDebug() << boardEnc;

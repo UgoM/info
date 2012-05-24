@@ -51,11 +51,13 @@ quint32 Server::makeNewBrain()
 	//QThread * newBrainThread = new QThread();
 	//newBrain->moveToThread(newBrainThread);
 	//newBrainThread->start();
+    newBrain->init();
 
     quint32 port = newBrain->getPort();	
     brains->insert(port, newBrain);
 
     return port;
+    /// \todo make the game send his data, and obs receive them
 }
 
 /** \brief initialize messages that are used for network communication

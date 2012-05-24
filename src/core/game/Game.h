@@ -44,4 +44,5 @@ class Game : public QWidget
     signals:
         void newGameData(QByteArray block);
         void nConnectedChanged(int nPlayers, int nObs);
+        void newStatus(QString status);
 };

@@ -6,7 +6,7 @@ Game::Game()
 {
     connect(this, SIGNAL(newGameData(QByteArray)), this, SLOT(processReceive(QByteArray)));
 	qDebug() << "Constructeur Game";
-    clientType = ClientType::NONE;
+    clientType = ClientType::OBSERVER;
     idPlayer = 0;
 
     nPlayers = 0;
@@ -41,6 +41,7 @@ void Game::setServer(QString hostAddress, quint32 port)
     qDebug() << "Game::setServer";
     qDebug() << "hostAddress : " << hostAddress << ", id : " << port;
 
+    /// \todo change name of tcpSocket
     tcpSocket = new QTcpSocket();
 
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
@@ -73,6 +74,7 @@ void Game::readDataTcp()
     in.setVersion(QDataStream::Qt_4_6);
     in >> type >> block;
 
+    /// \todo : change these else if by a switch
     if (type == DataType::GAMEDATA) {
         qDebug() << "GAMEDATA";
 	    qDebug() << block;
@@ -83,6 +85,22 @@ void Game::readDataTcp()
         QList<QByteArray> l = block.split(',');
         nPlayers = l[0].toInt(); nObs = l[1].toInt();
         emit nConnectedChanged(nPlayers, nObs);
+    } else if (type == DataType::MESSAGE) {
+        int messageId = block.toInt();
+        switch (messageId)
+        {
+            case Message::OK_YOU_CAN_PLAY:
+                clientType = ClientType::PLAYER;
+                emit newStatus("Playing now");
+                qDebug() << "Playing now";
+                break;
+            case Message::NO_YOU_CANT_PLAY:
+                emit newStatus("Server refused you as a player, observing now");
+                qDebug() << "Server refused you as a player, observing now";
+                break;
+            default:
+                qDebug() << "Wrong message in Game::readDataTcp";
+        }
     }
 }
 
@@ -103,7 +121,54 @@ void Game::displayErrorTcp(QAbstractSocket::SocketError socketError)
     }
 }
 
-void Game::setClientType( int id)
+/** \brief try to change client type
+  *
+  * By default, everybody is an obs, so in order to become a player, client
+  * should ask Brain if he can.
+  * If client is a player and wants to become an obs, he simply inform Brain.
+  */
+void Game::setClientType( int id )
 {
-    clientType = id;
+    if (!tcpSocket) {
+        qDebug() << "Need to setServer before calling setClientType";
+        return;
+    }
+
+    if (clientType == id) {
+        qDebug() << "Client is already " << id;
+        return;
+    }
+
+    quint32 message = 0;
+    switch (clientType) {
+        case ClientType::NONE:
+            qDebug() << "Error : ClientType is None";
+        case ClientType::OBSERVER:
+            if (id == ClientType::PLAYER) {
+                message = Message::I_WANT_TO_PLAY;
+            } else {
+                qDebug() << "Invalid Client Type given";
+            }
+            break;
+        case ClientType::PLAYER:
+            if (id == ClientType::OBSERVER) {
+                message = Message::I_AM_AN_OBS_NOW;
+            } else {
+                qDebug() << "Invalid Client Type given";
+            }
+            break;
+        default:
+            qDebug() << "Invalid Client Type given";
+     }
+            
+    if (message != 0) {
+        QByteArray block;
+        QDataStream out(&block, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_6);
+        out << (quint32)DataType::MESSAGE;
+        out << QVariant(QString::number(message)).toByteArray();
+        tcpSocket->write(block);
+        qDebug() << QVariant(QString::number(message)).toByteArray();
+    }
+    /// \todo create a function send(datatype, (int, qstring, qbytearray...) data)
 }

@@ -10,6 +10,8 @@ class BrainCheckers : public Brain {
 	Q_OBJECT
 
 	public slots:
+        void init();
+
 		void handleMove(QByteArray boardEnd);
 
         QString name() {return QString("Jeu de dames");};
