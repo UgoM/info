@@ -45,6 +45,7 @@ class Brain : public QObject
 
         void sendTo(QTcpSocket * socket, QByteArray dat, int type);
         void sendTo(Client * client, QByteArray dat, int type);
+        void sendToAll(QByteArray dat, int type);
 
     private slots:
         void newConnection();

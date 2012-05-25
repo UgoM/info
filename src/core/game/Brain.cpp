@@ -44,16 +44,21 @@ void Brain::sendTo(Client * client, QByteArray dat, int type)
 {
     sendTo(client->socket, dat, type);
 }
+/** \brief see Brain::sendTo(QTcpSocket * socket, QByteArray dat, int type)
+  */
+void Brain::sendToAll(QByteArray dat, int type)
+{
+    for (int i = 0; i < clients.size(); i++)
+    {
+        qDebug() << "-> client " << i << "#" << dat;
+        sendTo(clients[i], dat, type);
+    }
+}
 /** \brief send game data to all clients (players and obs)
   */
 void Brain::sendToAll(QByteArray dat)
 {
-    qDebug() << "Brain::sendToAll";
-    for (int i = 0; i < clients.size(); i++)
-    {
-        qDebug() << "-> client " << i;
-        sendTo(clients[i], dat, DataType::GAMEDATA);
-    }
+    sendToAll(dat, DataType::GAMEDATA);
 }
 /** \brief function to be redefined, process gamedata received
   * \param dat : game data to be processed
@@ -74,6 +79,8 @@ void Brain::newConnection()
     newClient->socket = tcpServer->nextPendingConnection();
     newClient->type = ClientType::OBSERVER; // default : a new client is an obs
                                             // it has to ask to become a player
+    nObs++;
+
     clients << newClient;
 
     connect(newClient->socket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
@@ -81,30 +88,18 @@ void Brain::newConnection()
 
     sendTo ( newClient, getLastData(), DataType::GAMEDATA) ;
 
-    /// \todo send nConnected data, and display
-    //emit newObs();
-
     // update clients (players and obs) after 2 sec
     // so the new client has time to create his window
-    //nObs ++;
-    //QTimer::singleShot(2000, this, SLOT(sendNConnected()));
+    QTimer::singleShot(2000, this, SLOT(sendNConnected()));
 }
 
 // send to everybody the new number of obs and players
 void Brain::sendNConnected()
 {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_6);
-    out << (quint32)DataType::NCONNECTED;
-    out << QVariant(QString::number(nPlayers) + "," + QString::number(nObs)).toByteArray();
-
-    qDebug() << "Brain::sendNConnected";
-    for (int i = 0; i < clients.size(); i++)
-    {
-        qDebug() << "-> client " << i;
-        clients[i]->socket->write(block);
-    }
+    QByteArray dat = QVariant(QString::number(nPlayers) + 
+                        "," + QString::number(nObs)).toByteArray();
+    qDebug() << "sendNConnected" << dat;
+    sendToAll(dat, DataType::NCONNECTED);
 }
 
 void Brain::readDataTcp()
@@ -188,6 +183,8 @@ void Brain::addNewPlayer(QTcpSocket *socket)
         int id = clientIdFromSocket(socket);
         clients[id]->type = ClientType::PLAYER;
         answer = Message::OK_YOU_CAN_PLAY;
+        nObs --;
+        nPlayers ++;
     } else {
         answer = Message::NO_YOU_CANT_PLAY;
     }
@@ -195,6 +192,7 @@ void Brain::addNewPlayer(QTcpSocket *socket)
     sendTo( socket, 
             QVariant(QString::number(answer)).toByteArray(), 
             DataType::MESSAGE);
+    QTimer::singleShot(1, this, SLOT(sendNConnected()));
 }
 
 /** \brief game initialization, must be subclassed
