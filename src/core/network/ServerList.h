@@ -5,15 +5,13 @@
 #include <QtNetwork>
 #include <QTimer>
 
-class Server;
-
+/// \todo comment class ServerList
 class ServerList : public QObject
 {
 	Q_OBJECT
 
     QUdpSocket * udpSocket;
     int flg_listen;
-    Server * serverObject;
     QTcpSocket * tcpSocket;
 
     QMap <QString, quint16> * serverList;
@@ -23,7 +21,6 @@ class ServerList : public QObject
 	public slots:
 		void processPendingDatagrams();
         void stopListening();
-        void askForInfos(QHostAddress senderHost, quint16 senderPort);
         void readDataTcp();
         void displayErrorTcp(QAbstractSocket::SocketError socketError);
 
@@ -39,8 +36,8 @@ class ServerList : public QObject
     private:
         void processTheDatagram (QByteArray datagram, QHostAddress sender, quint16 senderPort);
         void clearServerList();
+        void askForInfos(QHostAddress senderHost, quint16 senderPort);
 
     signals:
         void newList();
-        void s_askForInfos(QHostAddress senderHost, quint16 senderPort);
 };

@@ -32,14 +32,8 @@ class Server : public QObject
 	public slots:
 		quint32 makeNewBrain();
 
-    private:
-        QMap <QString, QString> * messages;
-        void initMessages();
-
     public:
-        QByteArray messageByteArray (QString m);
-        QString messageString (QString m);
         QByteArray listOfServers() const;
-        QList <QMap<QString,QString> *> decodeListOfServers(QString s);
+        static QList <QMap<QString,QString> *> decodeListOfServers(QByteArray dat);
 				
 };

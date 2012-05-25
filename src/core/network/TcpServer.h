@@ -6,6 +6,7 @@
 
 class Server;
 
+/// \todo comment TcpServer class
 class TcpServer : public QObject
 {
 	Q_OBJECT

@@ -17,7 +17,18 @@ namespace Message {
         OK_YOU_CAN_PLAY,
         NO_YOU_CANT_PLAY,
         // if Game wants to be an obs
-        I_AM_AN_OBS_NOW
+        I_AM_AN_OBS_NOW,
+
+        // Udp BroadCast
+        UDP_ASK_FOR_SERVER,
+        ANSWER_UDP_ASK_FOR_SERVER,
+
+        // Server's welcome
+        HELLO_FROM_SERVER,
+
+        // Ask for the game list of the server
+        ASK_LIST_GAMES,
+        END_GAME_LIST
     };
 }
 

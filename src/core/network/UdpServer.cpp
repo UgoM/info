@@ -2,15 +2,13 @@
 #include "src/core/network/Server.h"
 #include "src/core/type.h"
 
-UdpServer::UdpServer(Server * s)
+UdpServer::UdpServer()
 {
 	// Starting listening for UDP packets
 	udpSocket = new QUdpSocket(this);
 	udpSocket->bind(12800, QUdpSocket::ShareAddress);
 
 	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
-
-    mainServer = s;
 }
 
 UdpServer::~UdpServer()
@@ -40,28 +38,39 @@ void UdpServer::processTheDatagram (QByteArray datagram, QHostAddress senderHost
 
     qDebug() << "UdpServer::processTheDatagram";
 
-    QString data;
+    QByteArray block;
     quint32 type;
     QDataStream in(datagram);
-    in >> type >> data;
+    in.setVersion(QDataStream::Qt_4_6);
+    in >> type >> block;
 
-    if (type == DataType::MESSAGE) {
-        qDebug() << "MESSAGE";
-        qDebug() << type;
-        qDebug() << data;
-        qDebug() << "UdpServer messageByteArray : ";
-        for (int i = 0; i < data.size(); ++i) {
-            qDebug() << data.at(i).toAscii();
-        }
-    qDebug();
-        qDebug() << mainServer->messageString("UDP_ASK_FOR_SERVER");
-        if (data == mainServer->messageString("UDP_ASK_FOR_SERVER")) {
-            qDebug() << "UDP_ASK_FOR_SERVER " << senderHost.toString() << ":" << senderPort;
-	        /// the Udp server just respond it is there, so the client 
-	        /// can connect himself to the tcp server.
-            datagram = mainServer->messageByteArray("ANSWER_UDP_ASK_FOR_SERVER");
-            udpSocket->writeDatagram(datagram.data(), datagram.size(), senderHost, 12801);//senderPort);
-        }
+    int messageId;
+    QByteArray block_out;
+    QDataStream out(&block_out, QIODevice::WriteOnly);
+    switch (type)
+    {
+        case DataType::MESSAGE:
+            messageId = block.toInt();
+            switch (messageId)
+            {
+                case Message::UDP_ASK_FOR_SERVER:
+                    qDebug() << "UDP_ASK_FOR_SERVER " << senderHost.toString() 
+                             << ":" << senderPort;
+	                /// the Udp server just respond it is there, so the client 
+	                /// can connect himself to the tcp server.
+                    out.setVersion(QDataStream::Qt_4_6);
+                    out << (quint32)type;
+                    out << QVariant(QString::number(Message::ANSWER_UDP_ASK_FOR_SERVER)).toByteArray();
+                    udpSocket->writeDatagram(block_out.data(), datagram.size(), senderHost, 12801);
+                    break;
+                default:
+                    qDebug() << "Wrong message in UdpServer::processTheDatagram";
+                    qDebug() << messageId;
+                    qDebug() << block;
+            }
+            break;
+        default:
+            qDebug() << "Wrong type of data in UdpServer::processTheDatagram";
     }
 }
 

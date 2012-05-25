@@ -16,21 +16,11 @@ Server::Server()
     qDebug() << "Constructeur Server";
 
 	tcpServer = new TcpServer(this);
-	udpServer = new UdpServer(this);
+	udpServer = new UdpServer();
 
 	brains = new QMap <quint32, Brain *>;
-
-    initMessages();
 }
 
-Server::Server(int n)
-{
-    if (n) {
-        Server();
-    } else {
-        initMessages();
-    }
-}
 /** \brief Destructor
   */
 Server::~Server()
@@ -60,46 +50,6 @@ quint32 Server::makeNewBrain()
     return port;
 }
 
-/** \brief initialize messages that are used for network communication
-  */
-void Server::initMessages()
-{
-    messages = new QMap <QString, QString>;
-    
-    messages->insert("UDP_ASK_FOR_SERVER", "Is there any server here ?");
-    messages->insert("ANSWER_UDP_ASK_FOR_SERVER", "I think Im here. Don't you think that too ?");
-
-    messages->insert("HELLO_FROM_SERVER", "Hello, I'm a server. What do you want ?");
-
-    messages->insert("ASK_LIST_GAMES", "Could you give me your game list ? Please.");
-    messages->insert("END_GAME_LIST", "End of the game list.");
-    /// \todo to be moved in a separate class
-}
-QString Server::messageString(QString m)
-{
-    QString out (messages->value(m));
-    return out;
-    /// \todo to be moved in a separate class alongside with initMessage()
-}
-
-QByteArray Server::messageByteArray(QString m)
-{
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_6);
-    out << (quint32) DataType::MESSAGE ;
-    out << messages->value(m);
-    
-    qDebug() << "Server messageByteArray : ";
-    for (int i = 0; i < block.size(); ++i) {
-        std::cout << block.at(i);
-    }   
-    std::cout << std::endl;
-
-    return block;
-    /// \todo to be moved in a separate class alongside with initMessage()
-}
-
 /** \return The list of game's servers, formated for network sending
   * 
   * Take all the Brain (game servers) currently running, and return the list
@@ -113,36 +63,37 @@ QByteArray Server::listOfServers() const
     out.setVersion(QDataStream::Qt_4_6);
     out << (quint32) DataType::LISTOFSERVERS ;
 
-    QString s ("");
+    QByteArray byteArray ("");
 
     QMap<quint32, Brain *>::const_iterator it = brains->constBegin();
     while (it != brains->constEnd()) {
-        s.append(QVariant(it.key()).toString()) ;
-        s.append(";") ;
-        s.append(it.value()->name()) ;
-        s.append(";") ;
-        s.append(QString::number(it.value()->getNPlayers())) ;
+        byteArray.append(QVariant(it.key()).toString()) ;
+        byteArray.append(";") ;
+        byteArray.append(it.value()->name()) ;
+        byteArray.append(";") ;
+        byteArray.append(QString::number(it.value()->getNPlayers())) ;
         if (it != brains->constEnd()-1)
-            s.append("#") ;
+            byteArray.append("#") ;
         ++it;
     }
-    out << s;
-
+    out << byteArray;
+    qDebug() << byteArray;
 	return block;
 }
 
 /** see Server::listOfServers() for more informations
   */
-QList<QMap<QString,QString> *> Server::decodeListOfServers(QString s)
+QList<QMap<QString,QString> *> Server::decodeListOfServers(QByteArray dat)
 {
+    qDebug() << dat;
     QList<QMap<QString,QString> *> out;
     
-    qDebug() << s;
     qDebug() << "Server::decodeListOfServers";
-    QStringList tokens = s.split("#");
+    //QStringList tokens = s.split("#");
+	QList<QByteArray>  tokens = dat.split('#');
 	for (int k = 0; k < tokens.size(); k++) {
         QMap<QString,QString> * m = new QMap<QString,QString>;
-        QStringList a = tokens[k].split(";");
+        QList<QByteArray>  a = tokens[k].split(';');
         m->insert("port", a[0]);
         m->insert("name", a[1]);
         m->insert("nPlayers", a[2]);

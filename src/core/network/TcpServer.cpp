@@ -54,9 +54,14 @@ void TcpServer::newConnection()
 
     connect(nouveauClient, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(nouveauClient, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
+   
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint32)DataType::MESSAGE;
+    out << QVariant(QString::number(Message::HELLO_FROM_SERVER)).toByteArray();
+    nouveauClient->write(block);
 
-
-    nouveauClient->write(mainServer->messageByteArray("HELLO_FROM_SERVER"));
     qDebug() << "Server : HELLO_FROM_SERVER";
 }
 
@@ -71,42 +76,32 @@ void TcpServer::readDataTcp()
 
     qDebug() << "TcpServer : Sender found";
 
-   /* int tailleMessage = 0;
-    if (tailleMessage == 0) // Si on ne connaît pas encore la taille du message, on essaie de la récupérer
-    {
-        if (socket->bytesAvailable() < (int)sizeof(quint16)) // On n'a pas reçu la taille du message en entier
-             return;
-
-        in >> tailleMessage; // Si on a reçu la taille du message en entier, on la récupère
-    }
-    // Si on connaît la taille du message, on vérifie si on a reçu le message en entier
-    if (socket->bytesAvailable() < tailleMessage) // Si on n'a pas encore tout reçu, on arrête la méthode
-        return;
-
-    QString data;
-    QDataStream in(tcpSocket);
-    qDebug() << "TcpServer : toto";
-    in >> data;
-
-    qDebug() << "TcpServer : toto";
-*/
-
-    QString data;
+    QByteArray block;
     quint32 type;
     QDataStream in(socket);
     in.setVersion(QDataStream::Qt_4_6);
-    in >> type >> data;
+    in >> type >> block;
 
- //   qDebug() << mainServer->decodeDatagram(in);
-
-    if (type == DataType::MESSAGE) {
-        if (data == mainServer->messageString("ASK_LIST_GAMES")) {
-            qDebug() << "TcpServer : ASK_LIST_GAMES";
-            socket->write(mainServer->listOfServers());
-        }
+    int messageId;
+    switch (type)
+    {
+        case DataType::MESSAGE:
+            messageId = block.toInt();
+            switch (messageId)
+            {
+                case Message::ASK_LIST_GAMES:
+                    qDebug() << "TcpServer : ASK_LIST_GAMES";
+                    socket->write(mainServer->listOfServers());
+                    break;
+                default:
+                    qDebug() << "Wrong message in TcpServer::readDataTcp";
+                    qDebug() << messageId;
+                    qDebug() << block;
+            }
+            break;
+        default:
+            qDebug() << "Wrong type of data in TcpServer::readDataTcp";
     }
-
-    qDebug() << "TcpServer : toto";
 }
 
 void TcpServer::clientDisconnected()

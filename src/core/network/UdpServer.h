@@ -6,12 +6,13 @@
 
 class Server;
 
+/// \todo comment UdpServer class
 class UdpServer : public QObject
 {
 	Q_OBJECT
 
 	public:
-		UdpServer(Server * s);
+		UdpServer();
 		~UdpServer();
 
 	public slots:
@@ -21,5 +22,4 @@ class UdpServer : public QObject
         void processTheDatagram (QByteArray datagram, QHostAddress senderHost, quint16 senderPort);
 
 		QUdpSocket * udpSocket;
-        Server * mainServer;
 };

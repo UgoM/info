@@ -10,15 +10,10 @@ ServerList::ServerList()
     udpSocket = new QUdpSocket(this);
 	udpSocket->bind(12801, QUdpSocket::ShareAddress);
 	connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagrams()));
-    connect(this, SIGNAL(s_askForInfos(QHostAddress, quint16)), this, SLOT(askForInfos(QHostAddress, quint16)));
 
     /* variables */
     flg_listen = 0;
     serverList =  new QMap <QString, quint16> ;
-
-    /* create an empty Server object, just to get messages definitions */
-    serverObject = new Server(0);
-
 }
 
 ServerList::~ServerList()
@@ -26,7 +21,6 @@ ServerList::~ServerList()
 	qDebug() << "Destructeur ServerList";
     delete udpSocket;
     delete serverList;
-    delete serverObject;
 }
 
 void ServerList::run()
@@ -44,11 +38,17 @@ void ServerList::run()
     QSettings settings;
     QStringList broadcastAddresses = settings.value("network/broadcastAdresses").toStringList();
 
+    // make broadcast message
+    QByteArray datagram;
+    QDataStream out(&datagram, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint32)DataType::MESSAGE;
+    out << QVariant(QString::number(Message::UDP_ASK_FOR_SERVER)).toByteArray();
+
     // broadcast message
-    QString broadcastAddress;
-    QByteArray datagram = serverObject->messageByteArray("UDP_ASK_FOR_SERVER");
     QUdpSocket * udpSocket_send = new QUdpSocket(this);
-    qDebug() << "ServerList : Broadcasting message ... "; 
+    qDebug() << "ServerList : Broadcasting message ... " << datagram; 
+    QString broadcastAddress;
     foreach(broadcastAddress, broadcastAddresses) {
         QHostAddress address (broadcastAddress);
         if (address.isNull()) {
@@ -103,21 +103,34 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHos
     qDebug() << "ServerList : processTheDatagram";
 	qDebug() << "ServerList : Received Udp data : \"" << datagram.data() << "\""; 
 
-    QString data;
+    QByteArray block;
     quint32 type;
     QDataStream in(datagram);
     in.setVersion(QDataStream::Qt_4_6);
-    in >> type >> data;
+    in >> type >> block;
 
-    
-    if (type == DataType::MESSAGE) {
-        qDebug() << "MESSAGE";
-        if (data == serverObject->messageString("ANSWER_UDP_ASK_FOR_SERVER")) {
-            qDebug() << "ServerList : processTheDatagram OK";
-            qDebug() << "new server adress " << senderHost.toString() << ":" << senderPort << ", asking for games and infos...";
-            serverList->insert(senderHost.toString(), senderPort);
-            emit askForInfos(senderHost, senderPort);
-        }
+    int messageId;
+    switch (type)
+    {
+        case DataType::MESSAGE:
+            messageId = block.toInt();
+            switch (messageId)
+            {
+                case Message::ANSWER_UDP_ASK_FOR_SERVER:
+                    qDebug() << "ServerList : processTheDatagram OK";
+                    qDebug() << "new server adress " << senderHost.toString() 
+                             << ":" << senderPort << ", asking for games and infos...";
+                    serverList->insert(senderHost.toString(), senderPort);
+                    askForInfos(senderHost, senderPort);
+                    break;
+                default:
+                    qDebug() << "Wrong message in ServerList::processTheDatagram";
+                    qDebug() << messageId;
+                    qDebug() << block;
+            }
+            break;
+        default:
+            qDebug() << "Wrong type of data in ServerList::processTheDatagram";
     }
 }
 
@@ -177,7 +190,6 @@ void ServerList::askForInfos(QHostAddress senderHost, quint16 senderPort)
     qDebug() << "Tcp connection to host " << senderHost.toString() << ":" << "12801";
     tcpSocket->connectToHost(senderHost, 12801);
 
-
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(connected()));
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
@@ -198,45 +210,60 @@ void ServerList::readDataTcp()
 {
     qDebug() << "ServerList : Tcp data received";
 
-    QString data;
+    QByteArray block;
     quint32 type;
     QDataStream in(tcpSocket);
     in.setVersion(QDataStream::Qt_4_6);
-    in >> type >> data;
-    qDebug() << type;
-    qDebug() << data;
+    in >> type >> block;
 
-    //qDebug() << serverObject->decodeDatagram(in);
-
-    if (type == DataType::MESSAGE) {
-        qDebug() << "MESSAGE";
-        if (data == serverObject->messageString("HELLO_FROM_SERVER")) {
-            qDebug() << "ServerList : HELLO_FROM_SERVER";
-            tcpSocket->write(serverObject->messageByteArray("ASK_LIST_GAMES"));
-        }
-    } else if (type == DataType::LISTOFSERVERS) {
-        // get infos from server
-        QList<QMap<QString,QString> *> l = serverObject->decodeListOfServers(data);
-        // add ip to the list
-        for (int i=0; i<l.size(); ++i) {
-            l.at(i)->insert("IP", tcpSocket->peerAddress().toString());
-        }
-        gameList << l;
+    int messageId;
+    QByteArray block_out;
+    QDataStream out(&block_out, QIODevice::WriteOnly);
+    QList<QMap<QString,QString> *> l;
+    switch (type)
+    {
+        case DataType::MESSAGE:
+            messageId = block.toInt();
+            switch (messageId)
+            {
+                case Message::HELLO_FROM_SERVER:
+                        out.setVersion(QDataStream::Qt_4_6);
+                        out << (quint32)DataType::MESSAGE;
+                        out << QVariant(QString::number(Message::ASK_LIST_GAMES)).toByteArray();
+                        tcpSocket->write(block_out);
+                        qDebug() << "ServerList : HELLO_FROM_SERVER";
+                    break;
+                default:
+                    qDebug() << "Wrong message in ServerList::readDataTcp";
+                    qDebug() << messageId;
+                    qDebug() << block;
+            }
+            break;
+        case DataType::LISTOFSERVERS:
+            // get infos from server
+            l = Server::decodeListOfServers(block);
+            // add ip to the list
+            for (int i=0; i<l.size(); ++i) {
+                l.at(i)->insert("IP", tcpSocket->peerAddress().toString());
+            }
+            gameList << l;
+            // debug
+            for (int i=0; i<gameList.size(); ++i) {
+                qDebug() << "gameList : " << i;
+                QMapIterator<QString, QString> it(*gameList.at(i));
+                while (it.hasNext()) {
+                    it.next();
+                    qDebug() << it.key() << ": " << it.value();
+                }
+            }
+            // émission du signal pour rafraichir l'affichage
+            emit newList();
+            // fermeture de la connexion
+            tcpSocket->close();
+            break;
+        default:
+            qDebug() << "Wrong type of data in ServerList::readDataTcp";
     }
-
-    for (int i=0; i<gameList.size(); ++i) {
-        qDebug() << "gameList : " << i;
-        QMapIterator<QString, QString> it(*gameList.at(i));
-        while (it.hasNext()) {
-            it.next();
-            qDebug() << it.key() << ": " << it.value();
-        }
-        // émission du signal pour rafraichir l'affichage
-        emit newList();
-        // fermeture de la connexion
-        tcpSocket->close();
-    }
-
 }
 
 void ServerList::displayErrorTcp(QAbstractSocket::SocketError socketError)
