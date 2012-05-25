@@ -30,7 +30,7 @@ class Game : public QWidget
 		virtual void processKey();
 
     private:
-        QTcpSocket * tcpSocket;
+        QTcpSocket * socketServer;
 
     private slots:  
         void connected();
