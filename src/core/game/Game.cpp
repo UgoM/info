@@ -4,8 +4,7 @@
 
 Game::Game()
 {
-    connect(this, SIGNAL(newGameData(QByteArray)), this, SLOT(processReceive(QByteArray)));
-	qDebug() << "Constructeur Game";
+    qDebug() << "Constructeur Game";
     clientType = ClientType::OBSERVER;
     idPlayer = 0;
 
@@ -18,10 +17,30 @@ Game::~Game()
 	qDebug() << "Destructeur Game";
 }
 
-void Game::send(QByteArray block)
+/** \brief send data to the server of the game (Brain)
+  * \param dat : data to be send
+  *
+  * Send only data of type DataType::GAMEDATA to the Brain, other types are not
+  * to be used by subclasses.
+  */
+void Game::send(QByteArray dat)
 {
-    (void) block;
+    send(dat, DataType::GAMEDATA);
 }
+/** \brief same as Game::send(QByteArray dat), but is private can send other DataType
+  * \param dat : data to send
+  * \param type : from DataType
+  */
+void Game::send(QByteArray dat, int type)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint32)type;
+    out << dat;
+    tcpSocket->write(block);
+}
+
 
 void Game::processReceive(QByteArray block)
 {
@@ -78,7 +97,7 @@ void Game::readDataTcp()
     if (type == DataType::GAMEDATA) {
         qDebug() << "GAMEDATA";
 	    qDebug() << block;
-        emit newGameData( block );  
+        processReceive( block );  
     } else if (type == DataType::NCONNECTED) {
         qDebug() << "NCONNECTED";
         qDebug() << block;
@@ -162,13 +181,7 @@ void Game::setClientType( int id )
      }
             
     if (message != 0) {
-        QByteArray block;
-        QDataStream out(&block, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_4_6);
-        out << (quint32)DataType::MESSAGE;
-        out << QVariant(QString::number(message)).toByteArray();
-        tcpSocket->write(block);
+        send(QVariant(QString::number(message)).toByteArray(), DataType::MESSAGE);
         qDebug() << QVariant(QString::number(message)).toByteArray();
     }
-    /// \todo create a function send(datatype, (int, qstring, qbytearray...) data)
 }

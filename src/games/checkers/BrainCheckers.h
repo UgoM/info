@@ -12,10 +12,15 @@ class BrainCheckers : public Brain {
 	public slots:
         void init();
 
-		void handleMove(QByteArray boardEnd);
-
         QString name() {return QString("Jeu de dames");};
         QString nPlayers();
+
+        QByteArray getLastData();
+
+    private:
+        QByteArray lastData;
+
+        void processReceive(QByteArray dat);
 };
 
 #endif

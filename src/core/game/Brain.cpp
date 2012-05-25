@@ -22,6 +22,22 @@ Brain::Brain()
 }
 
 
+/** \brief send data to a client
+  * \param client : identifier of the client
+  * \param dat : data to send
+  * \param type : from DataType
+  *
+  * All send function are private, except sendToAll
+  */
+void Brain::sendTo(Client * client, QByteArray dat, int type)
+{
+    QByteArray block;
+    QDataStream out(&block, QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_6);
+    out << (quint32)type;
+    out << dat;
+    client->socket->write(block);
+}
 void Brain::sendTo(int idClient, QByteArray block)
 {
     (void) idClient;
@@ -46,7 +62,7 @@ void Brain::sendToAll(QByteArray dat)
 
 void Brain::processReceive(QByteArray block)
 {
-    qDebug() << "new data : " << block;
+    qDebug() << "You need to subclass Brain::processReceive(QByteArray block)";
     (void) block;
 }
 
@@ -65,7 +81,9 @@ void Brain::newConnection()
     connect(newClient->socket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(newClient->socket, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
 
-    /// \todo differenciate players and observators
+    sendTo ( newClient, getLastData(), DataType::GAMEDATA) ;
+
+    /// \todo send nConnected data, and display
     //emit newObs();
 
     // update clients (players and obs) after 2 sec
@@ -166,6 +184,9 @@ int Brain::clientIdFromSocket(QTcpSocket *socket)
     return -1;
 }
 
+/** \brief Used when an obs asked to become a new player
+  * \param socket : socket of the client, identify him
+  */
 void Brain::addNewPlayer(QTcpSocket *socket)
 {
     int answer;
@@ -198,4 +219,15 @@ void Brain::init()
     /// Model :
     ///
     /// nMaxPlayers = x;
+}
+
+/** \brief get last game data
+  *
+  * Used, for example, when a new obs is connecting, and wants to have the game
+  * state. Must be subclassed.
+  */
+QByteArray Brain::getLastData()
+{
+    qDebug() << "ERROR : Brain::getLastData must be subclassed";
+    return NULL;
 }

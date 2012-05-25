@@ -5,13 +5,19 @@ void BrainCheckers::init()
     nMaxPlayers = 2;
 }
 
-void BrainCheckers::handleMove(QByteArray boardEnc){
+void BrainCheckers::processReceive(QByteArray dat){
 	qDebug() << "Board received :";
-	qDebug() << boardEnc;
-    sendToAll( boardEnc);
+	qDebug() << dat;
+    sendToAll( dat);
+    lastData = dat;
 }
 
 QString BrainCheckers::nPlayers()
 {
     return QString("2/2");
+}
+
+QByteArray BrainCheckers::getLastData()
+{
+    return lastData;
 }

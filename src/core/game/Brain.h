@@ -31,6 +31,8 @@ class Brain : public QObject
 		void sendTo(int idClient, QByteArray dat);
 		void sendToAll(QByteArray block);
         quint32 nMaxPlayers;
+		virtual void processReceive(QByteArray block);
+        virtual QByteArray getLastData();
 
     private:
         quint32 port;
@@ -42,11 +44,12 @@ class Brain : public QObject
         int clientIdFromSocket(QTcpSocket *socket);
         void addNewPlayer(QTcpSocket *socket);
 
+        void sendTo(Client * client, QByteArray dat, int type);
+
     private slots:
         void newConnection();
         void readDataTcp();
         void clientDisconnected();
-		virtual void processReceive(QByteArray block);
         void sendNConnected();
 
     signals:

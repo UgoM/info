@@ -129,7 +129,7 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 					grayAllowedPositions();
 				}
 			}
-			emit moveMade(encodeBoard());	//on prévient qu'un coup est joué à tous ceux qui écoutent
+			send( encodeBoard() );
 		}
 	}
 }
@@ -227,6 +227,7 @@ Checkers::~Checkers() {
 
 
 void Checkers::processReceive(QByteArray block) {
+    if (block.isNull()) return;
 	decodeBoard(block);
 	drawBoard();
 }
@@ -237,8 +238,4 @@ void Checkers::processClick() {
 
 void Checkers::processKey() {
 
-}
-
-void Checkers::reSendData() {
-	emit moveMade(encodeBoard());
 }

@@ -9,6 +9,7 @@ class Game : public QWidget
 	Q_OBJECT
 
     protected:
+        /// \todo move the 4 next variables to private, and create function to access them
 		int clientType;
 		int idPlayer;
 
@@ -16,6 +17,7 @@ class Game : public QWidget
         quint32 nPlayers;
         quint32 nObs;
 
+		void send(QByteArray data);
 	public:
 		Game();
 		~Game();
@@ -23,7 +25,7 @@ class Game : public QWidget
         void setClientType(int clientType); 
 
 	private:
-		void send(QByteArray block);
+        void send(QByteArray dat, int type);
 		virtual void processClick();
 		virtual void processKey();
 
@@ -38,11 +40,7 @@ class Game : public QWidget
 
 		virtual void processReceive(QByteArray block);
 
-    public slots:
-        virtual void reSendData(){};
-
     signals:
-        void newGameData(QByteArray block);
         void nConnectedChanged(int nPlayers, int nObs);
         void newStatus(QString status);
 };
