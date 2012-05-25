@@ -93,33 +93,41 @@ void Game::readDataTcp()
     in.setVersion(QDataStream::Qt_4_6);
     in >> type >> block;
 
-    /// \todo : change these else if by a switch
-    if (type == DataType::GAMEDATA) {
-        qDebug() << "GAMEDATA";
-	    qDebug() << block;
-        processReceive( block );  
-    } else if (type == DataType::NCONNECTED) {
-        qDebug() << "NCONNECTED";
-        qDebug() << block;
-        QList<QByteArray> l = block.split(',');
-        nPlayers = l[0].toInt(); nObs = l[1].toInt();
-        emit nConnectedChanged(nPlayers, nObs);
-    } else if (type == DataType::MESSAGE) {
-        int messageId = block.toInt();
-        switch (messageId)
-        {
-            case Message::OK_YOU_CAN_PLAY:
-                clientType = ClientType::PLAYER;
-                emit newStatus("Playing now");
-                qDebug() << "Playing now";
-                break;
-            case Message::NO_YOU_CANT_PLAY:
-                emit newStatus("Server refused you as a player, observing now");
-                qDebug() << "Server refused you as a player, observing now";
-                break;
-            default:
-                qDebug() << "Wrong message in Game::readDataTcp";
-        }
+    int messageId;
+    QList<QByteArray> l;
+    switch (type)
+    {
+        case DataType::GAMEDATA:
+            qDebug() << "GAMEDATA";
+	        qDebug() << block;
+            processReceive( block );
+            break;
+        case DataType::NCONNECTED:
+            qDebug() << "NCONNECTED";
+            qDebug() << block;
+            l = block.split(',');
+            nPlayers = l[0].toInt(); nObs = l[1].toInt();
+            emit nConnectedChanged(nPlayers, nObs);
+            break;
+        case DataType::MESSAGE:
+            messageId = block.toInt();
+            switch (messageId)
+            {
+                case Message::OK_YOU_CAN_PLAY:
+                    clientType = ClientType::PLAYER;
+                    emit newStatus("Playing now");
+                    qDebug() << "Playing now";
+                    break;
+                case Message::NO_YOU_CANT_PLAY:
+                    emit newStatus("Server refused you as a player, observing now");
+                    qDebug() << "Server refused you as a player, observing now";
+                    break;
+                default:
+                    qDebug() << "Wrong message in Game::readDataTcp";
+            }
+            break;
+        default:
+            qDebug() << "Wrong dataType in Game::readDataTcp " << type;
     }
 }
 
