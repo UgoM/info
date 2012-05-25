@@ -43,13 +43,3 @@ class Server : public QObject
         QList <QMap<QString,QString> *> decodeListOfServers(QString s);
 				
 };
-
-/// \todo move DataType to type.h
-namespace DataType {
-	enum EDataType {
-		MESSAGE = 1,
-        LISTOFSERVERS,
-        GAMEDATA,
-        NCONNECTED
-	};
-}

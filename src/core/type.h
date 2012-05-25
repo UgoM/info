@@ -20,3 +20,14 @@ namespace Message {
         I_AM_AN_OBS_NOW
     };
 }
+
+/** \brief data types send across the network
+  */
+namespace DataType {
+	enum EDataType {
+		MESSAGE = 1,
+        LISTOFSERVERS,
+        GAMEDATA,
+        NCONNECTED
+	};
+}

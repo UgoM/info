@@ -1,5 +1,6 @@
 #include "src/core/network/UdpServer.h"
 #include "src/core/network/Server.h"
+#include "src/core/type.h"
 
 UdpServer::UdpServer(Server * s)
 {

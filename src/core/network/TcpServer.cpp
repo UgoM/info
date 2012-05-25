@@ -1,5 +1,6 @@
 #include "src/core/network/TcpServer.h"
 #include "src/core/network/Server.h"
+#include "src/core/type.h"
 
 TcpServer::TcpServer(Server * s)
 {

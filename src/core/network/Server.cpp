@@ -3,6 +3,7 @@
 #include "src/core/network/UdpServer.h"
 #include "src/core/game/Brain.h"
 #include "src/core/game/Game.h"
+#include "src/core/type.h"
 #include <iostream>
 
 #include "src/games/checkers/Checkers.h"

@@ -1,5 +1,6 @@
 #include "src/core/network/ServerList.h"
 #include "src/core/network/Server.h"
+#include "src/core/type.h"
 
 ServerList::ServerList()
 {
