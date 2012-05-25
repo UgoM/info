@@ -8,6 +8,7 @@ class GameInfoWidget : public QWidget {
 
     QLabel * labelNPlayers;
     QLabel * labelNObs;
+    QLabel * labelStatus;
 
     public:
         GameInfoWidget();
@@ -16,7 +17,7 @@ class GameInfoWidget : public QWidget {
 
     public slots:
         void nConnectedChanged(int nPlayers, int nObs);
-
+        void statusChanged(QString label);
 
 };
 

@@ -178,7 +178,6 @@ void MainWindow::newGameWindow(QWidget * newGame)
     // Connecting Game to GameInfoWidget to refresh infos
     connect(newGame, SIGNAL(nConnectedChanged(int, int)), 
         giw, SLOT(nConnectedChanged(int, int)) );
-    /// \todo add a status label to giw
-    //connect(newGame, SIGNAL(newStatus(QString)), 
-    //    giw, SLOT(statusChanged(QString)) );
+    connect(newGame, SIGNAL(newStatus(QString)), 
+        giw, SLOT(statusChanged(QString)) );
 }
