@@ -23,47 +23,46 @@ Brain::Brain()
 
 
 /** \brief send data to a client
-  * \param client : identifier of the client
+  * \param socket : socket of the client
   * \param dat : data to send
   * \param type : from DataType
   *
-  * All send function are private, except sendToAll
+  * All send function are private, except sendToAll. This function is the basic
+  * one, all other sendTo are just more practical way to use it.
   */
-void Brain::sendTo(Client * client, QByteArray dat, int type)
+void Brain::sendTo(QTcpSocket * socket, QByteArray dat, int type)
 {
     QByteArray block;
     QDataStream out(&block, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_6);
     out << (quint32)type;
     out << dat;
-    client->socket->write(block);
+    socket->write(block);
 }
-void Brain::sendTo(int idClient, QByteArray block)
+/** \brief see Brain::sendTo(QTcpSocket * socket, QByteArray dat, int type)
+  */
+void Brain::sendTo(Client * client, QByteArray dat, int type)
 {
-    (void) idClient;
-    (void) block;
+    sendTo(client->socket, dat, type);
 }
-
+/** \brief send game data to all clients (players and obs)
+  */
 void Brain::sendToAll(QByteArray dat)
 {
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_6);
-    out << DataType::GAMEDATA;
-    out << dat;
-
     qDebug() << "Brain::sendToAll";
     for (int i = 0; i < clients.size(); i++)
     {
         qDebug() << "-> client " << i;
-        clients[i]->socket->write(block);
+        sendTo(clients[i], dat, DataType::GAMEDATA);
     }
 }
-
-void Brain::processReceive(QByteArray block)
+/** \brief function to be redefined, process gamedata received
+  * \param dat : game data to be processed
+  */
+void Brain::processReceive(QByteArray dat)
 {
     qDebug() << "You need to subclass Brain::processReceive(QByteArray block)";
-    (void) block;
+    (void) dat;
 }
 
 /** \brief create a new client from a new connection
@@ -160,18 +159,12 @@ void Brain::clientDisconnected()
     int id = clientIdFromSocket(socket);
     if (id != -1) 
         clients.removeAt(id);
-/*    for (int i = 0; i < clients.size(); i++)
-    {
-        if (clients[i]->socket == socket)
-        {
-            clients.removeAt(i);
-            break;
-        }
-    }*/
 
     socket->deleteLater();
 }
 
+/** \brief To know id of a client when we know its socket
+  */
 int Brain::clientIdFromSocket(QTcpSocket *socket)
 {
     for (int i = 0; i < clients.size(); i++)
@@ -190,24 +183,19 @@ int Brain::clientIdFromSocket(QTcpSocket *socket)
 void Brain::addNewPlayer(QTcpSocket *socket)
 {
     int answer;
-    int id = clientIdFromSocket(socket);
 
     if (nPlayers < nMaxPlayers)
     {
+        int id = clientIdFromSocket(socket);
         clients[id]->type = ClientType::PLAYER;
         answer = Message::OK_YOU_CAN_PLAY;
     } else {
         answer = Message::NO_YOU_CANT_PLAY;
     }
 
-    QByteArray block;
-    QDataStream out(&block, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_6);
-    out << DataType::MESSAGE;
-    out << QVariant(QString::number(answer)).toByteArray();;
-
-    clients[id]->socket->write(block);
-    /// \todo create a function send(clientid, datatype, (int, qstring, qbytearray...) data)
+    sendTo( socket, 
+            QVariant(QString::number(answer)).toByteArray(), 
+            DataType::MESSAGE);
 }
 
 /** \brief game initialization, must be subclassed

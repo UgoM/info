@@ -28,7 +28,6 @@ class Brain : public QObject
         int getNPlayers(){return nPlayers;};
 
 	protected:
-		void sendTo(int idClient, QByteArray dat);
 		void sendToAll(QByteArray block);
         quint32 nMaxPlayers;
 		virtual void processReceive(QByteArray block);
@@ -44,6 +43,7 @@ class Brain : public QObject
         int clientIdFromSocket(QTcpSocket *socket);
         void addNewPlayer(QTcpSocket *socket);
 
+        void sendTo(QTcpSocket * socket, QByteArray dat, int type);
         void sendTo(Client * client, QByteArray dat, int type);
 
     private slots:
