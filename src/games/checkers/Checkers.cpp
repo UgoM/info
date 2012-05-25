@@ -76,7 +76,7 @@ void Checkers::drawBoard() {
 
 /** Handle mouse press event. **/
 void Checkers::mousePressEvent(QMouseEvent *ev) {
-	if (clientType == ClientType::OBSERVER) {
+	if (getClientType() != ClientType::PLAYER) {
 		return;	//si c'est un observeur qui clique, on le coupe
 	}
 	if (!moveInProgress) {	//aucun mouvement en cours

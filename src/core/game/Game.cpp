@@ -1,6 +1,8 @@
 #include "src/core/game/Game.h"
 #include "src/core/type.h"
 
+/** \brief Constructor
+  */
 Game::Game()
 {
     qDebug() << "Constructeur Game";
@@ -11,6 +13,8 @@ Game::Game()
     nObs = 0;
 }
 
+/** \brief Destructor
+  */
 Game::~Game()
 {
 	qDebug() << "Destructeur Game";
@@ -26,6 +30,7 @@ void Game::send(QByteArray dat)
 {
     send(dat, DataType::GAMEDATA);
 }
+
 /** \brief same as Game::send(QByteArray dat), but is private can send other DataType
   * \param dat : data to send
   * \param type : from DataType
@@ -40,20 +45,21 @@ void Game::send(QByteArray dat, int type)
     socketServer->write(block);
 }
 
-
-void Game::processReceive(QByteArray block)
+/** \brief what the game should do when it receives data from the Brain
+  * \param dat : data received
+  */
+void Game::processReceive(QByteArray dat)
 {
-    (void) block;
+    qDebug() << "ERROR : Game::processReceive must be reimplemented";
+    (void) dat;
 }
 
-void Game::processClick()
-{
-}
-
-void Game::processKey()
-{
-}
-
+/** \brief set and connect the client to a game server
+  * \param hostAddress : server address, like "192.168.1.211"
+  * \param port : server port
+  *
+  * Call this function right after creating the subclassed game object.
+  */
 void Game::setServer(QString hostAddress, quint32 port)
 {
     qDebug() << "Game::setServer";
@@ -80,7 +86,11 @@ void Game::disconnected()
     qDebug() << "Game : Déconnécté du server TCP";
 }
 
-
+/** \brief Process incomming data from the server
+  *
+  * It could be any data, but only data of type GameData are send to 
+  * processReceive, the other types are for internal use only
+  */
 void Game::readDataTcp()
 {
     qDebug() << "Game : Tcp data received";
@@ -129,6 +139,8 @@ void Game::readDataTcp()
     }
 }
 
+/** \brief display tcp errors
+  */
 void Game::displayErrorTcp(QAbstractSocket::SocketError socketError)
 {
     switch (socketError) {
@@ -190,4 +202,11 @@ void Game::setClientType( int id )
         send(QVariant(QString::number(message)).toByteArray(), DataType::MESSAGE);
         qDebug() << QVariant(QString::number(message)).toByteArray();
     }
+}
+
+/** \brief get client type
+  */
+int Game::getClientType()
+{
+    return clientType;
 }

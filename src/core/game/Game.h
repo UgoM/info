@@ -8,29 +8,25 @@ class Game : public QWidget
 {
 	Q_OBJECT
 
-    protected:
-        /// \todo move the 4 next variables to private, and create function to access them
+    private:
+        QTcpSocket * socketServer;
 		int clientType;
 		int idPlayer;
-
-        // number of players and obs, can only be modified by brain
         quint32 nPlayers;
         quint32 nObs;
 
+        void send(QByteArray dat, int type);
+
+    protected:
 		void send(QByteArray data);
+		virtual void processReceive(QByteArray dat);
+        int getClientType();
+
 	public:
 		Game();
 		~Game();
         void setServer(QString hostAddress, quint32 port);
-        void setClientType(int clientType); 
-
-	private:
-        void send(QByteArray dat, int type);
-		virtual void processClick();
-		virtual void processKey();
-
-    private:
-        QTcpSocket * socketServer;
+        void setClientType(int clientType);
 
     private slots:  
         void connected();
@@ -38,7 +34,6 @@ class Game : public QWidget
         void readDataTcp();
         void displayErrorTcp(QAbstractSocket::SocketError socketError);
 
-		virtual void processReceive(QByteArray block);
 
     signals:
         void nConnectedChanged(int nPlayers, int nObs);
