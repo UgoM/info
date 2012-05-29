@@ -1,5 +1,7 @@
 #pragma once
 
+/** \brief Client type
+  */
 namespace ClientType {
     enum EClientType {
         NONE,
@@ -8,6 +10,8 @@ namespace ClientType {
     };
 }
 
+/** \brief messages sent across the network, these messages are of DataType::Message
+  */
 namespace Message {
     enum EMessage {
         NONE,
@@ -32,7 +36,7 @@ namespace Message {
     };
 }
 
-/** \brief data types send across the network
+/** \brief data types sent across the network
   */
 namespace DataType {
 	enum EDataType {
