@@ -12,9 +12,6 @@ class BrainCheckers : public Brain {
 	public slots:
         void init();
 
-        QString name() {return QString("Jeu de dames");};
-        QString nPlayers();
-
         QByteArray getGameState();
 
     private:

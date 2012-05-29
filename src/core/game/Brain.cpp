@@ -207,6 +207,7 @@ void Brain::init()
     /// Model :
     ///
     /// nMaxPlayers = x;
+    /// gameName = "Awesome game"
 }
 
 /** \brief get last game data
@@ -219,3 +220,23 @@ QByteArray Brain::getGameState()
     qDebug() << "ERROR : Brain::getGameState must be subclassed";
     return NULL;
 }
+
+/** \brief returns the name of the game
+  */
+QString Brain::name()
+{
+    return gameName;
+}
+/** \brief returns the current number of players
+  */
+int Brain::getNPlayers()
+{
+    return nPlayers;
+}
+/** \brief returns the port on which Brain is listening
+  */
+quint32 Brain::getPort()
+{
+    return port;
+}
+

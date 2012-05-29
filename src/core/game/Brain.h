@@ -21,15 +21,18 @@ class Brain : public QObject
 
 	public:
 		Brain();
-        quint32 getPort() { return port; };
-
         virtual void init();
-        virtual QString name(){return "";};
-        int getNPlayers(){return nPlayers;};
+
+        QString name();
+        int getNPlayers();
+        quint32 getPort();
 
 	protected:
-		void sendToAll(QByteArray block);
         quint32 nMaxPlayers;
+        QString gameName;
+
+		void sendToAll(QByteArray block);
+
 		virtual void processReceive(QByteArray block);
         virtual QByteArray getGameState();
 

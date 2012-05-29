@@ -3,6 +3,7 @@
 void BrainCheckers::init()
 {
     nMaxPlayers = 2;
+    gameName = "Jeu de dames";
 }
 
 void BrainCheckers::processReceive(QByteArray dat){
@@ -10,11 +11,6 @@ void BrainCheckers::processReceive(QByteArray dat){
 	qDebug() << dat;
     sendToAll( dat);
     lastData = dat;
-}
-
-QString BrainCheckers::nPlayers()
-{
-    return QString("2/2");
 }
 
 QByteArray BrainCheckers::getGameState()
