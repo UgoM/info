@@ -138,6 +138,9 @@ void Brain::readDataTcp()
                     qDebug() << block;
             }
             break;
+        case DataType::CHATDATA:
+            sendToAll(block, DataType::CHATDATA); // simply relay Chat Message
+            break;
         default:
             qDebug() << "Wrong type of data in Brain::readDataTcp";
     }

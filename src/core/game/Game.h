@@ -34,8 +34,11 @@ class Game : public QWidget
         void readDataTcp();
         void displayErrorTcp(QAbstractSocket::SocketError socketError);
 
+    public slots:
+        void sendChatData(QString s);
 
     signals:
         void nConnectedChanged(int nPlayers, int nObs);
         void newStatus(QString status);
+        void newChatData(QString s);
 };

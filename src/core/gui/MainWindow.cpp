@@ -188,4 +188,9 @@ void MainWindow::newGameWindow(QWidget * newGame)
         giw, SLOT(nConnectedChanged(int, int)) );
     connect(newGame, SIGNAL(newStatus(QString)), 
         giw, SLOT(statusChanged(QString)) );
+    // Connecting Game to ChatWidget to refresh chat
+    connect(newGame, SIGNAL(newChatData(QString)), 
+        cw, SLOT(newChatData(QString)) );
+    connect(cw, SIGNAL(sendDataToServer(QString)),
+        newGame, SLOT(sendChatData(QString)) );
 }

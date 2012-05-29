@@ -4,10 +4,10 @@
 ChatWidget::ChatWidget()
 {
     QLabel * label1 = new QLabel(tr("Chat :"));
-    QLabel * label2 = new QLabel(tr("Not implemented yet"));
-    QTextEdit * textDisplay = new QTextEdit();
+    QLabel * label2 = new QLabel(tr("Not fully implemented yet"));
+    textDisplay = new QTextEdit();
     QLabel * label3 = new QLabel(tr("Send Message :"));
-    QLineEdit * textInput = new QLineEdit();
+    textInput = new QLineEdit();
 
     textDisplay->setFocusPolicy(Qt::NoFocus);
     textDisplay->setReadOnly(true);
@@ -19,5 +19,27 @@ ChatWidget::ChatWidget()
     vLayout->addWidget(label3);
     vLayout->addWidget(textInput);
 	setLayout(vLayout);
+
+    connect(textInput, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
 }
 
+/** \brief What's happening when new chat data arrive
+  * \param s : data
+  */
+void ChatWidget::newChatData(QString s)
+{
+    textDisplay->append(s);
+    /// \todo faire un peu de mise en forme des messages, et gérer les pseudos
+}
+/** \brief process and send input data
+  */
+void ChatWidget::returnPressed()
+{
+    QString text = textInput->text();
+    if (text.isEmpty())
+        return;
+
+    emit sendDataToServer(text);
+    textInput->clear();
+    qDebug() << "ChatWidget::returnPressed()" << text;
+}

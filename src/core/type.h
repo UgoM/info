@@ -39,6 +39,7 @@ namespace DataType {
 		MESSAGE = 1,
         LISTOFSERVERS,
         GAMEDATA,
+        CHATDATA,
         NCONNECTED
 	};
 }

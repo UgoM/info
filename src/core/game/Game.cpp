@@ -110,6 +110,9 @@ void Game::readDataTcp()
 	        qDebug() << block;
             processReceive( block );
             break;
+        case DataType::CHATDATA:
+            emit newChatData(QVariant(block).toString());
+            break;
         case DataType::NCONNECTED:
             qDebug() << "NCONNECTED";
             qDebug() << block;
@@ -209,4 +212,11 @@ void Game::setClientType( int id )
 int Game::getClientType()
 {
     return clientType;
+}
+
+/** \brief send new chat data, from user's input to the server
+  */
+void Game::sendChatData(QString s)
+{
+    send(QVariant(s).toByteArray(), DataType::CHATDATA);
 }
