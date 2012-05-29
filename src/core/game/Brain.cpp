@@ -86,7 +86,7 @@ void Brain::newConnection()
     connect(newClient->socket, SIGNAL(readyRead()), this, SLOT(readDataTcp()));
     connect(newClient->socket, SIGNAL(disconnected()), this, SLOT(clientDisconnected()));
 
-    sendTo ( newClient, getLastData(), DataType::GAMEDATA) ;
+    sendTo ( newClient, getGameState(), DataType::GAMEDATA) ;
 
     // update clients (players and obs) after 2 sec
     // so the new client has time to create his window
@@ -214,8 +214,8 @@ void Brain::init()
   * Used, for example, when a new obs is connecting, and wants to have the game
   * state. Must be subclassed.
   */
-QByteArray Brain::getLastData()
+QByteArray Brain::getGameState()
 {
-    qDebug() << "ERROR : Brain::getLastData must be subclassed";
+    qDebug() << "ERROR : Brain::getGameState must be subclassed";
     return NULL;
 }

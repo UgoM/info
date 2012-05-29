@@ -17,7 +17,7 @@ QString BrainCheckers::nPlayers()
     return QString("2/2");
 }
 
-QByteArray BrainCheckers::getLastData()
+QByteArray BrainCheckers::getGameState()
 {
     return lastData;
 }

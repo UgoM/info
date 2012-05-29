@@ -31,7 +31,7 @@ class Brain : public QObject
 		void sendToAll(QByteArray block);
         quint32 nMaxPlayers;
 		virtual void processReceive(QByteArray block);
-        virtual QByteArray getLastData();
+        virtual QByteArray getGameState();
 
     private:
         quint32 port;

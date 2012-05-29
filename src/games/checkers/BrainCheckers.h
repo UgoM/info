@@ -15,7 +15,7 @@ class BrainCheckers : public Brain {
         QString name() {return QString("Jeu de dames");};
         QString nPlayers();
 
-        QByteArray getLastData();
+        QByteArray getGameState();
 
     private:
         QByteArray lastData;
