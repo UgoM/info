@@ -10,8 +10,8 @@ int main(int argc, char *argv[]) {
 
     QApplication app(argc, argv);
 
-// traduction en français ds touches
-QString locale = QLocale::system().name().section('_', 0, 0);
+    // traduction en français ds touches
+    QString locale = QLocale::system().name().section('_', 0, 0);
     QTranslator translator;
     translator.load(QString("qt_") + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     app.installTranslator(&translator);
@@ -19,7 +19,7 @@ QString locale = QLocale::system().name().section('_', 0, 0);
     // options pour QSettings
     QCoreApplication::setOrganizationName("projetInfo");
     QCoreApplication::setOrganizationDomain("projetInfo.fr");
-    QCoreApplication::setApplicationName("dames");
+    QCoreApplication::setApplicationName("info");
     initConfig();
 
     MainWindow window;
@@ -28,9 +28,10 @@ QString locale = QLocale::system().name().section('_', 0, 0);
 return app.exec();
 }
 
-// initialize, and check integrity of the configuration file,
-// if a key is missing, it adds it with default value
-// default keys/values are in default.conf
+/** initialize, and check integrity of the configuration file,
+  * if a key is missing, it adds it with default value
+  * default keys/values are in default.conf
+  */
 void initConfig()
 {
     // program configuration
