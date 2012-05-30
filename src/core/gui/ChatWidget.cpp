@@ -29,7 +29,7 @@ ChatWidget::ChatWidget()
 void ChatWidget::newChatData(QString s)
 {
     textDisplay->append(s);
-    /// \todo faire un peu de mise en forme des messages, et gérer les pseudos
+    /// \todo faire un peu de mise en forme des messages
 }
 /** \brief process and send input data
   */
@@ -39,7 +39,9 @@ void ChatWidget::returnPressed()
     if (text.isEmpty())
         return;
 
-    emit sendDataToServer(text);
+    QSettings settings;
+    QString nick = settings.value("global/username").toString();
+    emit sendDataToServer(nick + " : " + text);
     textInput->clear();
     qDebug() << "ChatWidget::returnPressed()" << text;
 }
