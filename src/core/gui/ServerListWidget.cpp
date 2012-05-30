@@ -1,3 +1,6 @@
+#include <QtGui>
+#include <QSettings>
+
 #include "src/core/gui/ServerListWidget.h"
 #include "src/core/network/ServerList.h"
 

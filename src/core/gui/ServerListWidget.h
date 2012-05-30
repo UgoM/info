@@ -1,18 +1,22 @@
-#ifndef DEF_SERVERLISTWIDGET
-#define DEF_SERVERLISTWIDGET
+#pragma once
 
-#include <QtGui>
-#include <QSettings>
+#include <QWidget>
 
+class QTableView;
+class QLineEdit;
 class ServerList;
 
+/** \class ServerListWidget
+  * \brief Display the window to look for servers
+  *
+  * \todo comment ServerListWidget
+  */
 class ServerListWidget : public QWidget {
 
     Q_OBJECT
 
     ServerList * serverList;
     QTableView * tableView;
-
     QLineEdit * fieldBroadcastAddress;
 
     public:
@@ -21,7 +25,7 @@ class ServerListWidget : public QWidget {
     private:
         void config();
 
-    public slots:
+    private slots:
         void buttonRefresh();
         void refreshDisplay();
         void buttonObserv();
@@ -34,4 +38,3 @@ class ServerListWidget : public QWidget {
 
 };
 
-#endif
