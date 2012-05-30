@@ -79,6 +79,8 @@ void Brain::newConnection()
     newClient->socket = tcpServer->nextPendingConnection();
     newClient->type = ClientType::OBSERVER; // default : a new client is an obs
                                             // it has to ask to become a player
+    newClient->playerId = -1;
+
     nObs++;
 
     clients << newClient;
@@ -179,23 +181,43 @@ int Brain::clientIdFromSocket(QTcpSocket *socket)
   */
 void Brain::addNewPlayer(QTcpSocket *socket)
 {
-    int answer;
-
     if (nPlayers < nMaxPlayers)
     {
-        int id = clientIdFromSocket(socket);
-        clients[id]->type = ClientType::PLAYER;
-        answer = Message::OK_YOU_CAN_PLAY;
+        int clientId = clientIdFromSocket(socket);
+        clients[clientId]->type = ClientType::PLAYER;
+        int playerId = getUnusedPlayerId();
+        clients[clientId]->playerId = playerId;
+
+        sendTo( socket, 
+                QVariant(QString::number(playerId)).toByteArray(), 
+                DataType::PLAYERID);
+
         nObs --;
         nPlayers ++;
     } else {
-        answer = Message::NO_YOU_CANT_PLAY;
+        int answer = Message::NO_YOU_CANT_PLAY;
+        sendTo( socket, 
+                QVariant(QString::number(answer)).toByteArray(), 
+                DataType::MESSAGE);
     }
 
-    sendTo( socket, 
-            QVariant(QString::number(answer)).toByteArray(), 
-            DataType::MESSAGE);
     QTimer::singleShot(1, this, SLOT(sendNConnected()));
+}
+
+/** \brief get the first available player id
+  */
+int Brain::getUnusedPlayerId()
+{
+    QList<int> playersId;
+    for (unsigned int i=0; i<nMaxPlayers; ++i)
+        playersId.append(i);
+    qDebug() << "getUnusedPlayerId" << playersId;
+    for (int i=0; i<clients.size(); ++i)
+        playersId.removeOne(clients[i]->playerId);
+    qDebug() << "getUnusedPlayerId" << playersId;
+    if (playersId.size()>0)
+        return playersId[0];
+    return -1;
 }
 
 /** \brief game initialization, must be subclassed

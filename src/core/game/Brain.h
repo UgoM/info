@@ -15,8 +15,9 @@ class Brain : public QObject
     class Client
     {
         public:
-            QTcpSocket * socket;    /**< client's socket */
-            int type;               /**< client's type (EClientType) */
+            QTcpSocket * socket;    /**< socket */
+            int type;               /**< type (EClientType) */
+            int playerId;           /**< from 1 to nMaxPlayers */ 
     };
 
 	public:
@@ -44,6 +45,7 @@ class Brain : public QObject
         quint32 nPlayers;
 
         int clientIdFromSocket(QTcpSocket *socket);
+        int getUnusedPlayerId();
         void addNewPlayer(QTcpSocket *socket);
 
         void sendTo(QTcpSocket * socket, QByteArray dat, int type);

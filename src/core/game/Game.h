@@ -11,7 +11,7 @@ class Game : public QWidget
     private:
         QTcpSocket * socketServer;
 		int clientType;
-		int idPlayer;
+		int playerId;
         quint32 nPlayers;
         quint32 nObs;
 
@@ -21,6 +21,7 @@ class Game : public QWidget
 		void send(QByteArray data);
 		virtual void processReceive(QByteArray dat);
         int getClientType();
+        int getPlayerId();
 
 	public:
 		Game();

@@ -79,6 +79,10 @@ void Checkers::mousePressEvent(QMouseEvent *ev) {
 	if (getClientType() != ClientType::PLAYER) {
 		return;	//si c'est un observeur qui clique, on le coupe
 	}
+    if (current != getPlayerId()) {
+        QMessageBox::information(this, tr("Erreur"), tr("Ce n'est pas à vous de jouer"));
+        return;
+    }
 	if (!moveInProgress) {	//aucun mouvement en cours
 		QLabel * inPlay = static_cast<QLabel*>(childAt(ev->pos()));	//récupération de l'image cliquée
 		position.setX((inPlay->pos()).x() / CELL_SIZE);
@@ -204,6 +208,9 @@ void Checkers::decodeBoard(QByteArray byteArray) {
 		table[k % MAX_COL][k / MAX_COL] = tokens[k].toInt();
 	}
 	current = tokens.last().toInt();
+	if (getClientType() == ClientType::PLAYER) {
+        controller->calculateClickablePieces(table, current);
+    }
 }
 
 /** Return the matrix of pieces of the board. **/

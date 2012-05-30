@@ -7,7 +7,7 @@ Game::Game()
 {
     qDebug() << "Constructeur Game";
     clientType = ClientType::OBSERVER;
-    idPlayer = 0;
+    playerId = 0;
 
     nPlayers = 0;
     nObs = 0;
@@ -120,15 +120,16 @@ void Game::readDataTcp()
             nPlayers = l[0].toInt(); nObs = l[1].toInt();
             emit nConnectedChanged(nPlayers, nObs);
             break;
+        case DataType::PLAYERID:
+            clientType = ClientType::PLAYER;
+            playerId = block.toInt();
+            emit newStatus("Playing now");
+            qDebug() << "Playing now, idPlayer :" << playerId;
+            break;
         case DataType::MESSAGE:
             messageId = block.toInt();
             switch (messageId)
             {
-                case Message::OK_YOU_CAN_PLAY:
-                    clientType = ClientType::PLAYER;
-                    emit newStatus("Playing now");
-                    qDebug() << "Playing now";
-                    break;
                 case Message::NO_YOU_CANT_PLAY:
                     emit newStatus("Server refused you as a player, observing now");
                     qDebug() << "Server refused you as a player, observing now";
@@ -212,6 +213,13 @@ void Game::setClientType( int id )
 int Game::getClientType()
 {
     return clientType;
+}
+
+/** \brief get playerId
+  */
+int Game::getPlayerId()
+{
+    return playerId;
 }
 
 /** \brief send new chat data, from user's input to the server
