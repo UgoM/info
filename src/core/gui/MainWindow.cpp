@@ -59,7 +59,10 @@ MainWindow::MainWindow() {
 void MainWindow::serverListDisp() {
 	if (!serverListWidget) {
 		serverListWidget = new ServerListWidget();
-		connect(serverListWidget, SIGNAL(newObserver(QString, quint32)), this, SLOT(newObserver(QString, quint32)));
+		connect(serverListWidget, SIGNAL(newObserver(QString, quint32)), 
+                this, SLOT(newObserver(QString, quint32)));
+		connect(serverListWidget, SIGNAL(wantsToPlay(QString, quint32)), 
+                this, SLOT(wantsToPlay(QString, quint32)));
 	}
 	serverListWidget->show();
 }
@@ -146,6 +149,19 @@ void MainWindow::newObserver(QString hostAddress, quint32 port) {
     games->append(newGame);
 
     newGameWindow(newGame);
+}
+
+void MainWindow::wantsToPlay(QString hostAddress, quint32 port)
+{
+    qDebug() << "MainWindow::wantsToPlay";
+    qDebug() << "hostAddress : " << hostAddress << ", port : " << port;
+    Checkers * newGame = new Checkers();
+    newGame->setServer(hostAddress, port);
+    newGame->setClientType(ClientType::PLAYER);
+    games->append(newGame);
+
+    newGameWindow(newGame);
+    /// \todo regroup newObserver and wantsToPlay in a single function
 }
 
 // Make a new window, where the game will be (for players AND observers)

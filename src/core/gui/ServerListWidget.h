@@ -25,10 +25,12 @@ class ServerListWidget : public QWidget {
         void buttonRefresh();
         void refreshDisplay();
         void buttonObserv();
+        void buttonConnectAction();
         void textBroadcastAddressChanged(QString);
 
 	signals:
         void newObserver(QString hostAddress, quint32 id);
+        void wantsToPlay(QString hostAddress, quint32 id);
 
 };
 

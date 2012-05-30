@@ -38,6 +38,7 @@ class MainWindow : public QMainWindow {
 		void windowAboutDisp();
 
         void newObserver(QString hostAddress, quint32 id);
+        void wantsToPlay(QString hostAddress, quint32 id);
         void newGameWindow(QWidget * widget);
 
 };

@@ -11,6 +11,7 @@ ServerListWidget::ServerListWidget() {
     QLabel      * labelBroadcast = new QLabel(tr("Broadcast Address :"));
     fieldBroadcastAddress = new QLineEdit();
 	connect(buttonGetList, SIGNAL(clicked()), this, SLOT(buttonRefresh()));
+	connect(buttonConnect, SIGNAL(clicked()), this, SLOT(buttonConnectAction()));
 	connect(buttonWatch, SIGNAL(clicked()), this, SLOT(buttonObserv()));
     connect(fieldBroadcastAddress, SIGNAL(textChanged(QString)),
                     this, SLOT(textBroadcastAddressChanged(QString)));
@@ -62,4 +63,13 @@ void ServerListWidget::buttonObserv() {
     QString hostAddress = index.data(Qt::UserRole).toString();
     quint32 port = index.data(Qt::UserRole + 1).toInt();
     emit newObserver(hostAddress, port);
+}
+
+void ServerListWidget::buttonConnectAction()
+{
+    qDebug() << "ServerListWidget::buttonConnectAction()";
+    QModelIndex index = tableView->currentIndex();
+    QString hostAddress = index.data(Qt::UserRole).toString();
+    quint32 port = index.data(Qt::UserRole + 1).toInt();
+    emit wantsToPlay(hostAddress, port);
 }
