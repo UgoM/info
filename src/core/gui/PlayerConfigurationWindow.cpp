@@ -1,6 +1,8 @@
 #include "src/core/gui/PlayerConfigurationWindow.h"
 
 PlayerConfigurationWindow::PlayerConfigurationWindow() : QDialog() {
+    // Message d'information
+    QLabel * infoMessage = new QLabel(tr("Pour l'instant, seule la case pseudo est utilisée"));
 	// Groupe caractéristique profile (nom....)
 	name = new QLineEdit();
 	pseudo = new QLineEdit();
@@ -40,7 +42,12 @@ PlayerConfigurationWindow::PlayerConfigurationWindow() : QDialog() {
 	buttonsLayout->addWidget(createButton);
 	buttonsLayout->addWidget(cancelButton);
 
+    // remplissage des champs avec les valeurs existantes
+    QSettings settings;
+    pseudo->setText(settings.value("global/username").toString());
+
 	QVBoxLayout * layoutPrincipal = new QVBoxLayout();
+	layoutPrincipal->addWidget(infoMessage);
 	layoutPrincipal->addWidget(groupProfile);
 	layoutPrincipal->addWidget(groupOptions);
 	layoutPrincipal->addWidget(groupComment);
@@ -53,14 +60,17 @@ PlayerConfigurationWindow::PlayerConfigurationWindow() : QDialog() {
 }
 
 void PlayerConfigurationWindow::setupClose() {
-	if (name->text().isEmpty()) {	
-		QMessageBox::critical(this, tr("Nom"), tr("Vous n'avez pas entré de nom..."));
-    } else if (pseudo->text().isEmpty()) {
+	//if (name->text().isEmpty()) {	
+	//	QMessageBox::critical(this, tr("Nom"), tr("Vous n'avez pas entré de nom..."));
+    //} else if (pseudo->text().isEmpty()) {
+    if (pseudo->text().isEmpty()) {
 		QMessageBox::critical(this, tr("Pseudo"), tr("Vous n'avez pas entré de pseudo..."));
-	} else if (password->text().isEmpty()) {
-		QMessageBox::critical(this, tr("Mot de passe"), tr("Vous n'avez pas entré de mot de passe..."));
+	//} else if (password->text().isEmpty()) {
+	//	QMessageBox::critical(this, tr("Mot de passe"), tr("Vous n'avez pas entré de mot de passe..."));
 	} else {
 		//mettre ici ce qu'il faut faire des données
+        QSettings settings;
+        settings.setValue("global/username", pseudo->text());
 		hide();
 	}
 }
