@@ -202,6 +202,7 @@ void Brain::addNewPlayer(QTcpSocket *socket)
   */
 void Brain::init()
 {
+    /// \todo : move this function in the constructor
     qDebug() << "ERROR : Brain::init must be subclassed";
 
     /// Model :
