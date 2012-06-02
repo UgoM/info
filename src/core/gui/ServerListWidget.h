@@ -33,8 +33,8 @@ class ServerListWidget : public QWidget {
         void textBroadcastAddressChanged(QString);
 
 	signals:
-        void newObserver(QString hostAddress, quint32 id);
-        void wantsToPlay(QString hostAddress, quint32 id);
+        void newObserver(QString hostAddress, quint32 id, QString gameName);
+        void wantsToPlay(QString hostAddress, quint32 id, QString gameName);
 
 };
 

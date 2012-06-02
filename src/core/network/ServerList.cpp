@@ -136,6 +136,7 @@ void ServerList::processTheDatagram (QByteArray datagram, QHostAddress senderHos
 
 QStandardItemModel * ServerList::get()
 {
+    /// \todo set hidden data to be regrouped in a single function
     QStandardItemModel * model = new QStandardItemModel();
 
     //row
@@ -146,6 +147,7 @@ QStandardItemModel * ServerList::get()
             item->setData( (*gameList.at(i)).value("IP"), Qt::DisplayRole );
             item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
             item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
+            item->setData( (*gameList.at(i)).value("name"), Qt::UserRole + 2);
             items.append(item);
         }
         {
@@ -153,6 +155,7 @@ QStandardItemModel * ServerList::get()
             item->setData( (*gameList.at(i)).value("port").toInt(), Qt::DisplayRole );
             item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
             item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
+            item->setData( (*gameList.at(i)).value("name"), Qt::UserRole + 2);
             items.append(item);
         }
         {
@@ -160,6 +163,7 @@ QStandardItemModel * ServerList::get()
             item->setData( (*gameList.at(i)).value("name"), Qt::DisplayRole );
             item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
             item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
+            item->setData( (*gameList.at(i)).value("name"), Qt::UserRole + 2);
             items.append(item);
         }
         {
@@ -167,6 +171,7 @@ QStandardItemModel * ServerList::get()
             item->setData( (*gameList.at(i)).value("nPlayers"), Qt::DisplayRole );
             item->setData( (*gameList.at(i)).value("IP"), Qt::UserRole );
             item->setData( (*gameList.at(i)).value("port"), Qt::UserRole + 1);
+            item->setData( (*gameList.at(i)).value("name"), Qt::UserRole + 2);
             items.append(item);
         }
 	    model->appendRow(items);

@@ -65,7 +65,8 @@ void ServerListWidget::buttonObserv() {
     QModelIndex index = tableView->currentIndex();
     QString hostAddress = index.data(Qt::UserRole).toString();
     quint32 port = index.data(Qt::UserRole + 1).toInt();
-    emit newObserver(hostAddress, port);
+    QString gameName = index.data(Qt::UserRole + 2).toString();
+    emit newObserver(hostAddress, port, gameName);
 }
 
 void ServerListWidget::buttonConnectAction()
@@ -74,5 +75,6 @@ void ServerListWidget::buttonConnectAction()
     QModelIndex index = tableView->currentIndex();
     QString hostAddress = index.data(Qt::UserRole).toString();
     quint32 port = index.data(Qt::UserRole + 1).toInt();
-    emit wantsToPlay(hostAddress, port);
+    QString gameName = index.data(Qt::UserRole + 2).toString();
+    emit wantsToPlay(hostAddress, port, gameName);
 }

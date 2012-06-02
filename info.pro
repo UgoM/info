@@ -16,6 +16,7 @@ HEADERS += 	src/core/type.h \
 			src/core/network/Server.h \
 			src/core/game/Game.h \
 			src/core/game/Brain.h \
+            src/core/game/GameSelector.h \
 			src/core/gui/MainWindow.h \
             src/core/gui/ServerListWidget.h \
 			src/core/gui/PlayerConfigurationWindow.h \
@@ -35,6 +36,7 @@ SOURCES += 	src/core/main.cpp \
 			src/core/network/Server.cpp \
 			src/core/game/Game.cpp \
 			src/core/game/Brain.cpp \
+            src/core/game/GameSelector.cpp \
 			src/core/gui/MainWindow.cpp \
             src/core/gui/ServerListWidget.cpp \
 			src/core/gui/PlayerConfigurationWindow.cpp \

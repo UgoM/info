@@ -2,10 +2,11 @@
 #include "src/core/gui/ServerListWidget.h"
 #include "src/core/gui/PlayerConfigurationWindow.h"
 #include "src/core/network/Server.h"
-#include "src/games/checkers/Checkers.h"
 #include "src/core/gui/GameInfoWidget.h"
 #include "src/core/gui/ChatWidget.h"
 #include "src/core/type.h"
+#include "src/core/game/Game.h"
+#include "src/core/game/GameSelector.h"
 
 MainWindow::MainWindow() {
 	QMdiArea * centralZone = new QMdiArea;
@@ -52,6 +53,7 @@ MainWindow::MainWindow() {
 	windowBoss = NULL;
 	windowAbout = NULL;
 	windowServerWatch = NULL;
+    windowGameChoice = NULL;
     server = NULL;
     games = new QList<Game *>;
 }
@@ -59,10 +61,10 @@ MainWindow::MainWindow() {
 void MainWindow::serverListDisp() {
 	if (!serverListWidget) {
 		serverListWidget = new ServerListWidget();
-		connect(serverListWidget, SIGNAL(newObserver(QString, quint32)), 
-                this, SLOT(newObserver(QString, quint32)));
-		connect(serverListWidget, SIGNAL(wantsToPlay(QString, quint32)), 
-                this, SLOT(wantsToPlay(QString, quint32)));
+		connect(serverListWidget, SIGNAL(newObserver(QString, quint32, QString)), 
+                this, SLOT(newObserver(QString, quint32, QString)));
+		connect(serverListWidget, SIGNAL(wantsToPlay(QString, quint32, QString)), 
+                this, SLOT(wantsToPlay(QString, quint32, QString)));
 	}
 	serverListWidget->show();
 }
@@ -123,16 +125,43 @@ void MainWindow::mainButtonDisp(QPushButton * button) {
   */
 void MainWindow::newGameFromMenu()
 {
+    // Display game choice
+    if (!windowGameChoice)
+    {
+        windowGameChoice = new QWidget();
+        QVBoxLayout * layoutGameChoice = new QVBoxLayout();
+        QList<QString> gameList = GameSelector::getGameList();
+        QSignalMapper *signalMapper = new QSignalMapper(this);
+        for (int i = 0; i < gameList.size(); ++i)
+        {
+            QPushButton *button = new QPushButton(gameList[i]);
+            connect(button, SIGNAL(clicked()), signalMapper, SLOT(map()));
+            signalMapper->setMapping(button, gameList[i]);
+            layoutGameChoice->addWidget(button);
+        }
+        connect(signalMapper, SIGNAL(mapped(const QString &)),
+                this, SLOT(windowGameChoiceClicked(const QString &)));
+
+        windowGameChoice->setLayout(layoutGameChoice);
+    }
+    windowGameChoice->show();
+}
+
+void MainWindow::windowGameChoiceClicked(const QString & gameName)
+{
+    qDebug() << "windowGameChoiceClicked" << gameName ;
+    windowGameChoice->hide();
+
     // if no server started, start it    
     if (!server) {
         server = new Server();
 	}
 
     // start the game server
-    quint32 port = server->makeNewBrain();
+    quint32 port = server->makeNewBrain(gameName);
 
     // start the game client
-    Checkers * newGame = new Checkers();
+    Game * newGame = GameSelector::startNewGame(gameName);
     newGame->setServer("127.0.0.1", port);
     newGame->setClientType(ClientType::PLAYER);
 
@@ -140,10 +169,10 @@ void MainWindow::newGameFromMenu()
     newGameWindow(newGame);
 }
 
-void MainWindow::newObserver(QString hostAddress, quint32 port) {
+void MainWindow::newObserver(QString hostAddress, quint32 port, QString gameName) {
     qDebug() << "MainWindow::newObserver";
     qDebug() << "hostAddress : " << hostAddress << ", port : " << port;
-    Checkers * newGame = new Checkers();
+    Game * newGame = GameSelector::startNewGame(gameName);
     newGame->setServer(hostAddress, port);
     newGame->setClientType(ClientType::OBSERVER);
     games->append(newGame);
@@ -151,11 +180,11 @@ void MainWindow::newObserver(QString hostAddress, quint32 port) {
     newGameWindow(newGame);
 }
 
-void MainWindow::wantsToPlay(QString hostAddress, quint32 port)
+void MainWindow::wantsToPlay(QString hostAddress, quint32 port, QString gameName)
 {
     qDebug() << "MainWindow::wantsToPlay";
     qDebug() << "hostAddress : " << hostAddress << ", port : " << port;
-    Checkers * newGame = new Checkers();
+    Game * newGame = GameSelector::startNewGame(gameName);
     newGame->setServer(hostAddress, port);
     newGame->setClientType(ClientType::PLAYER);
     games->append(newGame);

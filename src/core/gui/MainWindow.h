@@ -15,6 +15,7 @@ class MainWindow : public QMainWindow {
 	QDialog * windowBoss;
 	QDialog * windowAbout;
 	QDialog * windowServerWatch;
+    QWidget * windowGameChoice;
 
 	Server * server;
 	ServerListWidget * serverListWidget;
@@ -37,9 +38,12 @@ class MainWindow : public QMainWindow {
 		void windowBossDisp();
 		void windowAboutDisp();
 
-        void newObserver(QString hostAddress, quint32 id);
-        void wantsToPlay(QString hostAddress, quint32 id);
+        void newObserver(QString hostAddress, quint32 id, QString gameName);
+        void wantsToPlay(QString hostAddress, quint32 id, QString gameName);
         void newGameWindow(QWidget * widget);
+
+    private slots:
+        void windowGameChoiceClicked(const QString & gameName);
 
 };
  

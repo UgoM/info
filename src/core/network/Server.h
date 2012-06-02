@@ -30,7 +30,7 @@ class Server : public QObject
 		QMap <quint32, Brain *> * brains;
 
 	public slots:
-		quint32 makeNewBrain();
+		quint32 makeNewBrain(QString gameName);
 
     public:
         QByteArray listOfServers() const;

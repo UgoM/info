@@ -6,8 +6,7 @@
 #include "src/core/type.h"
 #include <iostream>
 
-#include "src/games/checkers/Checkers.h"
-#include "src/games/checkers/BrainCheckers.h"
+#include "src/core/game/GameSelector.h"
 
 /** \brief Constructor
   */
@@ -35,10 +34,10 @@ Server::~Server()
   *
   * Create the server of the game (class derived from Brain)
   */
-quint32 Server::makeNewBrain()
+quint32 Server::makeNewBrain(QString gameName)
 {
     // Make Server (inherited from Brain)
-	BrainCheckers * newBrain = new BrainCheckers();
+	Brain * newBrain = GameSelector::startNewBrain(gameName);
 	//QThread * newBrainThread = new QThread();
 	//newBrain->moveToThread(newBrainThread);
 	//newBrainThread->start();
