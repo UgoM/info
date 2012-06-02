@@ -5,7 +5,7 @@
 void BrainExample::init()
 {
     // nMaxPlayers = 42;
-    // name = "Awesome Game";
+    // gameName = "Awesome Game";
 }
 
 /** \brief What to do when game receives data from clients
