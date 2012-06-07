@@ -24,6 +24,7 @@ class MainWindow : public QMainWindow {
 
     public:
 		MainWindow();
+		~MainWindow();
 	
 	public:
 		void mainButtonDisp(QPushButton * button);

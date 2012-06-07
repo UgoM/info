@@ -26,7 +26,14 @@ Server::~Server()
 {
 	delete tcpServer;
     delete udpServer;
-	brains->clear();
+
+    QMap <quint32, Brain *>::iterator itr;
+    for (itr = brains->begin(); itr != brains->end(); itr++)
+    {
+        Brain * toto = itr.value();
+        delete toto;
+        toto = NULL;
+    }
 	delete brains;
 }
 

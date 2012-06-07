@@ -57,7 +57,25 @@ MainWindow::MainWindow() {
     server = NULL;
     games = new QList<Game *>;
 }
+MainWindow::~MainWindow()
+{
+	delete windowBoss;
+	delete windowAbout;
+	delete windowServerWatch;
+	delete windowGameChoice;
+	delete server;
+	delete serverListWidget;
+	delete playerConfigurationWindow;
 
+    QList<Game *>::iterator itr;
+    for (itr = games->begin(); itr != games->end(); itr++)
+    {
+        Game * toto = *itr;
+        delete toto;
+        toto = NULL;
+    }
+	delete games;
+}
 void MainWindow::serverListDisp() {
 	if (!serverListWidget) {
 		serverListWidget = new ServerListWidget();
